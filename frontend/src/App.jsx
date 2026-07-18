@@ -11,40 +11,20 @@ function App() {
 
   useEffect(() => {
     if (!socket) return;
-
-    // Listen for global sounds sent from backend server
-    socket.on('play_sound', ({ type }) => {
-      console.log('Playing event sound:', type);
-      switch (type) {
-        case 'ROUND_START':
-          sounds.playRoundComplete(); // Fanfare
-          break;
-        case 'CORRECT':
-          sounds.playCorrect();
-          break;
-        case 'WRONG':
-          sounds.playWrong();
-          break;
-        case 'BUZZ':
-          sounds.playBuzz();
-          break;
-        case 'COUNTDOWN':
-          sounds.playCountdown();
-          break;
-        case 'TIMER_END':
-          sounds.playTimerEnd();
-          break;
-        case 'ROUND_COMPLETE':
-          sounds.playRoundComplete();
-          break;
-        default:
-          break;
-      }
-    });
-
-    return () => {
-      socket.off('play_sound');
+    const playSound = ({ type }) => {
+      const soundMap = {
+        ROUND_START: sounds.playRoundComplete,
+        CORRECT: sounds.playCorrect,
+        WRONG: sounds.playWrong,
+        BUZZ: sounds.playBuzz,
+        COUNTDOWN: sounds.playCountdown,
+        TIMER_END: sounds.playTimerEnd,
+        ROUND_COMPLETE: sounds.playRoundComplete,
+      };
+      soundMap[type]?.();
     };
+    socket.on('play_sound', playSound);
+    return () => socket.off('play_sound', playSound);
   }, [socket]);
 
   return (
@@ -52,14 +32,14 @@ function App() {
       <div className="relative min-h-screen overflow-hidden bg-darkBg">
         <div className="moxie-marquee" aria-label="Game information">
           <div className="moxie-marquee__track">
-            <span>15 SECONDS PER TEAM</span><b>•</b><span>THREE TURNS EACH</span><b>•</b><span>NO BUZZER NEEDED</span><b>•</b>
-            <span>15 SECONDS PER TEAM</span><b>•</b><span>THREE TURNS EACH</span><b>•</b><span>NO BUZZER NEEDED</span><b>•</b>
+            <span>15 SECONDS PER TEAM</span><b>&bull;</b><span>THREE TURNS EACH</span><b>&bull;</b><span>NO BUZZER NEEDED</span><b>&bull;</b><span>PLAY FAIR. PLAY LOUD.</span><b>&bull;</b>
+            <span>15 SECONDS PER TEAM</span><b>&bull;</b><span>THREE TURNS EACH</span><b>&bull;</b><span>NO BUZZER NEEDED</span><b>&bull;</b><span>PLAY FAIR. PLAY LOUD.</span><b>&bull;</b>
           </div>
         </div>
         <header className="moxie-header">
-          <span className="moxie-header__mark">≋</span>
-          <span className="moxie-header__logo">SURVEY <i>SAYS</i></span>
-          <span className="moxie-header__meta">FAMILY FEUD<br />VIT CHENNAI</span>
+          <span className="moxie-header__mark" aria-hidden="true">///</span>
+          <span className="moxie-header__logo">ACFEUD</span>
+          <span className="moxie-header__meta">LIVE<br />GAME</span>
         </header>
         <Routes>
           <Route path="/" element={<Landing />} />

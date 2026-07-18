@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Roboto+Condensed:wght@500;600;700&display=swap');
 
 @import "tailwindcss";
 
@@ -8,8 +8,8 @@
   --color-neonPink: #D03B5B;     /* Soft editorial red/coral strike */
   --color-neonCyan: #D2F128;     /* Bright chartreuse/lime yellow */
   
-  --font-sans: 'Plus Jakarta Sans', sans-serif;
-  --font-serif: 'Playfair Display', serif;
+  --font-sans: 'DM Sans', Arial, sans-serif;
+  --font-serif: 'DM Sans', Arial, sans-serif;
 }
 
 @layer base {
@@ -21,7 +21,7 @@
   button, input { font: inherit; }
   
   h1, h2, h3, .serif-font {
-    font-family: 'Playfair Display', serif;
+    font-family: 'DM Sans', Arial, sans-serif;
   }
 }
 
@@ -45,7 +45,8 @@
   align-items: center;
   gap: 22px;
   width: max-content;
-  animation: moxie-scroll 24s linear infinite;
+  animation: moxie-scroll 18s linear infinite;
+  will-change: transform;
 }
 
 .moxie-marquee b { font-size: 14px; }
@@ -61,18 +62,63 @@
   color: #112521;
 }
 
-.moxie-header__mark { font-size: 38px; line-height: 1; transform: rotate(-12deg); }
-.moxie-header__logo { font-family: 'Arial Narrow', Impact, sans-serif; font-size: clamp(26px, 4vw, 46px); font-stretch: condensed; letter-spacing: -.08em; line-height: .8; }
-.moxie-header__logo i { color: #d03b5b; font-style: normal; }
+.moxie-header__mark { font: 700 18px/1 'Roboto Condensed', sans-serif; letter-spacing: -4px; transform: skewX(-17deg); }
+.moxie-header__logo { font-family: 'Roboto Condensed', 'Arial Narrow', sans-serif; font-size: clamp(31px, 4vw, 48px); font-weight: 700; letter-spacing: -.055em; line-height: .8; }
 .moxie-header__meta { justify-self: end; font-size: 9px; font-weight: 800; letter-spacing: .12em; line-height: 1.35; text-align: right; }
 
 @keyframes moxie-scroll { to { transform: translateX(-50%); } }
 
 @media (max-width: 640px) {
   .moxie-header { height: 64px; padding: 0 1.25rem; }
-  .moxie-header__mark { font-size: 27px; }
+  .moxie-header__mark { font-size: 14px; }
   .moxie-header__meta { font-size: 7px; }
 }
+
+/* Game-show layer: deep blue, gold scores, and a strong centre board. */
+.feud-board { position: relative; }
+.feud-question {
+  background: radial-gradient(circle at 50% -30%, #245aa7 0, #102d64 45%, #081b42 100%);
+  border: 4px solid #f4cf55 !important;
+  border-radius: 28px !important;
+  box-shadow: 0 0 0 5px #0a224f, 0 13px 0 #061531, 0 22px 35px rgba(5, 19, 47, .25) !important;
+}
+.feud-question > div:first-child { background: linear-gradient(90deg, #e3a936, #fff0a2, #e3a936) !important; height: 5px !important; }
+.feud-question h3 { color: #fff8dc !important; font-family: 'Roboto Condensed', sans-serif; font-weight: 700; letter-spacing: -.02em; text-transform: uppercase; }
+.feud-question .bg-\[\#0D483F\] { background: #071a3b !important; border-color: #f4cf55 !important; color: #ffe277 !important; }
+.feud-board .flip-card { height: 86px; }
+.feud-board .flip-card-front {
+  background: linear-gradient(145deg, #194585, #0a2455);
+  border: 3px solid #f0ca58;
+  color: #fff8dc;
+  box-shadow: inset 0 0 0 3px #0b2b65, 0 4px 0 #05132d;
+}
+.feud-board .flip-card-back {
+  background: linear-gradient(145deg, #123b7d, #071b42);
+  border: 3px solid #f0ca58;
+  color: #fff8dc;
+  box-shadow: inset 0 0 0 3px #1d549d, 0 4px 0 #05132d;
+}
+.feud-board .flip-card-back .text-neonCyan { color: #ffe277 !important; background: rgba(255,255,255,.08) !important; }
+.feud-team-panel { border: 3px solid #0c2b61 !important; border-radius: 18px !important; box-shadow: 0 7px 0 #0b214a; }
+.feud-team-panel h4, .feud-team-panel .text-5xl { font-family: 'Roboto Condensed', sans-serif; letter-spacing: -.03em; }
+.feud-team-panel .text-5xl { color: #d03b5b !important; font-size: 4rem; line-height: 1; }
+
+/* Host tools are styled as a compact control desk, not a generic settings form. */
+.acfeud-admin { background: #081b42 !important; border: 3px solid #f2cc58 !important; border-bottom: 0 !important; border-radius: 28px 28px 0 0 !important; box-shadow: 0 -8px 28px rgba(0,0,0,.28); color: #fff8dc; }
+.acfeud-admin .border-b { border-color: rgba(242, 204, 88, .34) !important; }
+.acfeud-admin h3, .acfeud-admin h4 { color: #fff8dc !important; font-family: 'Roboto Condensed', sans-serif; letter-spacing: .01em; }
+.acfeud-admin .text-\[\#0D483F\] { color: #fff8dc !important; }
+.acfeud-admin .text-\[\#0D483F\]\/60, .acfeud-admin .text-\[\#0D483F\]\/70, .acfeud-admin .text-gray-500 { color: rgba(255,248,220,.68) !important; }
+.acfeud-admin .bg-\[\#FAF6EE\] { background: #102d64 !important; border-color: rgba(242,204,88,.34) !important; }
+.acfeud-admin__panel { background: #0d285a !important; border: 1px solid rgba(242,204,88,.42) !important; box-shadow: inset 0 1px rgba(255,255,255,.08); }
+.acfeud-admin__panel > span:first-child { color: #ffe277 !important; }
+.acfeud-admin button { border-radius: 8px !important; }
+.acfeud-admin .bg-neonPurple { background: #f0ca58 !important; color: #071b42 !important; }
+.acfeud-admin__turn { padding: 1rem; border: 2px solid #f0ca58; background: #071a3b; text-align: center; }
+.acfeud-admin__turn span { display: block; color: #ffe277; font-size: 10px; font-weight: 700; letter-spacing: .15em; }
+.acfeud-admin__turn strong { display: block; margin: .3rem 0; color: #fff8dc; font: 700 25px/1 'Roboto Condensed', sans-serif; }
+.acfeud-admin__turn div { color: rgba(255,248,220,.7); font-size: 11px; }
+.acfeud-admin__turn b { color: #d2f128; font-size: 14px; }
 
 /* Premium Editorial Cards matching moxiebeauty.in flat aesthetics */
 .glass-panel {
@@ -194,4 +240,79 @@
 
 .strike-animate {
   animation: strike-in 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Landing page: pared-back, punchy and led by the same condensed sans used above. */
+.acfeud-landing {
+  min-height: calc(100vh - 120px);
+  padding: clamp(3.5rem, 8vh, 6.5rem) 1.5rem 2.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #112521;
+  text-align: center;
+}
+
+.acfeud-landing__intro { max-width: 760px; }
+.acfeud-eyebrow {
+  margin: 0 0 1.2rem;
+  color: #d03b5b;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .16em;
+}
+
+.acfeud-landing h1 {
+  margin: 0;
+  font-family: 'Roboto Condensed', sans-serif;
+  font-size: clamp(4rem, 10vw, 8.5rem);
+  font-weight: 700;
+  line-height: .77;
+  letter-spacing: -.065em;
+}
+
+.acfeud-landing h1 em { color: #d03b5b; font-style: normal; }
+.acfeud-landing__copy {
+  max-width: 490px;
+  margin: 1.8rem auto 0;
+  color: rgba(17, 37, 33, .72);
+  font-size: clamp(1rem, 1.6vw, 1.18rem);
+  line-height: 1.45;
+}
+
+.acfeud-choices {
+  width: min(100%, 820px);
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: clamp(2.75rem, 6vh, 4.5rem);
+}
+
+.acfeud-choice {
+  position: relative;
+  min-height: 245px;
+  padding: 1.7rem;
+  overflow: hidden;
+  border: 1px solid #112521;
+  border-radius: 0;
+  text-align: left;
+  cursor: pointer;
+  transition: transform .25s ease, box-shadow .25s ease;
+}
+
+.acfeud-choice:hover { transform: translateY(-5px); box-shadow: 7px 7px 0 #112521; }
+.acfeud-choice--dark { background: #112521; color: #fffbed; }
+.acfeud-choice--lime { background: #d2f128; color: #112521; }
+.acfeud-choice__icon { display: inline-flex; margin-bottom: 2.4rem; }
+.acfeud-choice__label { display: block; font: 700 28px/.9 'Roboto Condensed', sans-serif; letter-spacing: -.035em; }
+.acfeud-choice__text { display: block; max-width: 280px; margin-top: .8rem; font-size: 14px; line-height: 1.45; opacity: .78; }
+.acfeud-choice__arrow { position: absolute; right: 1.4rem; bottom: 1.35rem; }
+.acfeud-landing__footer { margin: 2.2rem 0 0; font-size: 10px; font-weight: 700; letter-spacing: .13em; color: rgba(17, 37, 33, .58); }
+
+@media (max-width: 640px) {
+  .acfeud-landing { min-height: calc(100vh - 98px); padding-top: 3.5rem; justify-content: flex-start; }
+  .acfeud-choices { grid-template-columns: 1fr; margin-top: 2.7rem; }
+  .acfeud-choice { min-height: 190px; }
+  .acfeud-choice__icon { margin-bottom: 1.7rem; }
 }
