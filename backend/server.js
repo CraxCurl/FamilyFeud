@@ -654,6 +654,11 @@ if (fs.existsSync(distPath)) {
   app.get('*', (req, res) => {
     res.sendFile(path.join(distPath, 'index.html'));
   });
+} else {
+  // Fallback status route if deploying backend standalone
+  app.get('/', (req, res) => {
+    res.json({ status: 'healthy', message: 'Android Club Family Feud Server is Live!' });
+  });
 }
 
 const PORT = process.env.PORT || 5000;
