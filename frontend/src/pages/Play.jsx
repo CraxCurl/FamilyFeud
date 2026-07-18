@@ -345,6 +345,21 @@ export default function Play() {
               </p>
             </motion.div>
           )}
+
+          {gameState.status === 'ROUND_END' && (
+            <motion.div
+              key="round-end"
+              initial={{ opacity: 0, scale: 0.96 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="text-center p-8 glass-panel rounded-2xl max-w-sm w-full border-[#0D483F]/10"
+            >
+              <Award className="w-12 h-12 text-neonPink mx-auto mb-4" />
+              <h3 className="text-xl font-bold text-neonPurple mb-2">Round Complete</h3>
+              <p className="text-xs text-[#0D483F]/70">
+                Both teams completed their three turns. Watch the board for the next question.
+              </p>
+            </motion.div>
+          )}
         </AnimatePresence>
       </div>
 

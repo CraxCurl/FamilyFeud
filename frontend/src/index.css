@@ -103,23 +103,6 @@
 .feud-team-panel h4, .feud-team-panel .text-5xl { font-family: 'Roboto Condensed', sans-serif; letter-spacing: -.03em; }
 .feud-team-panel .text-5xl { color: #d03b5b !important; font-size: 4rem; line-height: 1; }
 
-/* Host tools are styled as a compact control desk, not a generic settings form. */
-.acfeud-admin { background: #081b42 !important; border: 3px solid #f2cc58 !important; border-bottom: 0 !important; border-radius: 28px 28px 0 0 !important; box-shadow: 0 -8px 28px rgba(0,0,0,.28); color: #fff8dc; }
-.acfeud-admin .border-b { border-color: rgba(242, 204, 88, .34) !important; }
-.acfeud-admin h3, .acfeud-admin h4 { color: #fff8dc !important; font-family: 'Roboto Condensed', sans-serif; letter-spacing: .01em; }
-.acfeud-admin .text-\[\#0D483F\] { color: #fff8dc !important; }
-.acfeud-admin .text-\[\#0D483F\]\/60, .acfeud-admin .text-\[\#0D483F\]\/70, .acfeud-admin .text-gray-500 { color: rgba(255,248,220,.68) !important; }
-.acfeud-admin .bg-\[\#FAF6EE\] { background: #102d64 !important; border-color: rgba(242,204,88,.34) !important; }
-.acfeud-admin__panel { background: #0d285a !important; border: 1px solid rgba(242,204,88,.42) !important; box-shadow: inset 0 1px rgba(255,255,255,.08); }
-.acfeud-admin__panel > span:first-child { color: #ffe277 !important; }
-.acfeud-admin button { border-radius: 8px !important; }
-.acfeud-admin .bg-neonPurple { background: #f0ca58 !important; color: #071b42 !important; }
-.acfeud-admin__turn { padding: 1rem; border: 2px solid #f0ca58; background: #071a3b; text-align: center; }
-.acfeud-admin__turn span { display: block; color: #ffe277; font-size: 10px; font-weight: 700; letter-spacing: .15em; }
-.acfeud-admin__turn strong { display: block; margin: .3rem 0; color: #fff8dc; font: 700 25px/1 'Roboto Condensed', sans-serif; }
-.acfeud-admin__turn div { color: rgba(255,248,220,.7); font-size: 11px; }
-.acfeud-admin__turn b { color: #d2f128; font-size: 14px; }
-
 /* Premium Editorial Cards matching moxiebeauty.in flat aesthetics */
 .glass-panel {
   background: #FFFFFF;
