@@ -25,7 +25,9 @@ export const SocketProvider = ({ children }) => {
     const socketUrl = import.meta.env.VITE_BACKEND_URL || (
       window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
         ? 'http://localhost:5000'
-        : `${window.location.protocol}//${window.location.host}`
+        : (window.location.hostname.includes('render.com')
+            ? `${window.location.protocol}//${window.location.host}`
+            : 'https://familyfeud-cf4d.onrender.com')
     );
     console.log("Connecting to Socket.io server at:", socketUrl);
     const newSocket = io(socketUrl);
