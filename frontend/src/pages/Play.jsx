@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useSocket } from '../context/SocketContext';
 import { Smartphone, Send, Clock, UserCheck, ShieldAlert, Award, Globe, Sparkles } from 'lucide-react';
+import { sounds } from '../utils/sounds';
 
 const InstagramIcon = (props) => (
   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
@@ -18,6 +19,7 @@ export default function Play() {
   const [answerInput, setAnswerInput] = useState('');
   const [submitted, setSubmitted] = useState(false);
   const [isBlocked, setIsBlocked] = useState(false);
+  const finalSoundPlayed = useRef(false);
 
   useEffect(() => {
     let savedId = localStorage.getItem('feud_user_id');
@@ -64,6 +66,10 @@ export default function Play() {
     }, 1500);
   };
 
+  const handleBuzz = () => {
+    if (socket && !gameState.buzzState.locked && !gameState.activeInputTeam) socket.emit('player_buzz');
+  };
+
   const handleLeave = () => {
     if (socket) {
       socket.emit('draw_identity');
@@ -80,8 +86,22 @@ export default function Play() {
 
   // Determine current play states
   const isMyTeamActiveInput = gameState.activeInputTeam === team;
+  const showBuzzer = gameState.status === 'PLAYING' && !gameState.activeInputTeam && !gameState.buzzState.locked;
   const showAnswerInput = gameState.status === 'PLAYING' && isMyTeamActiveInput;
   const showWaiting = gameState.status === 'PLAYING' && !isMyTeamActiveInput;
+  const isDraw = gameState.winner === 'DRAW';
+  const isWinner = isDraw || gameState.winner === team;
+
+  useEffect(() => {
+    if (gameState.status !== 'GAME_OVER') {
+      finalSoundPlayed.current = false;
+      return;
+    }
+    if (finalSoundPlayed.current) return;
+    finalSoundPlayed.current = true;
+    if (isDraw || isWinner) sounds.playWinner();
+    else sounds.playLoser();
+  }, [gameState.status, isDraw, isWinner]);
 
   // Render blocked screen if game is currently in progress
   if (isBlocked) {
@@ -201,13 +221,17 @@ export default function Play() {
             🤖
           </div>
 
-          <h2 className="text-3xl font-extrabold text-neonPurple mb-2">Thank You!</h2>
-          <p className="text-sm text-neonPink font-semibold mb-6">Android Club VIT Chennai</p>
+          <h2 className="text-3xl font-extrabold text-neonPurple mb-2">
+            {isDraw ? 'It’s a Draw!' : isWinner ? 'Congratulations!' : 'Great Game!'}
+          </h2>
+          <p className="text-sm text-neonPink font-semibold mb-6">
+            {isDraw ? 'Both teams finished level.' : isWinner ? `${team} wins ACFEUD!` : `${gameState.winner || 'The other team'} takes this one.`}
+          </p>
           
           <div className="p-4 bg-neonPurple/5 border border-neonPurple/15 rounded-xl mb-6 text-sm text-[#0D483F]">
-            <p className="mb-2 font-bold">11+ Years of Innovation</p>
+            <p className="mb-2 font-bold">Stay in the Android Club loop</p>
             <p className="text-xs text-[#0D483F]/80">
-              We are a community of passionate developers building future-ready mobile apps, organizing top-tier hackathons, and fostering innovation.
+              Follow Android Club VIT Chennai for projects, workshops, events, and the next chance to play.
             </p>
           </div>
 
@@ -282,6 +306,22 @@ export default function Play() {
                 <div><span className="font-bold text-[#0D483F]/60">Your Alias:</span> <strong className="text-neonPurple">{name}</strong></div>
                 <div><span className="font-bold text-[#0D483F]/60">Your Team:</span> <strong className="text-[#0D483F]">{team || 'Lobby (Waiting for assignment)'}</strong></div>
               </div>
+            </motion.div>
+          )}
+
+          {showBuzzer && (
+            <motion.div
+              key="opening-buzz"
+              initial={{ opacity: 0, scale: 0.92 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="flex flex-col items-center max-w-sm w-full text-center"
+            >
+              <span className="text-xs font-bold tracking-[0.16em] text-neonPink mb-3">OPENING BUZZ</span>
+              <h3 className="text-2xl font-bold text-neonPurple mb-3">Who starts this round?</h3>
+              <p className="text-sm text-[#0D483F]/70 mb-7">First buzz chooses the opening team. Then turns alternate every 15 seconds.</p>
+              <button onClick={handleBuzz} className="w-56 h-56 rounded-full bg-[#0D483F] border-[7px] border-[#D2F128] text-[#D2F128] font-black text-4xl shadow-[0_12px_0_rgba(13,72,63,0.2)] hover:scale-105 active:scale-95 transition cursor-pointer">
+                BUZZ
+              </button>
             </motion.div>
           )}
 
