@@ -377,12 +377,10 @@ export default function Play() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="text-center p-8 glass-panel rounded-2xl max-w-sm w-full flex flex-col items-center border-[#0D483F]/10"
+              className="text-center max-w-sm w-full flex flex-col items-center"
             >
-              <ShieldAlert className="w-12 h-12 text-neonPink mb-4 animate-pulse" />
-              <h3 className="text-xl font-bold text-neonPurple mb-2">{gameState.activeInputTeam}'s Turn</h3>
-              <p className="text-xs text-[#0D483F]/70">
-                {gameState.activeInputTeam} is answering now. Your team will get the next timed turn automatically.
+              <p className="text-xs font-semibold tracking-widest text-[#0D483F]/55 uppercase">
+                Waiting for your next turn
               </p>
             </motion.div>
           )}
