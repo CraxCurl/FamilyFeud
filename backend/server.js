@@ -36,6 +36,7 @@ const userSchema = new mongoose.Schema({
 
 const User = mongoose.model('User', userSchema);
 
+mongoose.set('bufferCommands', false);
 const mongoUri = process.env.MONGO_URI || 'mongodb://localhost:27017/familyfeud';
 mongoose.connect(mongoUri)
   .then(() => {
@@ -288,12 +289,26 @@ io.on('connection', (socket) => {
   // Player Registration (automatic name assignment with MongoDB profiles, team: null initially)
   socket.on('join_game', async ({ id }) => {
     try {
-      // Find or create User in MongoDB
-      let user = await User.findOne({ userId: id });
-      if (!user) {
-        // Generate initial random username for database profile
+      let resolvedUsername = null;
+
+      // Find or create User in MongoDB only if connected
+      if (isMongoConnected) {
+        try {
+          let user = await User.findOne({ userId: id });
+          if (!user) {
+            const randomName = RANDOM_NAMES[Math.floor(Math.random() * RANDOM_NAMES.length)] || `User_${Math.floor(Math.random()*1000)}`;
+            user = await User.create({ userId: id, username: randomName });
+          }
+          resolvedUsername = user.username;
+        } catch (dbErr) {
+          console.log(`Database query failed: ${dbErr.message}. Falling back to memory.`);
+        }
+      }
+
+      // If database was not connected or query failed, fallback to memory
+      if (!resolvedUsername) {
         const randomName = RANDOM_NAMES[Math.floor(Math.random() * RANDOM_NAMES.length)] || `User_${Math.floor(Math.random()*1000)}`;
-        user = await User.create({ userId: id, username: randomName });
+        resolvedUsername = randomName;
       }
 
       // Check if they are already in the active session
@@ -314,7 +329,7 @@ io.on('connection', (socket) => {
       }
 
       // Add to session players list with team: null (lobby state)
-      const newPlayer = { name: user.username, team: null, id, socketId: socket.id };
+      const newPlayer = { name: resolvedUsername, team: null, id, socketId: socket.id };
       gameState.players[socket.id] = newPlayer;
 
       socket.emit('joined_details', newPlayer);
