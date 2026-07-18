@@ -11,7 +11,7 @@ export default function Display() {
   // Host Panel Auth & Visibility
   const [showHostPanel, setShowHostPanel] = useState(false);
   const isAuthenticated = !!adminState;
-  const [adminKey, setAdminKey] = useState(localStorage.getItem('feud_admin_key') || '');
+  const [adminKey, setAdminKey] = useState('');
   const [passcodeInput, setPasscodeInput] = useState('');
   const [authError, setAuthError] = useState('');
 
@@ -44,7 +44,6 @@ export default function Display() {
 
     const handleAuthFailed = () => {
       setAuthError('Invalid Access Key');
-      localStorage.removeItem('feud_admin_key');
     };
 
     socket.on('admin_auth_failed', handleAuthFailed);
@@ -91,7 +90,6 @@ export default function Display() {
     if (!passcodeInput.trim()) return;
 
     const trimmedKey = passcodeInput.trim();
-    localStorage.setItem('feud_admin_key', trimmedKey);
     setAdminKey(trimmedKey);
     if (socket) {
       socket.emit('admin_register', { key: trimmedKey });
@@ -99,7 +97,6 @@ export default function Display() {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('feud_admin_key');
     setAdminKey('');
     setPasscodeInput('');
     setShowHostPanel(false);
