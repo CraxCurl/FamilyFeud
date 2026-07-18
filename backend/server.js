@@ -280,6 +280,32 @@ app.delete('/api/questions/:id', verifyAdminKey, (req, res) => {
 });
 
 let originalBuzzedTeam = null;
+let attemptsCount = { 'Team Alpha': 0, 'Team Beta': 0 };
+
+function handleTimerExpiration() {
+  io.emit('play_sound', { type: 'TIMER_END' });
+  const currentActive = gameState.activeInputTeam;
+  if (!currentActive) return;
+
+  const nextActive = currentActive === 'Team Alpha' ? 'Team Beta' : 'Team Alpha';
+  
+  if (attemptsCount[nextActive] < 3) {
+    gameState.activeInputTeam = nextActive;
+    attemptsCount[nextActive]++;
+    io.emit('play_sound', { type: 'ROUND_START' });
+    
+    startTimer(15, (t) => {
+      if (t <= 3) {
+        io.emit('play_sound', { type: 'COUNTDOWN' });
+      }
+    }, handleTimerExpiration);
+  } else {
+    gameState.activeInputTeam = null;
+  }
+  
+  broadcastState();
+  sendAdminState();
+}
 
 // Socket logic
 io.on('connection', (socket) => {
@@ -553,24 +579,13 @@ io.on('connection', (socket) => {
         };
         gameState.activeInputTeam = payload.team;
         originalBuzzedTeam = payload.team;
-        startTimer(15, null, () => {
-          io.emit('play_sound', { type: 'TIMER_END' });
-          if (gameState.activeInputTeam === originalBuzzedTeam) {
-            const otherTeam = originalBuzzedTeam === 'Team Alpha' ? 'Team Beta' : 'Team Alpha';
-            gameState.activeInputTeam = otherTeam;
-            io.emit('play_sound', { type: 'ROUND_START' });
-            startTimer(15, null, () => {
-              io.emit('play_sound', { type: 'TIMER_END' });
-              gameState.activeInputTeam = null;
-              broadcastState();
-              sendAdminState();
-            });
-          } else {
-            gameState.activeInputTeam = null;
+        attemptsCount = { 'Team Alpha': 0, 'Team Beta': 0 };
+        attemptsCount[payload.team] = 1;
+        startTimer(15, (t) => {
+          if (t <= 3) {
+            io.emit('play_sound', { type: 'COUNTDOWN' });
           }
-          broadcastState();
-          sendAdminState();
-        });
+        }, handleTimerExpiration);
         break;
       
       case 'SKIP_QUESTION':
@@ -609,6 +624,8 @@ io.on('connection', (socket) => {
       };
       gameState.activeInputTeam = player.team;
       originalBuzzedTeam = player.team;
+      attemptsCount = { 'Team Alpha': 0, 'Team Beta': 0 };
+      attemptsCount[player.team] = 1;
       
       io.emit('play_sound', { type: 'BUZZ' });
       
@@ -616,28 +633,7 @@ io.on('connection', (socket) => {
         if (t <= 3) {
           io.emit('play_sound', { type: 'COUNTDOWN' });
         }
-      }, () => {
-        io.emit('play_sound', { type: 'TIMER_END' });
-        if (gameState.activeInputTeam === originalBuzzedTeam) {
-          const otherTeam = originalBuzzedTeam === 'Team Alpha' ? 'Team Beta' : 'Team Alpha';
-          gameState.activeInputTeam = otherTeam;
-          io.emit('play_sound', { type: 'ROUND_START' });
-          startTimer(15, (t) => {
-            if (t <= 3) {
-              io.emit('play_sound', { type: 'COUNTDOWN' });
-            }
-          }, () => {
-            io.emit('play_sound', { type: 'TIMER_END' });
-            gameState.activeInputTeam = null;
-            broadcastState();
-            sendAdminState();
-          });
-        } else {
-          gameState.activeInputTeam = null;
-        }
-        broadcastState();
-        sendAdminState();
-      });
+      }, handleTimerExpiration);
 
       broadcastState();
       sendAdminState();
