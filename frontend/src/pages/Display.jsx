@@ -17,7 +17,6 @@ export default function Display() {
 
   // Strike visual states
   const [showStrikeOverlay, setShowStrikeOverlay] = useState(false);
-  const [strikeCount, setStrikeCount] = useState(0);
 
   // Question Builder/Management Tab States
   const [builderTab, setBuilderTab] = useState('controls'); // controls, builder
@@ -55,15 +54,14 @@ export default function Display() {
 
   // Strike flash listener
   useEffect(() => {
-    if (gameState.strikes > 0) {
-      setStrikeCount(gameState.strikes);
+    if (gameState.strikeFlash > 0) {
       setShowStrikeOverlay(true);
       const t = setTimeout(() => {
         setShowStrikeOverlay(false);
       }, 1200);
       return () => clearTimeout(t);
     }
-  }, [gameState.strikes]);
+  }, [gameState.strikeFlash]);
 
   // Fireworks on Game Over
   useEffect(() => {
@@ -286,14 +284,14 @@ export default function Display() {
       </div>
 
       {/* Main Game Interface */}
-      <div className="flex-1 grid grid-cols-12 gap-8 items-center">
+      <div className="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-8 items-center">
         {/* Left Team Panel */}
-        <div className="col-span-3 flex flex-col items-center">
+        <div className="col-span-1 lg:col-span-3 flex flex-col items-center order-2 lg:order-1">
           {renderTeamPanel(gameState, 0)}
         </div>
 
         {/* Board Center Panel */}
-        <div className="col-span-6 flex flex-col gap-6">
+        <div className="col-span-1 lg:col-span-6 flex flex-col gap-4 lg:gap-6 order-1 lg:order-2">
           <div className="glass-panel p-6 rounded-2xl border-[#0D483F]/15 text-center relative overflow-hidden flex flex-col items-center game-question">
             <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-neonPurple via-neonPink to-neonCyan" />
             
@@ -347,7 +345,7 @@ export default function Display() {
         </div>
 
         {/* Right Team Panel */}
-        <div className="col-span-3 flex flex-col items-center">
+        <div className="col-span-1 lg:col-span-3 flex flex-col items-center order-3">
           {renderTeamPanel(gameState, 1)}
         </div>
       </div>
@@ -380,11 +378,7 @@ export default function Display() {
             className="fixed inset-0 bg-red-950/80 backdrop-blur-sm z-50 flex flex-col items-center justify-center pointer-events-none"
           >
             <div className="flex gap-8 strike-animate">
-              {Array(strikeCount).fill(null).map((_, i) => (
-                <span key={i} className="text-9xl md:text-[14rem] font-black text-red-600 drop-shadow-[0_0_30px_rgba(220,38,38,0.8)]">
-                  X
-                </span>
-              ))}
+              <span className="text-9xl md:text-[14rem] font-black text-red-600 drop-shadow-[0_0_30px_rgba(220,38,38,0.8)]">X</span>
             </div>
           </motion.div>
         )}
@@ -410,17 +404,17 @@ export default function Display() {
               </div>
 
               <h2 className="text-4xl font-extrabold text-neonPurple mb-2 tracking-tight">Game Completed!</h2>
-              <p className="text-sm text-neonPink font-black uppercase tracking-widest mb-8">The ACFEUD final score is in!</p>
+              <p className="text-sm text-neonPink font-black uppercase tracking-widest mb-8">The AC FEUD final score is in!</p>
 
               {/* Show Final Scores */}
               <div className="grid grid-cols-2 gap-8 w-full max-w-md bg-neonPurple/5 border border-neonPurple/10 rounded-2xl p-6 mb-8 text-neonPurple font-bold">
                 <div>
                   <span className="text-xs text-[#0D483F]/60 block uppercase font-bold tracking-wider">Team Alpha</span>
-                  <span className="text-4xl font-black">{gameState.teams['Team Alpha']?.score || 0} Pts</span>
+                  <span className="text-4xl font-black">{gameState.finalScores?.['Team Alpha'] ?? gameState.teams['Team Alpha']?.score ?? 0} Pts</span>
                 </div>
                 <div className="border-l border-neonPurple/10">
                   <span className="text-xs text-[#0D483F]/60 block uppercase font-bold tracking-wider">Team Beta</span>
-                  <span className="text-4xl font-black">{gameState.teams['Team Beta']?.score || 0} Pts</span>
+                  <span className="text-4xl font-black">{gameState.finalScores?.['Team Beta'] ?? gameState.teams['Team Beta']?.score ?? 0} Pts</span>
                 </div>
               </div>
 
@@ -614,6 +608,33 @@ export default function Display() {
                             >
                               Next / Finish
                             </button>
+                          </div>
+
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                            <label className="text-xs text-[#0D483F]/70 font-semibold">
+                              Number of rounds
+                              <select
+                                value={adminState?.maxRounds || 3}
+                                disabled={adminState?.status !== 'LOBBY'}
+                                onChange={(e) => sendControl('UPDATE_SETTINGS', { maxRounds: Number(e.target.value) })}
+                                className="mt-1.5 w-full px-3 py-2 bg-[#FAF6EE] border border-neonPurple/15 rounded-lg text-[#0D483F] disabled:opacity-50"
+                              >
+                                <option value={1}>1 round</option>
+                                <option value={2}>2 rounds</option>
+                                <option value={3}>3 rounds</option>
+                              </select>
+                            </label>
+                            <label className="text-xs text-[#0D483F]/70 font-semibold">
+                              Seconds per turn
+                              <select
+                                value={adminState?.turnSeconds || 15}
+                                disabled={adminState?.status !== 'LOBBY'}
+                                onChange={(e) => sendControl('UPDATE_SETTINGS', { turnSeconds: Number(e.target.value) })}
+                                className="mt-1.5 w-full px-3 py-2 bg-[#FAF6EE] border border-neonPurple/15 rounded-lg text-[#0D483F] disabled:opacity-50"
+                              >
+                                {[10, 15, 20, 30, 45, 60].map((seconds) => <option key={seconds} value={seconds}>{seconds} seconds</option>)}
+                              </select>
+                            </label>
                           </div>
 
                           <div className="grid grid-cols-3 gap-2">

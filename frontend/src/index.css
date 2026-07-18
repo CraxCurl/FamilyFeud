@@ -178,6 +178,41 @@
   .game-question { min-height: 210px; }
 }
 
+@media (max-width: 1023px) {
+  .game-display { padding-top: 1rem; padding-bottom: 2rem; }
+  .game-topbar { margin-bottom: .4rem !important; }
+  .game-question { min-height: 190px; padding: 1.25rem !important; border-radius: 15px !important; }
+  .game-question h3 { font-size: clamp(1.7rem, 7.8vw, 2.4rem); line-height: 1.02; }
+  .game-question .text-4xl { font-size: 2.4rem !important; }
+  .game-answer-grid { gap: .65rem !important; }
+  .game-answer-grid .flip-card { height: 64px; }
+  .game-answer-grid .flip-card-front, .game-answer-grid .flip-card-back { border-radius: 13px; }
+  .game-answer-grid .flip-card-front > span { width: 34px; height: 34px; font-size: 1.15rem; }
+  .game-team-card {
+    min-height: 0;
+    padding: 1rem 1.15rem !important;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    column-gap: 1rem;
+    align-items: center;
+    text-align: left;
+  }
+  .game-team-card > span { grid-column: 1; margin: 0 !important; }
+  .game-team-card h4 { grid-column: 1; margin: .15rem 0 0 !important; font-size: 23px; }
+  .game-team-card .text-5xl { grid-column: 2; grid-row: 1 / span 2; margin: 0 !important; font-size: 3.6rem; }
+  .game-team-card .text-left { grid-column: 1 / -1; margin-top: .9rem; }
+  .game-team-card ul { max-height: 72px; }
+}
+
+@media (max-width: 500px) {
+  .moxie-marquee { height: 30px; font-size: 9px; }
+  .game-display { padding-left: .75rem; padding-right: .75rem; }
+  .game-topbar__round { width: 38px !important; height: 38px !important; font-size: 1rem !important; }
+  .game-question { min-height: 175px; }
+  .game-question h3 { font-size: 1.65rem; }
+  .game-answer-grid .flip-card { height: 57px; }
+}
+
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
   width: 6px;

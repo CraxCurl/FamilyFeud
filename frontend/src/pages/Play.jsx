@@ -99,6 +99,7 @@ export default function Play() {
     }
     if (finalSoundPlayed.current) return;
     finalSoundPlayed.current = true;
+    localStorage.removeItem('feud_user_id');
     if (isDraw || isWinner) sounds.playWinner();
     else sounds.playLoser();
   }, [gameState.status, isDraw, isWinner]);
@@ -139,7 +140,7 @@ export default function Play() {
               <InstagramIcon className="w-4 h-4" /> Instagram
             </a>
             <a
-              href="https://androidclubvitc.com"
+              href="https://www.androidclub.in/"
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center justify-center gap-2 py-3 bg-[#D2F128] text-[#0D483F] border border-[#0D483F] rounded-xl font-bold text-sm hover:bg-[#0D483F] hover:text-white transition cursor-pointer"
@@ -183,19 +184,19 @@ export default function Play() {
           <h2 className="text-2xl font-black text-neonPurple mb-2">Assign Team Identity</h2>
           <p className="text-xs text-[#0D483F]/60 font-semibold mb-6">VIT CHENNAI CLUB EXPO SPECIAL</p>
           
-          <div className="p-4 bg-neonPurple/5 border border-neonPurple/10 rounded-xl mb-6 text-sm text-[#0D483F] text-left space-y-2">
-            <p className="font-bold text-center text-neonPurple">How it works:</p>
+          <div className="p-5 bg-neonPurple/5 border border-neonPurple/10 rounded-xl mb-6 text-sm text-[#0D483F] text-left space-y-2">
+            <p className="font-bold text-center text-neonPurple uppercase tracking-widest text-[10px]">How it works</p>
             <p className="text-xs text-[#0D483F]/80 leading-relaxed text-center">
-              Click the button below to draw a random VIT coder alias and enroll in either Team Alpha or Team Beta (max 3 per team).
+              Pick your player identity before the host starts. You’ll be placed in Team Alpha or Team Beta (up to 3 players per team).
             </p>
             <p className="text-xs text-[#0D483F]/60 text-center italic">
-              Note: Team assignments reset at the end of each round!
+              Teams lock as soon as the game begins.
             </p>
           </div>
 
           <button
             onClick={() => socket.emit('draw_identity')}
-            className="w-full py-3 bg-[#0D483F] text-white rounded-xl font-bold text-sm hover:opacity-90 active:scale-[0.98] transition cursor-pointer shadow-md mb-6"
+            className="w-full py-3.5 bg-[#0D483F] text-white rounded-xl font-bold text-sm hover:opacity-90 active:scale-[0.98] transition cursor-pointer shadow-md mb-6"
           >
             Draw Alias & Join Team
           </button>
@@ -225,7 +226,7 @@ export default function Play() {
             {isDraw ? 'It’s a Draw!' : isWinner ? 'Congratulations!' : 'Great Game!'}
           </h2>
           <p className="text-sm text-neonPink font-semibold mb-6">
-            {isDraw ? 'Both teams finished level.' : isWinner ? `${team} wins ACFEUD!` : `${gameState.winner || 'The other team'} takes this one.`}
+            {isDraw ? 'Both teams finished level.' : isWinner ? `${team} wins AC FEUD!` : `${gameState.winner || 'The other team'} takes this one.`}
           </p>
           
           <div className="p-4 bg-neonPurple/5 border border-neonPurple/15 rounded-xl mb-6 text-sm text-[#0D483F]">
@@ -246,7 +247,7 @@ export default function Play() {
               <InstagramIcon className="w-4 h-4" /> Instagram
             </a>
             <a
-              href="https://androidclubvitc.com"
+              href="https://www.androidclub.in/"
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center justify-center gap-2 py-3 bg-[#D2F128] border border-[#0D483F] rounded-xl font-bold text-[#0D483F] hover:bg-[#0D483F] hover:text-white transition cursor-pointer"
@@ -260,10 +261,10 @@ export default function Play() {
           </div>
 
           <button
-            onClick={handleLeave}
+            onClick={handleWalkOff}
             className="text-xs text-[#0D483F]/50 hover:text-neonPurple underline transition cursor-pointer"
           >
-            Leave Game
+            Play again with a new team
           </button>
         </motion.div>
       </div>
@@ -381,7 +382,7 @@ export default function Play() {
               <ShieldAlert className="w-12 h-12 text-neonPink mb-4 animate-pulse" />
               <h3 className="text-xl font-bold text-neonPurple mb-2">{gameState.activeInputTeam}'s Turn</h3>
               <p className="text-xs text-[#0D483F]/70">
-                The turn changes automatically every 15 seconds. Your team will get three timed turns this round.
+                {gameState.activeInputTeam} is answering now. Your team will get the next timed turn automatically.
               </p>
             </motion.div>
           )}

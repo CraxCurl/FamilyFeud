@@ -167,10 +167,12 @@ let gameState = {
   timer: 0,
   activeInputTeam: null, // Team currently allowed to input answers (or has the buzz)
   maxRounds: 3,
+  turnSeconds: 15,
   turnsTaken: { 'Team Alpha': 0, 'Team Beta': 0 },
   turnsPerTeam: 3,
   winner: null,
-  finalScores: {}
+  finalScores: {},
+  strikeFlash: 0
 };
 
 // Interval for Countdown Timers
@@ -199,10 +201,12 @@ function broadcastState() {
     timer: gameState.timer,
     activeInputTeam: gameState.activeInputTeam,
     maxRounds: gameState.maxRounds,
+    turnSeconds: gameState.turnSeconds,
     turnsTaken: gameState.turnsTaken,
     turnsPerTeam: gameState.turnsPerTeam,
     winner: gameState.winner,
-    finalScores: gameState.finalScores
+    finalScores: gameState.finalScores,
+    strikeFlash: gameState.strikeFlash
   });
 }
 
@@ -337,7 +341,7 @@ function beginTeamTurn(team) {
   gameState.buzzState = { locked: false, player: null, team: null, time: null };
   io.emit('play_sound', { type: 'ROUND_START' });
 
-  startTimer(15, (secondsLeft) => {
+  startTimer(gameState.turnSeconds, (secondsLeft) => {
     if (secondsLeft <= 3) io.emit('play_sound', { type: 'COUNTDOWN' });
   }, advanceTeamTurn);
 }
@@ -418,6 +422,11 @@ io.on('connection', (socket) => {
         return;
       }
 
+      if (gameState.status !== 'LOBBY') {
+        socket.emit('join_blocked', { message: 'A game is already in progress. Please wait for the next session.' });
+        return;
+      }
+
       // Add to session players list with team: null (lobby state)
       const newPlayer = { name: resolvedUsername, team: null, id, socketId: socket.id };
       gameState.players[socket.id] = newPlayer;
@@ -434,6 +443,11 @@ io.on('connection', (socket) => {
   socket.on('draw_identity', () => {
     const player = gameState.players[socket.id];
     if (!player) return;
+
+    if (gameState.status !== 'LOBBY') {
+      socket.emit('join_blocked', { message: 'Teams are locked once the game starts.' });
+      return;
+    }
 
     // Reject if already enrolled in a team for this round
     if (player.team) return;
@@ -512,6 +526,7 @@ io.on('connection', (socket) => {
         gameState.activeInputTeam = null;
         gameState.winner = null;
         gameState.finalScores = {};
+        gameState.strikeFlash = 0;
         gameState.turnsTaken = { 'Team Alpha': 0, 'Team Beta': 0 };
         startTurnCycle();
         break;
@@ -536,6 +551,7 @@ io.on('connection', (socket) => {
         gameState.activeInputTeam = null;
         gameState.winner = null;
         gameState.finalScores = {};
+        gameState.strikeFlash = 0;
         gameState.turnsTaken = { 'Team Alpha': 0, 'Team Beta': 0 };
         stopTimer();
         break;
@@ -604,12 +620,23 @@ io.on('connection', (socket) => {
         break;
 
       case 'ADD_STRIKE':
-        gameState.strikes = Math.min(3, gameState.strikes + 1);
+        gameState.strikes = 1;
+        gameState.strikeFlash += 1;
         io.emit('play_sound', { type: 'WRONG' });
         break;
 
       case 'RESET_STRIKES':
         gameState.strikes = 0;
+        break;
+
+      case 'UPDATE_SETTINGS':
+        if (gameState.status !== 'LOBBY') break;
+        if (payload.maxRounds !== undefined) {
+          gameState.maxRounds = Math.max(1, Math.min(3, Number(payload.maxRounds) || 3));
+        }
+        if (payload.turnSeconds !== undefined) {
+          gameState.turnSeconds = Math.max(5, Math.min(60, Number(payload.turnSeconds) || 15));
+        }
         break;
 
       case 'RESET_BUZZ':
@@ -702,7 +729,8 @@ io.on('connection', (socket) => {
       io.emit('play_sound', { type: 'CORRECT' });
       // Keep the current 15-second team turn running after a correct answer.
     } else {
-      gameState.strikes = Math.min(3, gameState.strikes + 1);
+      gameState.strikes = 1;
+      gameState.strikeFlash += 1;
       io.emit('play_sound', { type: 'WRONG' });
     }
 
