@@ -52,12 +52,6 @@ export default function Play() {
     };
   }, [socket, userId]);
 
-  const handleBuzz = () => {
-    if (socket && !gameState.buzzState.locked) {
-      socket.emit('player_buzz');
-    }
-  };
-
   const handleSubmitAnswer = (e) => {
     e.preventDefault();
     if (!answerInput.trim() || !socket) return;
@@ -85,11 +79,9 @@ export default function Play() {
   };
 
   // Determine current play states
-  const amIBuzzWinner = gameState.buzzState.locked && gameState.buzzState.player?.socketId === socket?.id;
   const isMyTeamActiveInput = gameState.activeInputTeam === team;
-  const showBuzzer = gameState.status === 'PLAYING' && !gameState.buzzState.locked;
-  const showAnswerInput = gameState.status === 'PLAYING' && gameState.buzzState.locked && isMyTeamActiveInput;
-  const showWaiting = gameState.status === 'PLAYING' && gameState.buzzState.locked && !isMyTeamActiveInput;
+  const showAnswerInput = gameState.status === 'PLAYING' && isMyTeamActiveInput;
+  const showWaiting = gameState.status === 'PLAYING' && !isMyTeamActiveInput;
 
   // Render blocked screen if game is currently in progress
   if (isBlocked) {
@@ -293,34 +285,7 @@ export default function Play() {
             </motion.div>
           )}
 
-          {/* BUZZER STATE */}
-          {showBuzzer && (
-            <motion.div
-              key="buzz"
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              className="flex flex-col items-center w-full max-w-sm"
-            >
-              <div className="text-center mb-6">
-                <span className="text-xs font-semibold text-neonPink tracking-widest uppercase mb-1 block">Active Question</span>
-                <h4 className="text-lg font-bold text-neonPurple">{gameState.currentQuestion?.question}</h4>
-              </div>
-
-              {/* Glowing Buzz Button */}
-              <button
-                onClick={handleBuzz}
-                className="w-64 h-64 rounded-full bg-[#0D483F] border-4 border-[#D2F128] shadow-[0_8px_32px_rgba(13,72,63,0.25)] hover:opacity-95 active:scale-95 transition-all duration-150 flex flex-col items-center justify-center gap-1 cursor-pointer"
-              >
-                <span className="text-5xl font-black text-[#D2F128] tracking-wider">BUZZ</span>
-                <Sparkles className="w-5 h-5 text-[#D2F128] animate-pulse" />
-              </button>
-
-              <span className="text-xs font-bold text-[#0D483F]/60 mt-6 animate-pulse">TAP AS FAST AS YOU CAN!</span>
-            </motion.div>
-          )}
-
-          {/* INPUT ANSWER STATE (BUZZ WINNER) */}
+          {/* INPUT ANSWER STATE (ACTIVE TEAM TURN) */}
           {showAnswerInput && (
             <motion.div
               key="answer"
@@ -364,7 +329,7 @@ export default function Play() {
             </motion.div>
           )}
 
-          {/* OTHER PLAYER BUZZ WINNER / WAITING STATE */}
+          {/* WAITING FOR THE OTHER TEAM'S TURN */}
           {showWaiting && (
             <motion.div
               key="waiting"
@@ -373,35 +338,11 @@ export default function Play() {
               exit={{ opacity: 0 }}
               className="text-center p-8 glass-panel rounded-2xl max-w-sm w-full flex flex-col items-center border-[#0D483F]/10"
             >
-              {isMyTeamActiveInput ? (
-                // My teammate is answering
-                <>
-                  <UserCheck className="w-12 h-12 text-[#0D483F] mb-4 animate-bounce" />
-                  <h3 className="text-xl font-bold text-neonPurple mb-2">Teammate Answering!</h3>
-                  <p className="text-xs text-[#0D483F]/70">
-                    A player from your team ({gameState.buzzState.player?.name}) won the buzz. Let them type!
-                  </p>
-                </>
-              ) : (
-                // Opponent team is guessing
-                gameState.buzzState.team === team ? (
-                  <>
-                    <ShieldAlert className="w-12 h-12 text-neonPink mb-4 animate-pulse" />
-                    <h3 className="text-xl font-bold text-neonPurple mb-2">Time's Up!</h3>
-                    <p className="text-xs text-[#0D483F]/70">
-                      Your team ran out of time. Waiting for the opponent team to guess...
-                    </p>
-                  </>
-                ) : (
-                  <>
-                    <ShieldAlert className="w-12 h-12 text-neonPink mb-4 animate-pulse" />
-                    <h3 className="text-xl font-bold text-neonPurple mb-2">Buzzer Locked</h3>
-                    <p className="text-xs text-[#0D483F]/70">
-                      Team <span className="text-neonPink font-bold">{gameState.buzzState.team}</span> (by {gameState.buzzState.player?.name}) buzzed first!
-                    </p>
-                  </>
-                )
-              )}
+              <ShieldAlert className="w-12 h-12 text-neonPink mb-4 animate-pulse" />
+              <h3 className="text-xl font-bold text-neonPurple mb-2">{gameState.activeInputTeam}'s Turn</h3>
+              <p className="text-xs text-[#0D483F]/70">
+                The turn changes automatically every 15 seconds. Your team will get three timed turns this round.
+              </p>
             </motion.div>
           )}
         </AnimatePresence>

@@ -50,6 +50,17 @@ function App() {
   return (
     <Router>
       <div className="relative min-h-screen overflow-hidden bg-darkBg">
+        <div className="moxie-marquee" aria-label="Game information">
+          <div className="moxie-marquee__track">
+            <span>15 SECONDS PER TEAM</span><b>•</b><span>THREE TURNS EACH</span><b>•</b><span>NO BUZZER NEEDED</span><b>•</b>
+            <span>15 SECONDS PER TEAM</span><b>•</b><span>THREE TURNS EACH</span><b>•</b><span>NO BUZZER NEEDED</span><b>•</b>
+          </div>
+        </div>
+        <header className="moxie-header">
+          <span className="moxie-header__mark">≋</span>
+          <span className="moxie-header__logo">SURVEY <i>SAYS</i></span>
+          <span className="moxie-header__meta">FAMILY FEUD<br />VIT CHENNAI</span>
+        </header>
         <Routes>
           <Route path="/" element={<Landing />} />
           <Route path="/play" element={<Play />} />

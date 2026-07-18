@@ -166,7 +166,9 @@ let gameState = {
   },
   timer: 0,
   activeInputTeam: null, // Team currently allowed to input answers (or has the buzz)
-  maxRounds: 3
+  maxRounds: 3,
+  turnsTaken: { 'Team Alpha': 0, 'Team Beta': 0 },
+  turnsPerTeam: 3
 };
 
 // Interval for Countdown Timers
@@ -194,7 +196,9 @@ function broadcastState() {
     buzzState: gameState.buzzState,
     timer: gameState.timer,
     activeInputTeam: gameState.activeInputTeam,
-    maxRounds: gameState.maxRounds
+    maxRounds: gameState.maxRounds,
+    turnsTaken: gameState.turnsTaken,
+    turnsPerTeam: gameState.turnsPerTeam
   });
 }
 
@@ -279,32 +283,52 @@ app.delete('/api/questions/:id', verifyAdminKey, (req, res) => {
   res.json({ success: true });
 });
 
-let originalBuzzedTeam = null;
-let attemptsCount = { 'Team Alpha': 0, 'Team Beta': 0 };
-
-function handleTimerExpiration() {
-  io.emit('play_sound', { type: 'TIMER_END' });
-  const currentActive = gameState.activeInputTeam;
-  if (!currentActive) return;
-
-  const nextActive = currentActive === 'Team Alpha' ? 'Team Beta' : 'Team Alpha';
-  
-  if (attemptsCount[nextActive] < 3) {
-    gameState.activeInputTeam = nextActive;
-    attemptsCount[nextActive]++;
-    io.emit('play_sound', { type: 'ROUND_START' });
-    
-    startTimer(15, (t) => {
-      if (t <= 3) {
-        io.emit('play_sound', { type: 'COUNTDOWN' });
-      }
-    }, handleTimerExpiration);
-  } else {
-    gameState.activeInputTeam = null;
-  }
-  
+function finishTurnCycle() {
+  gameState.activeInputTeam = null;
+  gameState.timer = 0;
+  gameState.status = 'ROUND_END';
+  io.emit('play_sound', { type: 'ROUND_COMPLETE' });
   broadcastState();
   sendAdminState();
+}
+
+function beginTeamTurn(team) {
+  if (!team || gameState.turnsTaken[team] >= gameState.turnsPerTeam) {
+    finishTurnCycle();
+    return;
+  }
+
+  gameState.status = 'PLAYING';
+  gameState.activeInputTeam = team;
+  gameState.turnsTaken[team] += 1;
+  // This is a turn-based game now: no buzz winner is required for a team to play.
+  gameState.buzzState = { locked: false, player: null, team: null, time: null };
+  io.emit('play_sound', { type: 'ROUND_START' });
+
+  startTimer(15, (secondsLeft) => {
+    if (secondsLeft <= 3) io.emit('play_sound', { type: 'COUNTDOWN' });
+  }, advanceTeamTurn);
+}
+
+function advanceTeamTurn() {
+  io.emit('play_sound', { type: 'TIMER_END' });
+  const currentTeam = gameState.activeInputTeam;
+  const otherTeam = currentTeam === 'Team Alpha' ? 'Team Beta' : 'Team Alpha';
+
+  if (gameState.turnsTaken[otherTeam] < gameState.turnsPerTeam) {
+    beginTeamTurn(otherTeam);
+  } else if (gameState.turnsTaken[currentTeam] < gameState.turnsPerTeam) {
+    beginTeamTurn(currentTeam);
+  } else {
+    finishTurnCycle();
+  }
+}
+
+function startTurnCycle() {
+  stopTimer();
+  gameState.turnsTaken = { 'Team Alpha': 0, 'Team Beta': 0 };
+  gameState.strikes = 0;
+  beginTeamTurn('Team Alpha');
 }
 
 // Socket logic
@@ -448,14 +472,12 @@ io.on('connection', (socket) => {
         gameState.strikes = 0;
         gameState.buzzState = { locked: false, player: null, team: null, time: null };
         gameState.activeInputTeam = null;
-        stopTimer();
+        gameState.turnsTaken = { 'Team Alpha': 0, 'Team Beta': 0 };
+        startTurnCycle();
         break;
 
       case 'START_QUESTION':
-        gameState.buzzState = { locked: false, player: null, team: null, time: null };
-        gameState.activeInputTeam = null;
-        stopTimer();
-        io.emit('play_sound', { type: 'ROUND_START' });
+        startTurnCycle();
         break;
 
       case 'PAUSE_GAME':
@@ -472,6 +494,7 @@ io.on('connection', (socket) => {
         gameState.players = {};
         gameState.buzzState = { locked: false, player: null, team: null, time: null };
         gameState.activeInputTeam = null;
+        gameState.turnsTaken = { 'Team Alpha': 0, 'Team Beta': 0 };
         stopTimer();
         break;
 
@@ -486,6 +509,7 @@ io.on('connection', (socket) => {
           gameState.strikes = 0;
           gameState.buzzState = { locked: false, player: null, team: null, time: null };
           gameState.activeInputTeam = null;
+          gameState.turnsTaken = { 'Team Alpha': 0, 'Team Beta': 0 };
           stopTimer();
         } else {
           gameState.status = 'GAME_OVER';
@@ -513,6 +537,7 @@ io.on('connection', (socket) => {
           gameState.strikes = 0;
           gameState.buzzState = { locked: false, player: null, team: null, time: null };
           gameState.activeInputTeam = null;
+          gameState.turnsTaken = { 'Team Alpha': 0, 'Team Beta': 0 };
           stopTimer();
         }
         break;
@@ -557,8 +582,7 @@ io.on('connection', (socket) => {
 
       case 'RESET_BUZZ':
         gameState.buzzState = { locked: false, player: null, team: null, time: null };
-        gameState.activeInputTeam = null;
-        stopTimer();
+        startTurnCycle();
         break;
 
       case 'REMOVE_TEAM':
@@ -571,21 +595,11 @@ io.on('connection', (socket) => {
         break;
 
       case 'FORCE_BUZZ_WINNER':
-        gameState.buzzState = {
-          locked: true,
-          player: payload.player,
-          team: payload.team,
-          time: Date.now()
-        };
-        gameState.activeInputTeam = payload.team;
-        originalBuzzedTeam = payload.team;
-        attemptsCount = { 'Team Alpha': 0, 'Team Beta': 0 };
-        attemptsCount[payload.team] = 1;
-        startTimer(15, (t) => {
-          if (t <= 3) {
-            io.emit('play_sound', { type: 'COUNTDOWN' });
-          }
-        }, handleTimerExpiration);
+        // Kept for older host controls: forcing a player now simply opens that
+        // team's next timed turn instead of reviving the buzzer mechanic.
+        stopTimer();
+        gameState.turnsTaken = { 'Team Alpha': 0, 'Team Beta': 0 };
+        beginTeamTurn(payload.team || 'Team Alpha');
         break;
       
       case 'SKIP_QUESTION':
@@ -598,6 +612,7 @@ io.on('connection', (socket) => {
           gameState.strikes = 0;
           gameState.buzzState = { locked: false, player: null, team: null, time: null };
           gameState.activeInputTeam = null;
+          gameState.turnsTaken = { 'Team Alpha': 0, 'Team Beta': 0 };
           stopTimer();
         }
         break;
@@ -610,42 +625,16 @@ io.on('connection', (socket) => {
     sendAdminState();
   });
 
-  // Player Buzz
+  // Legacy event kept harmless for older clients. Rounds are driven by timed
+  // team turns, so players cannot take ownership with a buzzer.
   socket.on('player_buzz', () => {
-    const player = gameState.players[socket.id];
-    if (!player || !player.team) return;
-
-    if (!gameState.buzzState.locked) {
-      gameState.buzzState = {
-        locked: true,
-        player: { name: player.name, socketId: socket.id },
-        team: player.team,
-        time: Date.now()
-      };
-      gameState.activeInputTeam = player.team;
-      originalBuzzedTeam = player.team;
-      attemptsCount = { 'Team Alpha': 0, 'Team Beta': 0 };
-      attemptsCount[player.team] = 1;
-      
-      io.emit('play_sound', { type: 'BUZZ' });
-      
-      startTimer(15, (t) => {
-        if (t <= 3) {
-          io.emit('play_sound', { type: 'COUNTDOWN' });
-        }
-      }, handleTimerExpiration);
-
-      broadcastState();
-      sendAdminState();
-    }
+    return;
   });
 
   // Player Answer Submission
   socket.on('player_submit_answer', ({ answer }) => {
     const player = gameState.players[socket.id];
     if (!player || player.team !== gameState.activeInputTeam) return;
-
-    stopTimer();
 
     io.to('admin-room').emit('incoming_answer', {
       player: player.name,
@@ -668,8 +657,7 @@ io.on('connection', (socket) => {
       gameState.teams[player.team].score += pts;
       
       io.emit('play_sound', { type: 'CORRECT' });
-      gameState.buzzState = { locked: false, player: null, team: null, time: null };
-      gameState.activeInputTeam = null;
+      // Keep the current 15-second team turn running after a correct answer.
     } else {
       gameState.strikes = Math.min(3, gameState.strikes + 1);
       io.emit('play_sound', { type: 'WRONG' });

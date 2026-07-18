@@ -274,6 +274,13 @@ export default function Display() {
               <span>{gameState.timer}s</span>
             </div>
           )}
+          {gameState.status === 'PLAYING' && gameState.activeInputTeam && (
+            <div className="hidden md:block text-right">
+              <div className="text-[9px] font-bold tracking-[.16em] text-[#0D483F]/55">ACTIVE TURN</div>
+              <div className="text-sm font-black text-[#0D483F]">{gameState.activeInputTeam}</div>
+              <div className="text-[10px] text-[#0D483F]/60">{gameState.turnsTaken?.[gameState.activeInputTeam] || 0} / {gameState.turnsPerTeam || 3}</div>
+            </div>
+          )}
           
           <button
             onClick={() => setShowHostPanel(true)}
@@ -338,21 +345,11 @@ export default function Display() {
           </div>
 
           <div className="flex justify-center h-12">
-            <AnimatePresence>
-              {gameState.buzzState.locked && (
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  className="px-6 py-2 bg-neonPurple/5 border border-neonPurple/15 rounded-xl flex items-center gap-2 text-neonPurple font-semibold text-sm"
-                >
-                  <Star className="w-4 h-4 text-neonPink animate-spin" />
-                  <span>
-                    Buzzed In: <strong className="text-neonPurple">{gameState.buzzState.player?.name}</strong> ({gameState.buzzState.team})
-                  </span>
-                </motion.div>
-              )}
-            </AnimatePresence>
+            {gameState.status === 'ROUND_END' && (
+              <div className="px-6 py-2 bg-neonPurple/5 border border-neonPurple/15 rounded-xl text-neonPurple font-semibold text-sm">
+                Both teams completed three turns. Host: start the next round.
+              </div>
+            )}
           </div>
         </div>
 
@@ -637,7 +634,7 @@ export default function Display() {
                               onClick={() => sendControl('RESET_BUZZ')}
                               className="py-2 bg-neonPurple/5 border border-neonPurple/15 text-[10px] text-[#0D483F]/80 hover:text-[#0D483F] rounded cursor-pointer transition"
                             >
-                              Reset Buzzer
+                              Restart Turn Cycle
                             </button>
                             <button
                               onClick={() => sendControl('SKIP_QUESTION')}
@@ -725,9 +722,9 @@ export default function Display() {
                       {/* Right Panel side: Teams and Buzzers */}
                       <div className="md:col-span-4 space-y-6">
                         
-                        {/* Live Buzz Panel */}
+                        {/* Live team-turn panel */}
                         <div className="glass-panel p-4 rounded-xl border-[#0D483F]/10">
-                          <span className="text-xs font-bold text-[#0D483F]/60 uppercase tracking-widest block border-b border-[#0D483F]/10 pb-1 mb-3">Live Buzzer</span>
+                          <span className="text-xs font-bold text-[#0D483F]/60 uppercase tracking-widest block border-b border-[#0D483F]/10 pb-1 mb-3">Active Team Turn</span>
                           {adminState?.buzzState?.locked ? (
                             <div className="text-center p-3 bg-neonPink/10 border border-neonPink/30 rounded-lg">
                               <span className="text-xs text-[#0D483F]/60 block">BUZZ WINNER</span>
@@ -741,7 +738,7 @@ export default function Display() {
                               </button>
                             </div>
                           ) : (
-                            <div className="text-center py-4 text-gray-500 text-xs">Buzzer Open</div>
+                            <div className="text-center py-4 text-gray-500 text-xs">Turn cycle is active</div>
                           )}
                         </div>
 
