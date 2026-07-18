@@ -1,13 +1,15 @@
 import React, { useEffect } from 'react';
-import { HashRouter as Router, Routes, Route } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import Landing from './pages/Landing';
 import Play from './pages/Play';
 import Display from './pages/Display';
 import { useSocket } from './context/SocketContext';
 import { sounds } from './utils/sounds';
 
-function App() {
+function AppShell() {
   const { socket } = useSocket();
+  const location = useLocation();
+  const isDisplayRoute = location.pathname === '/display' || location.pathname === '/admin';
 
   useEffect(() => {
     if (!socket) return;
@@ -28,7 +30,6 @@ function App() {
   }, [socket]);
 
   return (
-    <Router>
       <div className="relative min-h-screen overflow-hidden bg-darkBg">
         <div className="moxie-marquee" aria-label="Game information">
           <div className="moxie-marquee__track">
@@ -36,11 +37,13 @@ function App() {
             <span>15 SECONDS PER TEAM</span><b>&bull;</b><span>THREE TURNS EACH</span><b>&bull;</b><span>NO BUZZER NEEDED</span><b>&bull;</b><span>PLAY FAIR. PLAY LOUD.</span><b>&bull;</b>
           </div>
         </div>
-        <header className="moxie-header">
-          <span className="moxie-header__mark" aria-hidden="true">///</span>
-          <span className="moxie-header__logo">ACFEUD</span>
-          <span className="moxie-header__meta">LIVE<br />GAME</span>
-        </header>
+        {!isDisplayRoute && (
+          <header className="moxie-header">
+            <span className="moxie-header__mark" aria-hidden="true" />
+            <span className="moxie-header__logo">ACFEUD</span>
+            <span className="moxie-header__meta">LIVE<br />GAME</span>
+          </header>
+        )}
         <Routes>
           <Route path="/" element={<Landing />} />
           <Route path="/play" element={<Play />} />
@@ -48,6 +51,13 @@ function App() {
           <Route path="/admin" element={<Display />} />
         </Routes>
       </div>
+  );
+}
+
+function App() {
+  return (
+    <Router>
+      <AppShell />
     </Router>
   );
 }
