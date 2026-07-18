@@ -16,7 +16,9 @@ export const SocketProvider = ({ children }) => {
     buzzState: { locked: false, player: null, team: null },
     timer: 0,
     activeInputTeam: null,
-    maxRounds: 5
+    maxRounds: 3,
+    turnsTaken: { 'Team Alpha': 0, 'Team Beta': 0 },
+    turnsPerTeam: 3
   });
 
   const [adminState, setAdminState] = useState(null);
