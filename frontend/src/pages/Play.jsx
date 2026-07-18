@@ -383,14 +383,24 @@ export default function Play() {
                   </p>
                 </>
               ) : (
-                // Opponent team is answering
-                <>
-                  <ShieldAlert className="w-12 h-12 text-neonPink mb-4 animate-pulse" />
-                  <h3 className="text-xl font-bold text-neonPurple mb-2">Buzzer Locked</h3>
-                  <p className="text-xs text-[#0D483F]/70">
-                    Team <span className="text-neonPink font-bold">{gameState.buzzState.team}</span> (by {gameState.buzzState.player?.name}) buzzed first!
-                  </p>
-                </>
+                // Opponent team is guessing
+                gameState.buzzState.team === team ? (
+                  <>
+                    <ShieldAlert className="w-12 h-12 text-neonPink mb-4 animate-pulse" />
+                    <h3 className="text-xl font-bold text-neonPurple mb-2">Time's Up!</h3>
+                    <p className="text-xs text-[#0D483F]/70">
+                      Your team ran out of time. Waiting for the opponent team to guess...
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    <ShieldAlert className="w-12 h-12 text-neonPink mb-4 animate-pulse" />
+                    <h3 className="text-xl font-bold text-neonPurple mb-2">Buzzer Locked</h3>
+                    <p className="text-xs text-[#0D483F]/70">
+                      Team <span className="text-neonPink font-bold">{gameState.buzzState.team}</span> (by {gameState.buzzState.player?.name}) buzzed first!
+                    </p>
+                  </>
+                )
               )}
             </motion.div>
           )}
