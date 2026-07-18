@@ -256,13 +256,13 @@ export default function Display() {
           </div>
           <div>
             <span className="text-xs text-[#0D483F]/60 font-semibold uppercase tracking-wider block">Round</span>
-            <span className="text-sm text-neonPurple font-bold">Family Feud Arena</span>
+            <span className="text-sm text-neonPurple font-bold">ACFEUD Live Board</span>
           </div>
         </div>
 
         <div className="text-center">
           <h2 className="text-3xl font-extrabold tracking-widest bg-clip-text text-transparent bg-[#0D483F] text-glow-purple">
-            SURVEY SAYS
+            ACFEUD
           </h2>
           <span className="text-xs text-[#0D483F]/60 tracking-widest uppercase font-semibold">Android Club VIT Chennai</span>
         </div>
@@ -300,8 +300,8 @@ export default function Display() {
         </div>
 
         {/* Board Center Panel */}
-        <div className="col-span-6 flex flex-col gap-6">
-          <div className="glass-panel p-6 rounded-2xl border-[#0D483F]/15 text-center relative overflow-hidden flex flex-col items-center">
+        <div className="col-span-6 flex flex-col gap-6 feud-board">
+          <div className="glass-panel p-6 rounded-2xl border-[#0D483F]/15 text-center relative overflow-hidden flex flex-col items-center feud-question">
             <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-neonPurple via-neonPink to-neonCyan" />
             
             {/* Round Pot */}
@@ -417,7 +417,7 @@ export default function Display() {
               </div>
 
               <h2 className="text-4xl font-extrabold text-neonPurple mb-2 tracking-tight">Game Completed!</h2>
-              <p className="text-sm text-neonPink font-black uppercase tracking-widest mb-8">Survey Says: Android Club is Awesome!</p>
+              <p className="text-sm text-neonPink font-black uppercase tracking-widest mb-8">The ACFEUD final score is in!</p>
 
               {/* Show Final Scores */}
               <div className="grid grid-cols-2 gap-8 w-full max-w-md bg-neonPurple/5 border border-neonPurple/10 rounded-2xl p-6 mb-8 text-neonPurple font-bold">
@@ -486,7 +486,7 @@ export default function Display() {
               animate={{ y: 0 }}
               exit={{ y: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="w-full max-w-6xl h-[75vh] glass-panel bg-darkBg/95 border-t border-white/10 rounded-t-3xl p-6 relative overflow-hidden flex flex-col"
+              className="w-full max-w-6xl h-[75vh] glass-panel bg-darkBg/95 border-t border-white/10 rounded-t-3xl p-6 relative overflow-hidden flex flex-col acfeud-admin"
             >
               <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-neonPurple to-neonCyan" />
 
@@ -580,7 +580,7 @@ export default function Display() {
                       
                       {/* Operational buttons */}
                       <div className="md:col-span-8 space-y-6">
-                        <div className="glass-panel p-4 rounded-xl space-y-4 border-[#0D483F]/10">
+                        <div className="glass-panel p-4 rounded-xl space-y-4 border-[#0D483F]/10 acfeud-admin__panel">
                           <span className="text-xs font-bold text-[#0D483F]/60 uppercase tracking-widest block border-b border-[#0D483F]/10 pb-1">Game States</span>
                           
                           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
@@ -602,21 +602,21 @@ export default function Display() {
 
                             <button
                               onClick={() => sendControl('START_QUESTION')}
-                              disabled={adminState?.status !== 'PLAYING'}
+                              disabled={adminState?.status === 'LOBBY' || adminState?.status === 'GAME_OVER'}
                               className="py-2.5 bg-cyan-600/10 border border-cyan-600/30 text-cyan-700 text-xs font-bold rounded-lg hover:bg-cyan-600/20 transition disabled:opacity-40 cursor-pointer"
                             >
-                              Start Question
+                              Restart Round
                             </button>
                             <button
                               onClick={() => sendControl('PREV_ROUND')}
-                              disabled={adminState?.status !== 'PLAYING'}
+                              disabled={adminState?.status === 'LOBBY' || adminState?.status === 'GAME_OVER'}
                               className="py-2.5 bg-neonPurple/5 border border-neonPurple/15 text-[#0D483F] text-xs font-bold rounded-lg hover:bg-neonPurple/10 transition disabled:opacity-40 cursor-pointer"
                             >
                               Prev Round
                             </button>
                             <button
                               onClick={() => sendControl('NEXT_ROUND')}
-                              disabled={adminState?.status !== 'PLAYING'}
+                              disabled={adminState?.status === 'LOBBY' || adminState?.status === 'GAME_OVER'}
                               className="py-2.5 bg-neonPurple/5 border border-neonPurple/15 text-[#0D483F] text-xs font-bold rounded-lg hover:bg-neonPurple/10 transition disabled:opacity-40 cursor-pointer"
                             >
                               Next / Finish
@@ -647,7 +647,7 @@ export default function Display() {
 
                         {/* Answers controller */}
                         {adminState?.currentQuestion && (
-                          <div className="glass-panel p-4 rounded-xl space-y-4 border-[#0D483F]/10">
+                          <div className="glass-panel p-4 rounded-xl space-y-4 border-[#0D483F]/10 acfeud-admin__panel">
                             <span className="text-xs font-bold text-[#0D483F]/60 uppercase tracking-widest block border-b border-[#0D483F]/10 pb-1">Reveals & Strikes</span>
                             
                             <div className="space-y-2">
@@ -723,27 +723,21 @@ export default function Display() {
                       <div className="md:col-span-4 space-y-6">
                         
                         {/* Live team-turn panel */}
-                        <div className="glass-panel p-4 rounded-xl border-[#0D483F]/10">
+                        <div className="glass-panel p-4 rounded-xl border-[#0D483F]/10 acfeud-admin__panel">
                           <span className="text-xs font-bold text-[#0D483F]/60 uppercase tracking-widest block border-b border-[#0D483F]/10 pb-1 mb-3">Active Team Turn</span>
-                          {adminState?.buzzState?.locked ? (
-                            <div className="text-center p-3 bg-neonPink/10 border border-neonPink/30 rounded-lg">
-                              <span className="text-xs text-[#0D483F]/60 block">BUZZ WINNER</span>
-                              <strong className="text-sm text-neonPurple block">{adminState?.buzzState?.player?.name}</strong>
-                              <span className="text-[10px] text-[#0D483F] font-bold uppercase">{adminState?.buzzState?.team}</span>
-                              <button
-                                onClick={() => sendControl('RESET_BUZZ')}
-                                className="mt-3 px-3 py-1 bg-[#0D483F] text-white rounded text-[10px] font-bold cursor-pointer hover:opacity-90 transition"
-                              >
-                                Clear Lock
-                              </button>
+                          {adminState?.activeInputTeam ? (
+                            <div className="acfeud-admin__turn">
+                              <span>NOW PLAYING</span>
+                              <strong>{adminState.activeInputTeam}</strong>
+                              <div><b>{adminState.timer || 0}s</b> &middot; turn {adminState.turnsTaken?.[adminState.activeInputTeam] || 0} of {adminState.turnsPerTeam || 3}</div>
                             </div>
                           ) : (
-                            <div className="text-center py-4 text-gray-500 text-xs">Turn cycle is active</div>
+                            <div className="text-center py-4 text-gray-500 text-xs">Start a turn cycle to put a team on the clock.</div>
                           )}
                         </div>
 
                         {/* Scores override */}
-                        <div className="glass-panel p-4 rounded-xl space-y-3 border-[#0D483F]/10">
+                        <div className="glass-panel p-4 rounded-xl space-y-3 border-[#0D483F]/10 acfeud-admin__panel">
                           <span className="text-xs font-bold text-[#0D483F]/60 uppercase tracking-widest block border-b border-[#0D483F]/10 pb-1">Scores Override</span>
                           {Object.keys(adminState?.teams || {}).map(tName => {
                             const teamData = adminState?.teams?.[tName];
@@ -941,7 +935,7 @@ function renderTeamPanel(gameState, index) {
   return (
     <motion.div
       animate={{ scale: isActive ? 1.05 : 1 }}
-      className={`w-full p-6 rounded-2xl glass-panel text-center relative overflow-hidden transition-all duration-300 ${
+      className={`w-full p-6 rounded-2xl glass-panel feud-team-panel text-center relative overflow-hidden transition-all duration-300 ${
         isActive ? 'border-neonCyan shadow-neonCyan bg-neonCyan/5' : ''
       }`}
     >
