@@ -279,6 +279,8 @@ app.delete('/api/questions/:id', verifyAdminKey, (req, res) => {
   res.json({ success: true });
 });
 
+let originalBuzzedTeam = null;
+
 // Socket logic
 io.on('connection', (socket) => {
   console.log(`Socket connected: ${socket.id}`);
@@ -550,9 +552,22 @@ io.on('connection', (socket) => {
           time: Date.now()
         };
         gameState.activeInputTeam = payload.team;
+        originalBuzzedTeam = payload.team;
         startTimer(15, null, () => {
           io.emit('play_sound', { type: 'TIMER_END' });
-          gameState.activeInputTeam = null;
+          if (gameState.activeInputTeam === originalBuzzedTeam) {
+            const otherTeam = originalBuzzedTeam === 'Team Alpha' ? 'Team Beta' : 'Team Alpha';
+            gameState.activeInputTeam = otherTeam;
+            io.emit('play_sound', { type: 'ROUND_START' });
+            startTimer(15, null, () => {
+              io.emit('play_sound', { type: 'TIMER_END' });
+              gameState.activeInputTeam = null;
+              broadcastState();
+              sendAdminState();
+            });
+          } else {
+            gameState.activeInputTeam = null;
+          }
           broadcastState();
           sendAdminState();
         });
@@ -593,6 +608,7 @@ io.on('connection', (socket) => {
         time: Date.now()
       };
       gameState.activeInputTeam = player.team;
+      originalBuzzedTeam = player.team;
       
       io.emit('play_sound', { type: 'BUZZ' });
       
@@ -602,7 +618,23 @@ io.on('connection', (socket) => {
         }
       }, () => {
         io.emit('play_sound', { type: 'TIMER_END' });
-        gameState.activeInputTeam = null;
+        if (gameState.activeInputTeam === originalBuzzedTeam) {
+          const otherTeam = originalBuzzedTeam === 'Team Alpha' ? 'Team Beta' : 'Team Alpha';
+          gameState.activeInputTeam = otherTeam;
+          io.emit('play_sound', { type: 'ROUND_START' });
+          startTimer(15, (t) => {
+            if (t <= 3) {
+              io.emit('play_sound', { type: 'COUNTDOWN' });
+            }
+          }, () => {
+            io.emit('play_sound', { type: 'TIMER_END' });
+            gameState.activeInputTeam = null;
+            broadcastState();
+            sendAdminState();
+          });
+        } else {
+          gameState.activeInputTeam = null;
+        }
         broadcastState();
         sendAdminState();
       });
