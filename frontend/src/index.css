@@ -1,0 +1,146 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+
+@import "tailwindcss";
+
+@theme {
+  --color-darkBg: #FAF6EE;       /* Warm sand/cream background */
+  --color-neonPurple: #0D483F;   /* Luxurious forest green/deep teal */
+  --color-neonPink: #D03B5B;     /* Soft editorial red/coral strike */
+  --color-neonCyan: #D2F128;     /* Bright chartreuse/lime yellow */
+  
+  --font-sans: 'Plus Jakarta Sans', sans-serif;
+  --font-serif: 'Playfair Display', serif;
+}
+
+@layer base {
+  body {
+    @apply bg-darkBg text-[#112521] overflow-x-hidden font-sans;
+    background-color: #FAF6EE;
+  }
+  
+  h1, h2, h3, .serif-font {
+    font-family: 'Playfair Display', serif;
+  }
+}
+
+/* Premium Editorial Cards matching moxiebeauty.in flat aesthetics */
+.glass-panel {
+  background: #FFFFFF;
+  border: 1px solid rgba(13, 72, 63, 0.12);
+  border-radius: 1.5rem;
+  box-shadow: 0 4px 20px -2px rgba(13, 72, 63, 0.04);
+}
+
+.glass-panel-interactive {
+  @apply transition-all duration-300 ease-out;
+}
+
+.glass-panel-interactive:hover {
+  border-color: #0D483F;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px -4px rgba(13, 72, 63, 0.08);
+}
+
+/* Flat Premium Buttons matching Moxie's chic styling */
+.flat-btn-chartreuse {
+  background-color: #D2F128;
+  color: #0D483F;
+  border: 1px solid #0D483F;
+  @apply font-bold transition-all duration-200 rounded-xl;
+}
+
+.flat-btn-chartreuse:hover {
+  background-color: #0D483F;
+  color: #FFFFFF;
+}
+
+.flat-btn-teal {
+  background-color: #0D483F;
+  color: #FFFFFF;
+  border: 1px solid #0D483F;
+  @apply font-bold transition-all duration-200 rounded-xl;
+}
+
+.flat-btn-teal:hover {
+  background-color: #FFFFFF;
+  color: #0D483F;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #FAF6EE;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(13, 72, 63, 0.15);
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #0D483F;
+}
+
+/* Feud Board card flat flip classes (Moxie style: elegant cream and deep green) */
+.flip-card {
+  perspective: 1000px;
+  height: 80px;
+}
+
+.flip-card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  transition: transform 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+  transform-style: preserve-3d;
+}
+
+.flip-card.is-flipped .flip-card-inner {
+  transform: rotateY(180deg);
+}
+
+.flip-card-front, .flip-card-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  display: flex;
+  align-items: center;
+  border-radius: 1.25rem;
+}
+
+.flip-card-front {
+  background: #FFFFFF;
+  border: 1px solid rgba(13, 72, 63, 0.15);
+  color: #0D483F;
+  box-shadow: 0 4px 12px rgba(13, 72, 63, 0.03);
+}
+
+.flip-card-front:hover {
+  border-color: #0D483F;
+  background: #FDFBF7;
+}
+
+.flip-card-back {
+  background: #0D483F;
+  border: 1px solid #0D483F;
+  color: #FFFFFF;
+  transform: rotateY(180deg);
+  box-shadow: 0 6px 16px rgba(13, 72, 63, 0.15);
+}
+
+/* Strike Overlay (Elegant soft editorial red overlay) */
+@keyframes strike-in {
+  0% { transform: scale(0.7); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.strike-animate {
+  animation: strike-in 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}

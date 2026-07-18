@@ -1,0 +1,20 @@
+{
+  "name": "family-feud-backend",
+  "version": "1.0.0",
+  "description": "Family Feud Real-time Multiplayer Backend for VIT Chennai Android Club",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.2",
+    "mongoose": "^9.7.4",
+    "socket.io": "^4.8.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.0"
+  }
+}

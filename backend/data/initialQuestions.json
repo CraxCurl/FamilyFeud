@@ -1,0 +1,77 @@
+[
+  {
+    "id": "q1",
+    "question": "Name something every VIT student carries.",
+    "category": "Campus",
+    "answers": [
+      { "text": "Phone", "points": 40 },
+      { "text": "ID Card", "points": 25 },
+      { "text": "Laptop", "points": 15 },
+      { "text": "Water Bottle", "points": 10 },
+      { "text": "Umbrella", "points": 5 },
+      { "text": "Earphones", "points": 3 },
+      { "text": "Pen", "points": 2 }
+    ]
+  },
+  {
+    "id": "q2",
+    "question": "Name a popular spot on VIT Chennai campus.",
+    "category": "Campus",
+    "answers": [
+      { "text": "Gazebo", "points": 35 },
+      { "text": "MG Auditorium", "points": 25 },
+      { "text": "Food Court", "points": 20 },
+      { "text": "Central Library", "points": 12 },
+      { "text": "Netaji Sports Ground", "points": 5 },
+      { "text": "D-Block", "points": 3 }
+    ]
+  },
+  {
+    "id": "q3",
+    "question": "Name something you do when a class gets cancelled.",
+    "category": "Funny",
+    "answers": [
+      { "text": "Sleep", "points": 45 },
+      { "text": "Go to Cafeteria", "points": 25 },
+      { "text": "Play Games", "points": 15 },
+      { "text": "Watch Movies", "points": 10 },
+      { "text": "Go back to Hostel", "points": 5 }
+    ]
+  },
+  {
+    "id": "q4",
+    "question": "Name a programming language taught in first year.",
+    "category": "Academics",
+    "answers": [
+      { "text": "Python", "points": 50 },
+      { "text": "C", "points": 30 },
+      { "text": "Java", "points": 12 },
+      { "text": "C++", "points": 8 }
+    ]
+  },
+  {
+    "id": "q5",
+    "question": "Name a reason a student gets a call from the warden.",
+    "category": "Hostel",
+    "answers": [
+      { "text": "Late Entry", "points": 45 },
+      { "text": "Low Attendance", "points": 25 },
+      { "text": "Courier Arrival", "points": 15 },
+      { "text": "Noise Complaint", "points": 10 },
+      { "text": "Room Shifting", "points": 5 }
+    ]
+  },
+  {
+    "id": "q6",
+    "question": "Name a keyword associated with Android Club.",
+    "category": "Android Club",
+    "answers": [
+      { "text": "Hackathon", "points": 35 },
+      { "text": "App Development", "points": 30 },
+      { "text": "Kotlin", "points": 18 },
+      { "text": "Flutter", "points": 10 },
+      { "text": "Innovation", "points": 5 },
+      { "text": "Club Expo", "points": 2 }
+    ]
+  }
+]
