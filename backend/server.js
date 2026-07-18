@@ -499,7 +499,6 @@ io.on('connection', (socket) => {
         break;
 
       case 'NEXT_ROUND':
-        clearPlayerTeams();
         if (gameState.currentRound < gameState.maxRounds) {
           gameState.currentRound++;
           gameState.currentQuestion = gameState.questions[gameState.currentRound - 1] || null;
@@ -510,7 +509,9 @@ io.on('connection', (socket) => {
           gameState.buzzState = { locked: false, player: null, team: null, time: null };
           gameState.activeInputTeam = null;
           gameState.turnsTaken = { 'Team Alpha': 0, 'Team Beta': 0 };
-          stopTimer();
+          // Keep the same players and their teams for the complete game.
+          // A new question immediately begins the next alternating turn cycle.
+          startTurnCycle();
         } else {
           gameState.status = 'GAME_OVER';
           stopTimer();
@@ -527,7 +528,6 @@ io.on('connection', (socket) => {
         break;
 
       case 'PREV_ROUND':
-        clearPlayerTeams();
         if (gameState.currentRound > 1) {
           gameState.currentRound--;
           gameState.currentQuestion = gameState.questions[gameState.currentRound - 1] || null;
@@ -538,7 +538,7 @@ io.on('connection', (socket) => {
           gameState.buzzState = { locked: false, player: null, team: null, time: null };
           gameState.activeInputTeam = null;
           gameState.turnsTaken = { 'Team Alpha': 0, 'Team Beta': 0 };
-          stopTimer();
+          startTurnCycle();
         }
         break;
 

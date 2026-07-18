@@ -486,7 +486,7 @@ export default function Display() {
               animate={{ y: 0 }}
               exit={{ y: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="w-full max-w-6xl h-[75vh] glass-panel bg-darkBg/95 border-t border-white/10 rounded-t-3xl p-6 relative overflow-hidden flex flex-col acfeud-admin"
+              className="w-full max-w-6xl h-[75vh] glass-panel bg-darkBg/95 border-t border-white/10 rounded-t-3xl p-6 relative overflow-hidden flex flex-col"
             >
               <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-neonPurple to-neonCyan" />
 
@@ -580,7 +580,7 @@ export default function Display() {
                       
                       {/* Operational buttons */}
                       <div className="md:col-span-8 space-y-6">
-                        <div className="glass-panel p-4 rounded-xl space-y-4 border-[#0D483F]/10 acfeud-admin__panel">
+                        <div className="glass-panel p-4 rounded-xl space-y-4 border-[#0D483F]/10">
                           <span className="text-xs font-bold text-[#0D483F]/60 uppercase tracking-widest block border-b border-[#0D483F]/10 pb-1">Game States</span>
                           
                           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
@@ -647,7 +647,7 @@ export default function Display() {
 
                         {/* Answers controller */}
                         {adminState?.currentQuestion && (
-                          <div className="glass-panel p-4 rounded-xl space-y-4 border-[#0D483F]/10 acfeud-admin__panel">
+                          <div className="glass-panel p-4 rounded-xl space-y-4 border-[#0D483F]/10">
                             <span className="text-xs font-bold text-[#0D483F]/60 uppercase tracking-widest block border-b border-[#0D483F]/10 pb-1">Reveals & Strikes</span>
                             
                             <div className="space-y-2">
@@ -723,13 +723,13 @@ export default function Display() {
                       <div className="md:col-span-4 space-y-6">
                         
                         {/* Live team-turn panel */}
-                        <div className="glass-panel p-4 rounded-xl border-[#0D483F]/10 acfeud-admin__panel">
+                        <div className="glass-panel p-4 rounded-xl border-[#0D483F]/10">
                           <span className="text-xs font-bold text-[#0D483F]/60 uppercase tracking-widest block border-b border-[#0D483F]/10 pb-1 mb-3">Active Team Turn</span>
                           {adminState?.activeInputTeam ? (
-                            <div className="acfeud-admin__turn">
-                              <span>NOW PLAYING</span>
-                              <strong>{adminState.activeInputTeam}</strong>
-                              <div><b>{adminState.timer || 0}s</b> &middot; turn {adminState.turnsTaken?.[adminState.activeInputTeam] || 0} of {adminState.turnsPerTeam || 3}</div>
+                            <div className="text-center p-3 bg-neonPurple/5 border border-neonPurple/15 rounded-lg">
+                              <span className="text-[10px] text-[#0D483F]/60 font-bold tracking-widest block">NOW PLAYING</span>
+                              <strong className="text-sm text-neonPurple block my-1">{adminState.activeInputTeam}</strong>
+                              <div className="text-[10px] text-[#0D483F]/70"><b className="text-neonPink">{adminState.timer || 0}s</b> &middot; turn {adminState.turnsTaken?.[adminState.activeInputTeam] || 0} of {adminState.turnsPerTeam || 3}</div>
                             </div>
                           ) : (
                             <div className="text-center py-4 text-gray-500 text-xs">Start a turn cycle to put a team on the clock.</div>
@@ -737,7 +737,7 @@ export default function Display() {
                         </div>
 
                         {/* Scores override */}
-                        <div className="glass-panel p-4 rounded-xl space-y-3 border-[#0D483F]/10 acfeud-admin__panel">
+                        <div className="glass-panel p-4 rounded-xl space-y-3 border-[#0D483F]/10">
                           <span className="text-xs font-bold text-[#0D483F]/60 uppercase tracking-widest block border-b border-[#0D483F]/10 pb-1">Scores Override</span>
                           {Object.keys(adminState?.teams || {}).map(tName => {
                             const teamData = adminState?.teams?.[tName];
