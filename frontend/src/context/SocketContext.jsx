@@ -1,0 +1,62 @@
+import React, { createContext, useContext, useEffect, useState } from 'react';
+import { io } from 'socket.io-client';
+
+const SocketContext = createContext(null);
+
+export const SocketProvider = ({ children }) => {
+  const [socket, setSocket] = useState(null);
+  const [gameState, setGameState] = useState({
+    status: 'LOBBY',
+    currentRound: 0,
+    currentQuestion: null,
+    revealedAnswers: [],
+    strikes: 0,
+    teams: {},
+    players: [],
+    buzzState: { locked: false, player: null, team: null },
+    timer: 0,
+    activeInputTeam: null,
+    maxRounds: 5
+  });
+
+  const [adminState, setAdminState] = useState(null);
+
+  useEffect(() => {
+    // Dynamic socket connection URL
+    const socketUrl = import.meta.env.VITE_BACKEND_URL || `${window.location.protocol}//${window.location.hostname}:5000`;
+    console.log("Connecting to Socket.io server at:", socketUrl);
+    const newSocket = io(socketUrl);
+
+    setSocket(newSocket);
+
+    newSocket.on('connect', () => {
+      console.log('Socket.io connected successfully!');
+    });
+
+    newSocket.on('game_state_update', (state) => {
+      setGameState(state);
+    });
+
+    newSocket.on('admin_state_update', (state) => {
+      setAdminState(state);
+    });
+
+    return () => {
+      newSocket.close();
+    };
+  }, []);
+
+  return (
+    <SocketContext.Provider value={{ socket, gameState, adminState }}>
+      {children}
+    </SocketContext.Provider>
+  );
+};
+
+export const useSocket = () => {
+  const context = useContext(SocketContext);
+  if (!context) {
+    throw new Error('useSocket must be used within a SocketProvider');
+  }
+  return context;
+};
