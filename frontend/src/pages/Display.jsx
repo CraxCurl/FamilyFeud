@@ -246,25 +246,18 @@ export default function Display() {
   );
 
   return (
-    <div className="flex flex-col min-h-screen px-6 py-6 relative justify-between select-none pb-24">
+    <div className="flex flex-col min-h-screen px-6 py-6 relative justify-between select-none pb-24 game-display">
       
       {/* Top Banner / Round Status */}
-      <div className="flex justify-between items-center mb-4">
+      <div className="flex justify-between items-center mb-5 game-topbar">
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 bg-neonPurple/10 border border-neonPurple/30 rounded-xl flex items-center justify-center text-neonPurple text-xl font-black">
+          <div className="w-12 h-12 bg-neonPurple/10 border border-neonPurple/30 rounded-xl flex items-center justify-center text-neonPurple text-xl font-black game-topbar__round">
             {gameState.currentRound || 1}
           </div>
           <div>
             <span className="text-xs text-[#0D483F]/60 font-semibold uppercase tracking-wider block">Round</span>
-            <span className="text-sm text-neonPurple font-bold">ACFEUD Live Board</span>
+            <span className="text-sm text-neonPurple font-bold">Game in progress</span>
           </div>
-        </div>
-
-        <div className="text-center">
-          <h2 className="text-3xl font-extrabold tracking-widest bg-clip-text text-transparent bg-[#0D483F] text-glow-purple">
-            ACFEUD
-          </h2>
-          <span className="text-xs text-[#0D483F]/60 tracking-widest uppercase font-semibold">Android Club VIT Chennai</span>
         </div>
 
         <div className="flex items-center gap-3">
@@ -293,15 +286,15 @@ export default function Display() {
       </div>
 
       {/* Main Game Interface */}
-      <div className="flex-1 grid grid-cols-12 gap-8 my-auto items-center">
+      <div className="flex-1 grid grid-cols-12 gap-8 items-center">
         {/* Left Team Panel */}
         <div className="col-span-3 flex flex-col items-center">
           {renderTeamPanel(gameState, 0)}
         </div>
 
         {/* Board Center Panel */}
-        <div className="col-span-6 flex flex-col gap-6 feud-board">
-          <div className="glass-panel p-6 rounded-2xl border-[#0D483F]/15 text-center relative overflow-hidden flex flex-col items-center feud-question">
+        <div className="col-span-6 flex flex-col gap-6">
+          <div className="glass-panel p-6 rounded-2xl border-[#0D483F]/15 text-center relative overflow-hidden flex flex-col items-center game-question">
             <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-neonPurple via-neonPink to-neonCyan" />
             
             {/* Round Pot */}
@@ -321,7 +314,7 @@ export default function Display() {
             </h3>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-4 game-answer-grid">
             {cards.map((ans, idx) => {
               const isRevealed = gameState.revealedAnswers && gameState.revealedAnswers[idx];
               return (
@@ -486,7 +479,7 @@ export default function Display() {
               animate={{ y: 0 }}
               exit={{ y: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="w-full max-w-6xl h-[75vh] glass-panel bg-darkBg/95 border-t border-white/10 rounded-t-3xl p-6 relative overflow-hidden flex flex-col"
+              className="w-full max-w-6xl h-[75vh] glass-panel bg-darkBg/95 border-t border-white/10 rounded-t-3xl p-6 relative overflow-hidden flex flex-col moxie-host-drawer"
             >
               <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-neonPurple to-neonCyan" />
 
@@ -935,7 +928,7 @@ function renderTeamPanel(gameState, index) {
   return (
     <motion.div
       animate={{ scale: isActive ? 1.05 : 1 }}
-      className={`w-full p-6 rounded-2xl glass-panel feud-team-panel text-center relative overflow-hidden transition-all duration-300 ${
+      className={`w-full p-6 rounded-2xl glass-panel game-team-card text-center relative overflow-hidden transition-all duration-300 ${
         isActive ? 'border-neonCyan shadow-neonCyan bg-neonCyan/5' : ''
       }`}
     >
