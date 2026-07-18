@@ -166,7 +166,7 @@ let gameState = {
   },
   timer: 0,
   activeInputTeam: null, // Team currently allowed to input answers (or has the buzz)
-  maxRounds: 5
+  maxRounds: 3
 };
 
 // Interval for Countdown Timers
