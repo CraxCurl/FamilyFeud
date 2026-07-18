@@ -22,8 +22,11 @@ export const SocketProvider = ({ children }) => {
   const [adminState, setAdminState] = useState(null);
 
   useEffect(() => {
-    // Dynamic socket connection URL
-    const socketUrl = import.meta.env.VITE_BACKEND_URL || `${window.location.protocol}//${window.location.hostname}:5000`;
+    const socketUrl = import.meta.env.VITE_BACKEND_URL || (
+      window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+        ? 'http://localhost:5000'
+        : `${window.location.protocol}//${window.location.host}`
+    );
     console.log("Connecting to Socket.io server at:", socketUrl);
     const newSocket = io(socketUrl);
 
