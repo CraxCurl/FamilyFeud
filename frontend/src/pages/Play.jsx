@@ -71,6 +71,15 @@ export default function Play() {
   };
 
   const handleLeave = () => {
+    if (socket) {
+      socket.emit('draw_identity');
+    }
+  };
+
+  const handleWalkOff = () => {
+    if (socket) {
+      socket.emit('walk_off');
+    }
     localStorage.removeItem('feud_user_id');
     window.location.reload();
   };
@@ -273,9 +282,14 @@ export default function Play() {
             >
               <div className="w-12 h-12 rounded-full border-2 border-dashed border-[#0D483F] animate-spin mx-auto mb-4" />
               <h3 className="text-xl font-bold text-[#0D483F] mb-2">Waiting for Host...</h3>
-              <p className="text-xs text-[#0D483F]/70">
+              <p className="text-xs text-[#0D483F]/70 mb-4">
                 The game will start automatically when the host launches the first round. Get ready!
               </p>
+              
+              <div className="p-3 bg-[#FAF6EE] border border-[#0D483F]/10 rounded-xl mb-4 text-xs space-y-1 text-left">
+                <div><span className="font-bold text-[#0D483F]/60">Your Alias:</span> <strong className="text-neonPurple">{name}</strong></div>
+                <div><span className="font-bold text-[#0D483F]/60">Your Team:</span> <strong className="text-[#0D483F]">{team || 'Lobby (Waiting for assignment)'}</strong></div>
+              </div>
             </motion.div>
           )}
 
@@ -383,16 +397,22 @@ export default function Play() {
         </AnimatePresence>
       </div>
 
-      {gameState.status === 'LOBBY' && (
-        <div className="mt-8 flex justify-center">
+      <div className="mt-8 flex flex-col items-center gap-2">
+        {gameState.status === 'LOBBY' && (
           <button
             onClick={handleLeave}
-            className="text-xs text-[#0D483F]/50 hover:text-neonPurple underline transition cursor-pointer"
+            className="text-xs text-[#0D483F]/70 hover:text-neonPurple underline transition cursor-pointer font-semibold"
           >
             Draw New Identity
           </button>
-        </div>
-      )}
+        )}
+        <button
+          onClick={handleWalkOff}
+          className="text-xs text-red-500/70 hover:text-red-600 underline transition cursor-pointer font-semibold"
+        >
+          Walk Off (Delete Profile)
+        </button>
+      </div>
     </div>
   );
 }

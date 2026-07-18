@@ -651,6 +651,35 @@ io.on('connection', (socket) => {
     sendAdminState();
   });
 
+  socket.on('walk_off', async () => {
+    try {
+      const player = gameState.players[socket.id];
+      if (player) {
+        const team = player.team;
+        if (team && gameState.teams[team]) {
+          gameState.teams[team].members = gameState.teams[team].members.filter(m => m.socketId !== socket.id);
+        }
+
+        // Delete user profile from MongoDB if connected
+        if (isMongoConnected) {
+          try {
+            await User.deleteOne({ userId: player.id });
+            console.log(`Deleted user profile ${player.name} (${player.id}) from MongoDB.`);
+          } catch (dbErr) {
+            console.error("Failed to delete user profile from DB:", dbErr.message);
+          }
+        }
+
+        delete gameState.players[socket.id];
+        logPlayerAction({ userId: player.id, username: player.name, team: player.team, round: gameState.currentRound, action: 'leave' });
+      }
+      broadcastState();
+      sendAdminState();
+    } catch (err) {
+      console.error('Error on walk_off:', err.message);
+    }
+  });
+
   socket.on('disconnect', () => {
     const player = gameState.players[socket.id];
     if (player) {
