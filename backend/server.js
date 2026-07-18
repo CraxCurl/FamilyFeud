@@ -168,7 +168,9 @@ let gameState = {
   activeInputTeam: null, // Team currently allowed to input answers (or has the buzz)
   maxRounds: 3,
   turnsTaken: { 'Team Alpha': 0, 'Team Beta': 0 },
-  turnsPerTeam: 3
+  turnsPerTeam: 3,
+  winner: null,
+  finalScores: {}
 };
 
 // Interval for Countdown Timers
@@ -198,7 +200,9 @@ function broadcastState() {
     activeInputTeam: gameState.activeInputTeam,
     maxRounds: gameState.maxRounds,
     turnsTaken: gameState.turnsTaken,
-    turnsPerTeam: gameState.turnsPerTeam
+    turnsPerTeam: gameState.turnsPerTeam,
+    winner: gameState.winner,
+    finalScores: gameState.finalScores
   });
 }
 
@@ -286,8 +290,36 @@ app.delete('/api/questions/:id', verifyAdminKey, (req, res) => {
 function finishTurnCycle() {
   gameState.activeInputTeam = null;
   gameState.timer = 0;
+  if (gameState.currentRound >= gameState.maxRounds) {
+    concludeGame();
+    return;
+  }
   gameState.status = 'ROUND_END';
   io.emit('play_sound', { type: 'ROUND_COMPLETE' });
+  broadcastState();
+  sendAdminState();
+}
+
+function concludeGame() {
+  stopTimer();
+  gameState.status = 'GAME_OVER';
+  gameState.activeInputTeam = null;
+  const scores = Object.entries(gameState.teams).map(([name, data]) => ({ name, score: data.score || 0 }));
+  const maxScore = Math.max(...scores.map(({ score }) => score), 0);
+  const winners = scores.filter(({ score }) => score === maxScore).map(({ name }) => name);
+  gameState.winner = winners.length === 1 ? winners[0] : 'DRAW';
+  gameState.finalScores = Object.fromEntries(scores.map(({ name, score }) => [name, score]));
+
+  // Results remain available through finalScores, while the active session is
+  // cleared immediately so the next group can join with fresh team slots.
+  const finishedPlayerIds = Object.values(gameState.players).map((player) => player.id).filter(Boolean);
+  if (isMongoConnected && finishedPlayerIds.length) {
+    User.deleteMany({ userId: { $in: finishedPlayerIds } })
+      .catch((err) => console.error('Could not clear finished player profiles:', err.message));
+  }
+  gameState.players = {};
+  gameState.teams = {};
+  io.emit('game_over_trigger', { winner: gameState.winner });
   broadcastState();
   sendAdminState();
 }
@@ -327,8 +359,14 @@ function advanceTeamTurn() {
 function startTurnCycle() {
   stopTimer();
   gameState.turnsTaken = { 'Team Alpha': 0, 'Team Beta': 0 };
+  gameState.activeInputTeam = null;
+  gameState.buzzState = { locked: false, player: null, team: null, time: null };
+  gameState.status = 'PLAYING';
   gameState.strikes = 0;
-  beginTeamTurn('Team Alpha');
+  // The only buzzer in a question: it decides which team receives the first turn.
+  io.emit('play_sound', { type: 'ROUND_START' });
+  broadcastState();
+  sendAdminState();
 }
 
 // Socket logic
@@ -472,6 +510,8 @@ io.on('connection', (socket) => {
         gameState.strikes = 0;
         gameState.buzzState = { locked: false, player: null, team: null, time: null };
         gameState.activeInputTeam = null;
+        gameState.winner = null;
+        gameState.finalScores = {};
         gameState.turnsTaken = { 'Team Alpha': 0, 'Team Beta': 0 };
         startTurnCycle();
         break;
@@ -494,6 +534,8 @@ io.on('connection', (socket) => {
         gameState.players = {};
         gameState.buzzState = { locked: false, player: null, team: null, time: null };
         gameState.activeInputTeam = null;
+        gameState.winner = null;
+        gameState.finalScores = {};
         gameState.turnsTaken = { 'Team Alpha': 0, 'Team Beta': 0 };
         stopTimer();
         break;
@@ -513,17 +555,7 @@ io.on('connection', (socket) => {
           // A new question immediately begins the next alternating turn cycle.
           startTurnCycle();
         } else {
-          gameState.status = 'GAME_OVER';
-          stopTimer();
-          let winner = null;
-          let maxScore = -1;
-          Object.keys(gameState.teams).forEach(tName => {
-            if (gameState.teams[tName].score > maxScore) {
-              maxScore = gameState.teams[tName].score;
-              winner = tName;
-            }
-          });
-          io.emit('game_over_trigger', { winner });
+          concludeGame();
         }
         break;
 
@@ -625,10 +657,21 @@ io.on('connection', (socket) => {
     sendAdminState();
   });
 
-  // Legacy event kept harmless for older clients. Rounds are driven by timed
-  // team turns, so players cannot take ownership with a buzzer.
+  // Opening buzz: it only decides the first team. All later turns alternate
+  // automatically on the 15-second timer.
   socket.on('player_buzz', () => {
-    return;
+    const player = gameState.players[socket.id];
+    if (!player || !player.team || gameState.status !== 'PLAYING') return;
+    if (gameState.activeInputTeam || gameState.buzzState.locked) return;
+
+    gameState.buzzState = {
+      locked: true,
+      player: { name: player.name, socketId: socket.id },
+      team: player.team,
+      time: Date.now()
+    };
+    io.emit('play_sound', { type: 'BUZZ' });
+    beginTeamTurn(player.team);
   });
 
   // Player Answer Submission

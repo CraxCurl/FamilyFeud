@@ -18,7 +18,8 @@ export const SocketProvider = ({ children }) => {
     activeInputTeam: null,
     maxRounds: 3,
     turnsTaken: { 'Team Alpha': 0, 'Team Beta': 0 },
-    turnsPerTeam: 3
+    turnsPerTeam: 3,
+    winner: null
   });
 
   const [adminState, setAdminState] = useState(null);
