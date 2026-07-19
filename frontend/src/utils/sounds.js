@@ -14,7 +14,7 @@ class SoundSynthesizer {
       this.ctx.resume();
     }
     if (!this.buzzAudio) {
-      this.buzzAudio = new Audio('/buzzersound.mp3');
+      this.buzzAudio = new Audio('buzzersound.mp3');
       this.buzzAudio.preload = 'auto';
     }
   }

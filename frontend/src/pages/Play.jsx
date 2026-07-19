@@ -51,7 +51,7 @@ export default function Play() {
 
       const timer = setTimeout(() => {
         setShowCelebration(false);
-      }, 3000);
+      }, 1500);
 
       prevScoreRef.current = currentScore;
       return () => clearTimeout(timer);
@@ -59,6 +59,27 @@ export default function Play() {
       prevScoreRef.current = currentScore;
     }
   }, [gameState.teams, team]);
+
+  // Mobile Audio Unlocker for programmatic sounds (e.g. buzzer)
+  useEffect(() => {
+    const resumeAudio = () => {
+      sounds.init();
+      if (sounds.buzzAudio) {
+        sounds.buzzAudio.play()
+          .then(() => {
+            sounds.buzzAudio.pause();
+            sounds.buzzAudio.currentTime = 0;
+          })
+          .catch(() => {});
+      }
+    };
+    window.addEventListener('click', resumeAudio);
+    window.addEventListener('touchstart', resumeAudio);
+    return () => {
+      window.removeEventListener('click', resumeAudio);
+      window.removeEventListener('touchstart', resumeAudio);
+    };
+  }, []);
 
   useEffect(() => {
     let savedId = localStorage.getItem('feud_user_id');
