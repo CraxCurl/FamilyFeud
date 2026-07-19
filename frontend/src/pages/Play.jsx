@@ -19,6 +19,7 @@ export default function Play() {
   const [answerInput, setAnswerInput] = useState('');
   const [submitted, setSubmitted] = useState(false);
   const [isBlocked, setIsBlocked] = useState(false);
+  const [localGameOver, setLocalGameOver] = useState(false);
   const finalSoundPlayed = useRef(false);
 
   useEffect(() => {
@@ -97,6 +98,7 @@ export default function Play() {
       finalSoundPlayed.current = false;
       return;
     }
+    setLocalGameOver(true);
     if (finalSoundPlayed.current) return;
     finalSoundPlayed.current = true;
     localStorage.removeItem('feud_user_id');
@@ -204,7 +206,7 @@ export default function Play() {
   }
 
   // Render Promotion Screen at GAME_OVER
-  if (gameState.status === 'GAME_OVER') {
+  if (gameState.status === 'GAME_OVER' || localGameOver) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen px-4 py-8 text-center">
         <motion.div
