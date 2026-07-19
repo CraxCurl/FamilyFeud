@@ -463,6 +463,43 @@ export default function Display() {
           </motion.div>
         )}
       </AnimatePresence>
+ 
+      {/* LOBBY JOIN QR POPUP */}
+      <AnimatePresence>
+        {gameState.status === 'LOBBY' && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-[#FAF6EE]/80 backdrop-blur-md z-50 flex items-center justify-center p-6"
+          >
+            <motion.div
+              initial={{ scale: 0.9, y: 30 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.9, y: 30 }}
+              className="w-full max-w-lg bg-white border-4 border-[#0D483F] p-8 text-center relative shadow-[12px_12px_0_#0D483F] flex flex-col items-center"
+            >
+              <h2 className="text-4xl font-condensed font-bold uppercase tracking-tight text-[#0D483F] mb-2">Join the Feud!</h2>
+              <p className="text-xs font-condensed font-bold text-neonPink tracking-widest uppercase mb-6">Scan to join Team Alpha or Team Beta</p>
+              
+              <div className="p-4 bg-white border-2 border-[#0D483F] mb-6">
+                <img 
+                  src={`https://api.qrserver.com/v1/create-qr-code/?size=300x300&color=0d483f&data=${encodeURIComponent(playUrl)}`} 
+                  alt="Join QR Code" 
+                  className="w-56 h-56 object-contain"
+                />
+              </div>
+
+              <span className="text-xs font-condensed font-bold text-[#0D483F]/75 uppercase tracking-wider mb-1">Or navigate on your phone to:</span>
+              <span className="text-sm font-mono text-neonPink font-bold underline select-all">{playUrl}</span>
+              
+              <div className="mt-8 text-[10px] font-condensed font-bold tracking-widest text-[#0D483F]/50 uppercase">
+                ANDROID CLUB VIT CHENNAI
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* HOST DRAWER OVERLAY */}
       <AnimatePresence>
