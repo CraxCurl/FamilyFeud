@@ -318,7 +318,7 @@ export default function Play() {
             {isDraw ? 'It’s a Draw!' : isWinner ? 'Congratulations!' : 'Great Game!'}
           </h2>
           <p className="text-xs font-condensed font-bold text-neonPink tracking-widest uppercase mb-6">
-            {isDraw ? 'Both teams finished level.' : isWinner ? `${team} wins AC FEUD!` : `${gameState.winner || 'The other team'} takes this one.`}
+            {isDraw ? 'Both teams finished level.' : isWinner ? `${team} wins AC FEUD!` : "It's time for another team to play! Happy playing with you!"}
           </p>
           
           <div className="p-4 bg-[#FAF6EE] border-2 border-[#0D483F] rounded-none mb-6 text-sm text-[#0D483F] w-full">

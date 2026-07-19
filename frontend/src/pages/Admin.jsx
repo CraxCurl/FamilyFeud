@@ -338,7 +338,7 @@ export default function Admin() {
                     className="flex flex-col items-center justify-center p-4 bg-red-500/10 border border-red-500/30 rounded-xl hover:bg-red-500/20 text-red-400 font-bold transition group"
                   >
                     <RotateCcw className="w-6 h-6 mb-2 group-hover:rotate-45 transition" />
-                    Reset Game
+                    New Game
                   </button>
                 )}
 
