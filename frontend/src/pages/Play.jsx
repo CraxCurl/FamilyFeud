@@ -438,39 +438,50 @@ export default function Play() {
               </h4>
 
               {/* Big, Beautiful Circular Countdown Timer */}
-              <div className="relative w-40 h-40 flex items-center justify-center mb-6">
-                <svg className="absolute w-full h-full transform -rotate-90">
-                  <circle
-                    cx="80"
-                    cy="80"
-                    r="70"
-                    stroke="#FAF6EE"
-                    strokeWidth="10"
-                    fill="transparent"
-                  />
-                  <motion.circle
-                    cx="80"
-                    cy="80"
-                    r="70"
-                    stroke={gameState.timer <= 5 ? "#FF2E93" : "#0D483F"}
-                    strokeWidth="10"
-                    fill="transparent"
-                    strokeDasharray={440}
-                    animate={{
-                      strokeDashoffset: (1 - (gameState.timer / (gameState.turnSeconds || 15))) * 440
-                    }}
-                    transition={{ duration: 0.5, ease: "linear" }}
-                  />
-                </svg>
-                <div className="flex flex-col items-center justify-center">
-                  <span className={`text-5xl font-black font-condensed tracking-tighter ${gameState.timer <= 5 ? 'text-neonPink animate-pulse' : 'text-[#0D483F]'}`}>
-                    {gameState.timer}
-                  </span>
-                  <span className="text-[10px] font-condensed font-bold text-[#0D483F]/50 uppercase tracking-widest mt-1">
-                    Seconds Left
+              {isMyTeamActiveInput ? (
+                <div className="relative w-40 h-40 flex items-center justify-center mb-6">
+                  <svg className="absolute w-full h-full transform -rotate-90">
+                    <circle
+                      cx="80"
+                      cy="80"
+                      r="70"
+                      stroke="#FAF6EE"
+                      strokeWidth="10"
+                      fill="transparent"
+                    />
+                    <motion.circle
+                      cx="80"
+                      cy="80"
+                      r="70"
+                      stroke={gameState.timer <= 5 ? "#FF2E93" : "#0D483F"}
+                      strokeWidth="10"
+                      fill="transparent"
+                      strokeDasharray={440}
+                      animate={{
+                        strokeDashoffset: (1 - (gameState.timer / (gameState.turnSeconds || 15))) * 440
+                      }}
+                      transition={{ duration: 0.5, ease: "linear" }}
+                    />
+                  </svg>
+                  <div className="flex flex-col items-center justify-center">
+                    <span className={`text-5xl font-black font-condensed tracking-tighter ${gameState.timer <= 5 ? 'text-neonPink animate-pulse' : 'text-[#0D483F]'}`}>
+                      {gameState.timer}
+                    </span>
+                    <span className="text-[10px] font-condensed font-bold text-[#0D483F]/50 uppercase tracking-widest mt-1">
+                      Seconds Left
+                    </span>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex flex-col items-center justify-center py-8 mb-6">
+                  <div className="w-16 h-16 bg-[#0D483F]/5 border-2 border-dashed border-[#0D483F]/30 rounded-full flex items-center justify-center mb-4 text-neonPink text-3xl animate-pulse">
+                    💬
+                  </div>
+                  <span className="text-sm font-bold text-[#0D483F] uppercase tracking-wider">
+                    Answering...
                   </span>
                 </div>
-              </div>
+              )}
 
               {isMyTeamActiveInput ? (
                 <div className="p-4 bg-[#FAF6EE] border-2 border-dashed border-[#0D483F]/30 w-full">
