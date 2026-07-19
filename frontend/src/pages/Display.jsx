@@ -343,21 +343,6 @@ export default function Display() {
               </div>
             </div>
 
-            {gameState.activeInputTeam ? (
-              <div className="mb-3 bg-neonCyan/15 border border-neonCyan/30 text-neonCyan px-4 py-1.5 rounded-full text-xs font-extrabold uppercase tracking-widest inline-flex items-center gap-2 animate-bounce">
-                <span className="w-2 h-2 rounded-full bg-neonCyan animate-ping" />
-                {gameState.activeInputTeam} is Answering
-                {gameState.buzzState?.player && ` (${gameState.buzzState.player.name} buzzed)`}
-              </div>
-            ) : gameState.buzzState?.locked ? (
-              <div className="mb-3 bg-neonPink/15 border border-neonPink/30 text-neonPink px-4 py-1.5 rounded-full text-xs font-extrabold uppercase tracking-widest inline-flex items-center gap-2 animate-pulse">
-                🔥 {gameState.buzzState.player?.name} Buzzed!
-              </div>
-            ) : gameState.status === 'PLAYING' ? (
-              <div className="mb-3 bg-amber-500/10 border border-amber-500/20 text-amber-500 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider inline-flex items-center gap-1.5">
-                🛎️ Buzzer Open
-              </div>
-            ) : null}
 
             <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-neonPurple/5 border border-neonPurple/10 rounded-full text-xs text-[#0D483F]/75 mb-3 font-semibold">
               <HelpCircle className="w-3.5 h-3.5 text-[#0D483F]/70" />

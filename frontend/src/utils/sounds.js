@@ -100,11 +100,11 @@ class SoundSynthesizer {
     osc2.frequency.setValueAtTime(112, now); // Slightly detuned for chorusing buzz
 
     filter.type = 'lowpass';
-    filter.frequency.setValueAtTime(600, now); // Cut harsh high frequencies
+    filter.frequency.setValueAtTime(900, now); // Allow more high-frequency buzz for extra loudness
 
     gainNode.gain.setValueAtTime(0, now);
-    gainNode.gain.linearRampToValueAtTime(0.4, now + 0.05);
-    gainNode.gain.setValueAtTime(0.4, now + 0.45);
+    gainNode.gain.linearRampToValueAtTime(0.9, now + 0.05); // High gain/volume
+    gainNode.gain.setValueAtTime(0.9, now + 0.45);
     gainNode.gain.exponentialRampToValueAtTime(0.0001, now + 0.6);
 
     osc1.connect(filter);

@@ -345,7 +345,7 @@ function beginTeamTurn(team, buzzed = false) {
   }
 
   startTimer(gameState.turnSeconds, (secondsLeft) => {
-    if (secondsLeft <= 3) io.emit('play_sound', { type: 'COUNTDOWN' });
+    io.emit('play_sound', { type: 'COUNTDOWN' });
   }, advanceTeamTurn);
 }
 
