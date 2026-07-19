@@ -10,7 +10,7 @@ export default function Display() {
   
   // Host Panel Auth & Visibility
   const [showHostPanel, setShowHostPanel] = useState(false);
-  const isAuthenticated = !!adminState;
+  const isAuthenticated = !!adminState && !!adminKey;
   const [adminKey, setAdminKey] = useState('');
   const [passcodeInput, setPasscodeInput] = useState('');
   const [authError, setAuthError] = useState('');
@@ -785,7 +785,7 @@ export default function Display() {
                         <div className="glass-panel p-4 rounded-xl space-y-3 border-[#0D483F]/10">
                           <span className="text-xs font-bold text-[#0D483F]/60 uppercase tracking-widest block border-b border-[#0D483F]/10 pb-1">Connected Members</span>
                           <div className="space-y-2 max-h-48 overflow-y-auto pr-1">
-                            {adminState?.players?.map((player) => (
+                            {Object.values(adminState?.players || {}).map((player) => (
                               <div key={player.socketId || player.id} className="flex justify-between items-center bg-[#FAF6EE] px-2.5 py-1.5 rounded-lg border border-[#0D483F]/10 text-xs">
                                 <div className="truncate pr-2">
                                   <strong className="text-neonPurple block leading-tight">{player.name}</strong>
