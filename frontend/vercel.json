@@ -1,0 +1,15 @@
+{
+  "redirects": [
+    {
+      "source": "/display/admin",
+      "destination": "/#/display/admin",
+      "permanent": true
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}
