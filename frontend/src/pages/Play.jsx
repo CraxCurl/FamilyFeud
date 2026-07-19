@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useSocket } from '../context/SocketContext';
 import { Smartphone, Send, Clock, UserCheck, ShieldAlert, Award, Globe, Sparkles } from 'lucide-react';
 import { sounds } from '../utils/sounds';
+import confetti from 'canvas-confetti';
 
 const InstagramIcon = (props) => (
   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...props}><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
@@ -21,6 +22,43 @@ export default function Play() {
   const [isBlocked, setIsBlocked] = useState(false);
   const [localGameOver, setLocalGameOver] = useState(false);
   const finalSoundPlayed = useRef(false);
+
+  const prevScoreRef = useRef(null);
+  const [showCelebration, setShowCelebration] = useState(false);
+  const [pointsEarned, setPointsEarned] = useState(0);
+
+  // Monitor score increases for team celebration confetti & pop-up
+  useEffect(() => {
+    if (!team || !gameState.teams || !gameState.teams[team]) return;
+    const currentScore = gameState.teams[team].score || 0;
+
+    if (prevScoreRef.current === null) {
+      prevScoreRef.current = currentScore;
+      return;
+    }
+
+    if (currentScore > prevScoreRef.current) {
+      const diff = currentScore - prevScoreRef.current;
+      setPointsEarned(diff);
+      setShowCelebration(true);
+
+      // Trigger confetti on player's screen
+      confetti({
+        particleCount: 80,
+        spread: 60,
+        origin: { y: 0.7 }
+      });
+
+      const timer = setTimeout(() => {
+        setShowCelebration(false);
+      }, 3000);
+
+      prevScoreRef.current = currentScore;
+      return () => clearTimeout(timer);
+    } else {
+      prevScoreRef.current = currentScore;
+    }
+  }, [gameState.teams, team]);
 
   useEffect(() => {
     let savedId = localStorage.getItem('feud_user_id');
@@ -435,6 +473,31 @@ export default function Play() {
           Walk Off (Delete Profile)
         </button>
       </div>
+
+      {/* CONGRATULATIONS CELEBRATION OVERLAY */}
+      <AnimatePresence>
+        {showCelebration && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.8 }}
+            className="fixed inset-0 flex items-center justify-center z-50 pointer-events-none p-4"
+          >
+            <div className="bg-white border-4 border-[#0D483F] p-8 text-center shadow-[12px_12px_0_#D2F128] max-w-sm w-full flex flex-col items-center">
+              <span className="text-4xl mb-3 animate-bounce">🎉</span>
+              <h2 className="text-3xl font-condensed font-black uppercase tracking-tight text-[#0D483F] mb-1">
+                +{pointsEarned} Points!
+              </h2>
+              <p className="text-xs font-condensed font-bold text-neonPink tracking-widest uppercase">
+                Awesome Job Team!
+              </p>
+              <div className="mt-4 text-[10px] font-condensed font-bold tracking-widest text-[#0D483F]/55 uppercase">
+                Keep it up!
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
