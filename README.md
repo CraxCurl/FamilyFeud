@@ -15,6 +15,14 @@ An interactive, real-time multiplayer Family Feud style game customized for **An
 
 ---
 
+## Access & Security
+
+To keep players from accessing the game controls or the live board during active play, the admin host panel and public board are hidden under a specific path:
+- **Player Controller**: `/` or `/play`
+- **Hidden Display Board & Host Panel**: `/display/admin` (This route is hidden and omitted from the landing screen to keep game management and question previews secure).
+
+---
+
 ## Project Structure
 
 ```
