@@ -146,10 +146,9 @@ export default function Play() {
   };
 
   // Determine current play states
-  const isMyTeamActiveInput = gameState.activeInputTeam === team;
   const showBuzzer = gameState.status === 'PLAYING' && !gameState.activeInputTeam && !gameState.buzzState.locked;
-  const showAnswerInput = gameState.status === 'PLAYING' && isMyTeamActiveInput;
-  const showWaiting = gameState.status === 'PLAYING' && !isMyTeamActiveInput;
+  const showActiveTurn = gameState.status === 'PLAYING' && gameState.activeInputTeam;
+  const isMyTeamActiveInput = gameState.activeInputTeam === team;
   const isDraw = gameState.winner === 'DRAW';
   const isWinner = isDraw || gameState.winner === team;
 
@@ -382,8 +381,8 @@ export default function Play() {
             </motion.div>
           )}
 
-          {/* INPUT ANSWER STATE (ACTIVE TEAM TURN) */}
-          {showAnswerInput && (
+          {/* ACTIVE TEAM TURN STATE */}
+          {showActiveTurn && (
             <motion.div
               key="answer"
               initial={{ opacity: 0, scale: 0.95 }}
@@ -391,10 +390,10 @@ export default function Play() {
               exit={{ opacity: 0, scale: 0.95 }}
               className="w-full max-w-md p-8 bg-white border-2 border-[#0D483F] shadow-[8px_8px_0_#0D483F] relative overflow-hidden flex flex-col items-center text-center"
             >
-              <div className="absolute top-0 left-0 right-0 h-1.5 bg-[#D2F128]" />
+              <div className={`absolute top-0 left-0 right-0 h-1.5 ${isMyTeamActiveInput ? 'bg-[#D2F128]' : 'bg-[#0D483F]/30'}`} />
               
-              <span className="text-xs font-condensed font-black tracking-[0.2em] text-neonPink uppercase mb-2">
-                YOUR TEAM'S TURN
+              <span className={`text-xs font-condensed font-black tracking-[0.2em] uppercase mb-2 ${isMyTeamActiveInput ? 'text-neonPink' : 'text-[#0D483F]/50'}`}>
+                {isMyTeamActiveInput ? "YOUR TEAM'S TURN" : `${gameState.activeInputTeam?.toUpperCase()}'S TURN`}
               </span>
               
               <h4 className="text-xl font-condensed font-bold uppercase tracking-tight text-[#0D483F] mb-6 px-2">
@@ -436,29 +435,25 @@ export default function Play() {
                 </div>
               </div>
 
-              <div className="p-4 bg-[#FAF6EE] border-2 border-dashed border-[#0D483F]/30 w-full">
-                <p className="text-sm font-bold text-[#0D483F] uppercase tracking-wide">
-                  Answer Verbally Now!
-                </p>
-                <p className="text-xs text-[#0D483F]/70 mt-1 leading-relaxed">
-                  Call out your answer to the host. The host will reveal it and award points on the admin board.
-                </p>
-              </div>
-            </motion.div>
-          )}
-
-          {/* WAITING FOR THE OTHER TEAM'S TURN */}
-          {showWaiting && (
-            <motion.div
-              key="waiting"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="text-center max-w-sm w-full flex flex-col items-center"
-            >
-              <p className="text-xs font-semibold tracking-widest text-[#0D483F]/55 uppercase">
-                Waiting for your next turn
-              </p>
+              {isMyTeamActiveInput ? (
+                <div className="p-4 bg-[#FAF6EE] border-2 border-dashed border-[#0D483F]/30 w-full">
+                  <p className="text-sm font-bold text-[#0D483F] uppercase tracking-wide">
+                    Answer Verbally Now!
+                  </p>
+                  <p className="text-xs text-[#0D483F]/70 mt-1 leading-relaxed">
+                    Call out your answer to the host. The host will reveal it and award points on the admin board.
+                  </p>
+                </div>
+              ) : (
+                <div className="p-4 bg-[#FAF6EE]/50 border-2 border-dashed border-[#0D483F]/10 w-full">
+                  <p className="text-sm font-bold text-[#0D483F]/65 uppercase tracking-wide">
+                    Waiting for Other Team...
+                  </p>
+                  <p className="text-xs text-[#0D483F]/50 mt-1 leading-relaxed">
+                    The other team is answering verbally to the host. Think of your answers in case they get a strike!
+                  </p>
+                </div>
+              )}
             </motion.div>
           )}
 
