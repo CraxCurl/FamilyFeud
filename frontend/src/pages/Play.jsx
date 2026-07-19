@@ -51,7 +51,7 @@ export default function Play() {
 
       const timer = setTimeout(() => {
         setShowCelebration(false);
-      }, 1500);
+      }, 1000);
 
       prevScoreRef.current = currentScore;
       return () => clearTimeout(timer);

@@ -3,7 +3,8 @@ class SoundSynthesizer {
   constructor() {
     this.ctx = null;
     this.muted = false;
-    this.buzzAudio = null;
+    this.buzzAudio = new Audio('/buzzersound.mp3');
+    this.buzzAudio.preload = 'auto';
   }
 
   init() {
@@ -12,10 +13,6 @@ class SoundSynthesizer {
     }
     if (this.ctx.state === 'suspended') {
       this.ctx.resume();
-    }
-    if (!this.buzzAudio) {
-      this.buzzAudio = new Audio('buzzersound.mp3');
-      this.buzzAudio.preload = 'auto';
     }
   }
 
