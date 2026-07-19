@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useSocket } from '../context/SocketContext';
 import confetti from 'canvas-confetti';
 import { HelpCircle, Star, QrCode, Settings, X, Play, RotateCcw, FastForward, ShieldAlert, Sparkles, FileCode, Plus, Trash2, Copy, Search, Eye, EyeOff, Key } from 'lucide-react';
+import { sounds } from '../utils/sounds';
 
 export default function Display() {
   const { socket, gameState, adminState } = useSocket();
@@ -17,6 +18,29 @@ export default function Display() {
 
   const [showStrikeOverlay, setShowStrikeOverlay] = useState(false);
   const [showLobbyQR, setShowLobbyQR] = useState(true);
+  const [audioSuspended, setAudioSuspended] = useState(true);
+
+  // Sync / check AudioContext state
+  useEffect(() => {
+    const checkAudio = () => {
+      if (sounds.ctx && sounds.ctx.state === 'running') {
+        setAudioSuspended(false);
+      } else {
+        setAudioSuspended(true);
+      }
+    };
+    checkAudio();
+
+    const resumeAudio = () => {
+      sounds.init();
+      setTimeout(checkAudio, 150);
+    };
+
+    window.addEventListener('click', resumeAudio);
+    return () => {
+      window.removeEventListener('click', resumeAudio);
+    };
+  }, []);
 
   // Question Builder/Management Tab States
   const [builderTab, setBuilderTab] = useState('controls'); // controls, builder
@@ -253,6 +277,15 @@ export default function Display() {
   return (
     <div className="flex flex-col min-h-screen px-6 py-6 relative justify-between select-none pb-24 game-display">
       
+      {audioSuspended && (
+        <div 
+          onClick={() => sounds.init()}
+          className="mb-4 bg-amber-500 text-darkBg text-xs font-black py-2.5 px-4 text-center cursor-pointer hover:bg-amber-400 transition animate-pulse uppercase tracking-wider rounded-xl border border-amber-600"
+        >
+          ⚠️ Browser blocked game sounds. Click anywhere on this screen to enable game sound effects!
+        </div>
+      )}
+      
       {/* Top Banner / Round Status */}
       <div className="flex justify-between items-center mb-5 game-topbar">
         <div className="flex items-center gap-3">
@@ -309,6 +342,22 @@ export default function Display() {
                 {String(answers.reduce((sum, ans, idx) => sum + (gameState.revealedAnswers && gameState.revealedAnswers[idx] ? ans.points : 0), 0)).padStart(3, '0')}
               </div>
             </div>
+
+            {gameState.activeInputTeam ? (
+              <div className="mb-3 bg-neonCyan/15 border border-neonCyan/30 text-neonCyan px-4 py-1.5 rounded-full text-xs font-extrabold uppercase tracking-widest inline-flex items-center gap-2 animate-bounce">
+                <span className="w-2 h-2 rounded-full bg-neonCyan animate-ping" />
+                {gameState.activeInputTeam} is Answering
+                {gameState.buzzState?.player && ` (${gameState.buzzState.player.name} buzzed)`}
+              </div>
+            ) : gameState.buzzState?.locked ? (
+              <div className="mb-3 bg-neonPink/15 border border-neonPink/30 text-neonPink px-4 py-1.5 rounded-full text-xs font-extrabold uppercase tracking-widest inline-flex items-center gap-2 animate-pulse">
+                🔥 {gameState.buzzState.player?.name} Buzzed!
+              </div>
+            ) : gameState.status === 'PLAYING' ? (
+              <div className="mb-3 bg-amber-500/10 border border-amber-500/20 text-amber-500 px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider inline-flex items-center gap-1.5">
+                🛎️ Buzzer Open
+              </div>
+            ) : null}
 
             <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-neonPurple/5 border border-neonPurple/10 rounded-full text-xs text-[#0D483F]/75 mb-3 font-semibold">
               <HelpCircle className="w-3.5 h-3.5 text-[#0D483F]/70" />
@@ -1034,7 +1083,12 @@ function renderTeamPanel(gameState, index) {
       }`}
     >
       {isActive && (
-        <div className="absolute top-0 left-0 right-0 h-[3px] bg-neonCyan" />
+        <>
+          <div className="absolute top-0 left-0 right-0 h-[3px] bg-neonCyan" />
+          <div className="bg-neonCyan text-white text-[10px] font-black py-1 px-2.5 uppercase tracking-widest animate-pulse inline-block rounded-full mb-2 shadow-[0_0_10px_rgba(6,182,212,0.3)]">
+            ⚡ Now Playing
+          </div>
+        </>
       )}
       
       <span className="text-[10px] font-bold text-[#0D483F]/60 uppercase tracking-widest mb-1 block">Team {index === 0 ? 'Alpha' : 'Beta'}</span>

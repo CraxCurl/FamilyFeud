@@ -328,7 +328,7 @@ function concludeGame() {
   sendAdminState();
 }
 
-function beginTeamTurn(team) {
+function beginTeamTurn(team, buzzed = false) {
   if (!team || gameState.turnsTaken[team] >= gameState.turnsPerTeam) {
     finishTurnCycle();
     return;
@@ -337,9 +337,12 @@ function beginTeamTurn(team) {
   gameState.status = 'PLAYING';
   gameState.activeInputTeam = team;
   gameState.turnsTaken[team] += 1;
-  // This is a turn-based game now: no buzz winner is required for a team to play.
-  gameState.buzzState = { locked: false, player: null, team: null, time: null };
-  io.emit('play_sound', { type: 'ROUND_START' });
+  
+  if (!buzzed) {
+    // If not triggered by a buzz (e.g. automatic turn transition), clear the buzz state.
+    gameState.buzzState = { locked: false, player: null, team: null, time: null };
+    io.emit('play_sound', { type: 'ROUND_START' });
+  }
 
   startTimer(gameState.turnSeconds, (secondsLeft) => {
     if (secondsLeft <= 3) io.emit('play_sound', { type: 'COUNTDOWN' });
@@ -724,7 +727,7 @@ io.on('connection', (socket) => {
       time: Date.now()
     };
     io.emit('play_sound', { type: 'BUZZ' });
-    beginTeamTurn(player.team);
+    beginTeamTurn(player.team, true);
   });
 
   // Player Answer Submission
