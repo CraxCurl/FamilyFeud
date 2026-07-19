@@ -8,7 +8,7 @@ export default function Admin() {
 
   // Auth States
   const [adminKey, setAdminKey] = useState(localStorage.getItem('feud_admin_key') || '');
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('feud_admin_key'));
   const [authError, setAuthError] = useState('');
   const [passcodeInput, setPasscodeInput] = useState('');
 
