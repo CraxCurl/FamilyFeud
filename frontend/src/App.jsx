@@ -10,6 +10,8 @@ function AppShell() {
   const { socket } = useSocket();
   const location = useLocation();
   const isDisplayRoute = location.pathname === '/display/admin';
+  const isPlayRoute = location.pathname === '/play';
+  const showGlobalHeader = !isDisplayRoute && !isPlayRoute;
 
   useEffect(() => {
     if (!socket) return;
@@ -33,13 +35,15 @@ function AppShell() {
 
   return (
       <div className="relative min-h-screen overflow-hidden bg-darkBg">
-        <div className="moxie-marquee" aria-label="Game information">
-          <div className="moxie-marquee__track">
-            <span>15 SECONDS PER TEAM</span><b>&bull;</b><span>THREE TURNS EACH</span><b>&bull;</b><span>NO BUZZER NEEDED</span><b>&bull;</b><span>PLAY FAIR. PLAY LOUD.</span><b>&bull;</b>
-            <span>15 SECONDS PER TEAM</span><b>&bull;</b><span>THREE TURNS EACH</span><b>&bull;</b><span>NO BUZZER NEEDED</span><b>&bull;</b><span>PLAY FAIR. PLAY LOUD.</span><b>&bull;</b>
+        {showGlobalHeader && (
+          <div className="moxie-marquee" aria-label="Game information">
+            <div className="moxie-marquee__track">
+              <span>15 SECONDS PER TEAM</span><b>&bull;</b><span>THREE TURNS EACH</span><b>&bull;</b><span>NO BUZZER NEEDED</span><b>&bull;</b><span>PLAY FAIR. PLAY LOUD.</span><b>&bull;</b>
+              <span>15 SECONDS PER TEAM</span><b>&bull;</b><span>THREE TURNS EACH</span><b>&bull;</b><span>NO BUZZER NEEDED</span><b>&bull;</b><span>PLAY FAIR. PLAY LOUD.</span><b>&bull;</b>
+            </div>
           </div>
-        </div>
-        {!isDisplayRoute && (
+        )}
+        {showGlobalHeader && (
           <header className="moxie-header">
             <span className="moxie-header__mark" aria-hidden="true" />
             <span className="moxie-header__logo">AC FEUD</span>

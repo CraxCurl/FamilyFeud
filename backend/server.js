@@ -158,6 +158,7 @@ let gameState = {
   strikes: 0,
   teams: {}, // { teamName: { score: 0, members: [] } }
   players: {}, // { socketId: { name: '', team: '', id: '' } }
+  queue: [], // Waiting queue for players { id, name, socketId }
   buzzState: {
     locked: false,
     player: null,
@@ -328,6 +329,30 @@ function concludeGame() {
   sendAdminState();
 }
 
+function processQueue() {
+  const lobbyCapacity = 6;
+  const currentActiveCount = Object.keys(gameState.players).length;
+  const spacesAvailable = lobbyCapacity - currentActiveCount;
+
+  if (spacesAvailable > 0 && gameState.queue.length > 0) {
+    const toPromote = gameState.queue.splice(0, spacesAvailable);
+    toPromote.forEach(player => {
+      gameState.players[player.socketId] = {
+        id: player.id,
+        name: player.name,
+        team: null,
+        socketId: player.socketId
+      };
+      io.to(player.socketId).emit('joined_details', gameState.players[player.socketId]);
+    });
+
+    // Recalculate and update queue positions for remaining players
+    gameState.queue.forEach((player, idx) => {
+      io.to(player.socketId).emit('joined_queue', { position: idx + 1 });
+    });
+  }
+}
+
 function beginTeamTurn(team, buzzed = false) {
   if (!team || gameState.turnsTaken[team] >= gameState.turnsPerTeam) {
     finishTurnCycle();
@@ -411,6 +436,10 @@ io.on('connection', (socket) => {
       // Check if they are already in the active session
       let existingPlayer = Object.values(gameState.players).find(p => p.id === id);
       if (existingPlayer) {
+        const oldSocketId = Object.keys(gameState.players).find(k => gameState.players[k].id === id);
+        if (oldSocketId && oldSocketId !== socket.id) {
+          delete gameState.players[oldSocketId];
+        }
         gameState.players[socket.id] = { ...existingPlayer, socketId: socket.id };
         const team = existingPlayer.team;
         if (team && gameState.teams[team]) {
@@ -425,8 +454,22 @@ io.on('connection', (socket) => {
         return;
       }
 
-      if (gameState.status !== 'LOBBY') {
-        socket.emit('join_blocked', { message: 'A game is already in progress. Please wait for the next session.' });
+      // Check if they are already in the queue
+      let existingQueueIndex = gameState.queue.findIndex(p => p.id === id);
+      if (existingQueueIndex !== -1) {
+        gameState.queue[existingQueueIndex].socketId = socket.id;
+        socket.emit('joined_queue', { position: existingQueueIndex + 1 });
+        return;
+      }
+
+      const activePlayersCount = Object.keys(gameState.players).length;
+
+      if (gameState.status !== 'LOBBY' || activePlayersCount >= 6) {
+        const queuedPlayer = { id, name: resolvedUsername, socketId: socket.id };
+        gameState.queue.push(queuedPlayer);
+        socket.emit('joined_queue', { position: gameState.queue.length });
+        broadcastState();
+        sendAdminState();
         return;
       }
 
@@ -557,6 +600,7 @@ io.on('connection', (socket) => {
         gameState.strikeFlash = 0;
         gameState.turnsTaken = { 'Team Alpha': 0, 'Team Beta': 0 };
         stopTimer();
+        processQueue();
         break;
 
       case 'NEXT_ROUND':
@@ -801,6 +845,12 @@ io.on('connection', (socket) => {
     if (player) {
       delete gameState.players[socket.id];
     }
+    
+    gameState.queue = gameState.queue.filter(p => p.socketId !== socket.id);
+    gameState.queue.forEach((p, idx) => {
+      io.to(p.socketId).emit('joined_queue', { position: idx + 1 });
+    });
+
     broadcastState();
     sendAdminState();
   });

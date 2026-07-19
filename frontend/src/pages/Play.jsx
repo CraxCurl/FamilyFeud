@@ -20,6 +20,8 @@ export default function Play() {
   const [answerInput, setAnswerInput] = useState('');
   const [submitted, setSubmitted] = useState(false);
   const [isBlocked, setIsBlocked] = useState(false);
+  const [queuePosition, setQueuePosition] = useState(0);
+  const [showStrikeOverlay, setShowStrikeOverlay] = useState(false);
   const [localGameOver, setLocalGameOver] = useState(false);
   const finalSoundPlayed = useRef(false);
 
@@ -82,6 +84,24 @@ export default function Play() {
     };
   }, []);
 
+  // Strike flash listener
+  useEffect(() => {
+    if (gameState.strikeFlash > 0) {
+      setShowStrikeOverlay(true);
+      const t = setTimeout(() => {
+        setShowStrikeOverlay(false);
+      }, 1200);
+      return () => clearTimeout(t);
+    }
+  }, [gameState.strikeFlash]);
+
+  // Auto rejoin when status transitions back to LOBBY
+  useEffect(() => {
+    if (socket && userId && isBlocked && gameState.status === 'LOBBY') {
+      socket.emit('join_game', { id: userId });
+    }
+  }, [gameState.status, isBlocked, socket, userId]);
+
   useEffect(() => {
     let savedId = localStorage.getItem('feud_user_id');
     if (!savedId) {
@@ -103,6 +123,13 @@ export default function Play() {
       setTeam(details.team);
       setRegistered(true);
       setIsBlocked(false);
+      setQueuePosition(0);
+    });
+
+    socket.on('joined_queue', ({ position }) => {
+      setQueuePosition(position);
+      setRegistered(true);
+      setIsBlocked(true);
     });
 
     socket.on('join_blocked', () => {
@@ -111,6 +138,7 @@ export default function Play() {
 
     return () => {
       socket.off('joined_details');
+      socket.off('joined_queue');
       socket.off('join_blocked');
     };
   }, [socket, userId]);
@@ -178,8 +206,17 @@ export default function Play() {
             ⏳
           </div>
 
-          <h2 className="text-3xl font-condensed font-bold uppercase tracking-tight text-neonPurple mb-2">Game in Progress</h2>
-          <p className="text-xs text-neonPink font-extrabold uppercase tracking-widest mb-6">Wait in queue patiently</p>
+          <h2 className="text-3xl font-condensed font-bold uppercase tracking-tight text-neonPurple mb-2">
+            {queuePosition > 0 ? "You are Queued" : "Game in Progress"}
+          </h2>
+          
+          {queuePosition > 0 ? (
+            <div className="bg-[#FAF6EE] border-2 border-[#0D483F] px-8 py-3 mb-6 rounded-none font-condensed font-black text-3xl text-[#0D483F]">
+              Position: #{queuePosition}
+            </div>
+          ) : (
+            <p className="text-xs text-neonPink font-extrabold uppercase tracking-widest mb-6">Wait in queue patiently</p>
+          )}
           
           <div className="p-4 bg-[#FAF6EE] border-2 border-[#0D483F] rounded-none mb-6 text-sm text-[#0D483F] text-left">
             <p className="mb-2 font-condensed font-bold text-center text-neonPurple uppercase tracking-wider text-sm">About Android Club VIT Chennai</p>
@@ -511,6 +548,21 @@ export default function Play() {
               <div className="mt-4 text-[10px] font-condensed font-bold tracking-widest text-[#0D483F]/55 uppercase">
                 Keep it up!
               </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+      {/* STRIKE OVERLAY */}
+      <AnimatePresence>
+        {showStrikeOverlay && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-red-950/85 backdrop-blur-sm z-50 flex flex-col items-center justify-center pointer-events-none"
+          >
+            <div className="flex gap-8 strike-animate">
+              <span className="text-9xl md:text-[12rem] font-black text-red-600 drop-shadow-[0_0_30px_rgba(220,38,38,0.8)]">X</span>
             </div>
           </motion.div>
         )}
