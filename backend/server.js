@@ -277,6 +277,15 @@ const verifyAdminKey = (req, res, next) => {
 };
 
 // REST APIs
+app.post('/api/admin/verify', (req, res) => {
+  const { key } = req.body;
+  if (key && String(key).trim() === ADMIN_KEY) {
+    res.json({ success: true });
+  } else {
+    res.json({ success: false });
+  }
+});
+
 app.get('/api/questions', (req, res) => {
   // Free read to allow display/play view setup if needed
   res.json(getQuestions());
