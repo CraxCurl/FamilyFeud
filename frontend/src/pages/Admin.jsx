@@ -2,6 +2,17 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useSocket } from '../context/SocketContext';
 import { Play, RotateCcw, FastForward, Check, X, ShieldAlert, Sparkles, Plus, Trash2, Copy, FileCode, Search, HelpCircle, Eye, EyeOff, Trophy, RefreshCw, Key, Settings } from 'lucide-react';
 
+const getApiBaseUrl = () => {
+  if (import.meta.env.VITE_BACKEND_URL) {
+    return import.meta.env.VITE_BACKEND_URL;
+  }
+  return window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+    ? 'http://localhost:5000'
+    : (window.location.hostname.includes('render.com')
+        ? `${window.location.protocol}//${window.location.host}`
+        : 'https://familyfeud-cf4d.onrender.com');
+};
+
 export default function Admin() {
   const { socket, adminState, gameState } = useSocket();
   const fileInputRef = useRef(null);
@@ -56,7 +67,7 @@ export default function Admin() {
     e.preventDefault();
     try {
       const response = await fetch(
-        (import.meta.env.VITE_BACKEND_URL || `${window.location.protocol}//${window.location.hostname}:5000`) + '/api/admin/verify',
+        getApiBaseUrl() + '/api/admin/verify',
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -116,7 +127,7 @@ export default function Admin() {
 
     try {
       const response = await fetch(
-        (import.meta.env.VITE_BACKEND_URL || `${window.location.protocol}//${window.location.hostname}:5000`) + '/api/questions',
+        getApiBaseUrl() + '/api/questions',
         {
           method: 'POST',
           headers: { 
@@ -149,7 +160,7 @@ export default function Admin() {
     if (!confirm("Are you sure you want to delete this question?")) return;
     try {
       const response = await fetch(
-        (import.meta.env.VITE_BACKEND_URL || `${window.location.protocol}//${window.location.hostname}:5000`) + `/api/questions/${id}`,
+        getApiBaseUrl() + `/api/questions/${id}`,
         { 
           method: 'DELETE',
           headers: {
@@ -197,7 +208,7 @@ export default function Admin() {
         if (Array.isArray(parsed)) {
           for (const q of parsed) {
             await fetch(
-              (import.meta.env.VITE_BACKEND_URL || `${window.location.protocol}//${window.location.hostname}:5000`) + '/api/questions',
+              getApiBaseUrl() + '/api/questions',
               {
                 method: 'POST',
                 headers: { 
