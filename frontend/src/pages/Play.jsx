@@ -27,10 +27,11 @@ export default function Play() {
   const [showCelebration, setShowCelebration] = useState(false);
   const [pointsEarned, setPointsEarned] = useState(0);
 
+  const currentScore = (team && gameState.teams && gameState.teams[team]) ? (gameState.teams[team].score || 0) : 0;
+
   // Monitor score increases for team celebration confetti & pop-up
   useEffect(() => {
-    if (!team || !gameState.teams || !gameState.teams[team]) return;
-    const currentScore = gameState.teams[team].score || 0;
+    if (!team) return;
 
     if (prevScoreRef.current === null) {
       prevScoreRef.current = currentScore;
@@ -51,14 +52,14 @@ export default function Play() {
 
       const timer = setTimeout(() => {
         setShowCelebration(false);
-      }, 1000);
+      }, 1500);
 
       prevScoreRef.current = currentScore;
       return () => clearTimeout(timer);
     } else {
       prevScoreRef.current = currentScore;
     }
-  }, [gameState.teams, team]);
+  }, [currentScore, team]);
 
   // Mobile Audio Unlocker for programmatic sounds (e.g. buzzer)
   useEffect(() => {
