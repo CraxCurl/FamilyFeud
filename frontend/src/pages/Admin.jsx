@@ -233,8 +233,8 @@ export default function Admin() {
 
   // Filtered list of questions based on search query
   const filteredQs = (adminState?.allQuestions || []).filter(q => 
-    q.question.toLowerCase().includes(searchQuery.toLowerCase()) || 
-    q.category.toLowerCase().includes(searchQuery.toLowerCase())
+    (q?.question || '').toLowerCase().includes(searchQuery.toLowerCase()) || 
+    (q?.category || '').toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   // Render Login Panel if not authenticated
@@ -459,7 +459,7 @@ export default function Admin() {
                                 >
                                   Reveal Only
                                 </button>
-                                {Object.keys(adminState.teams).map(tName => (
+                                {Object.keys(adminState.teams || {}).map(tName => (
                                   <button
                                     key={tName}
                                     onClick={() => sendControl('REVEAL_ANSWER', { index: idx, awardToTeam: tName })}
@@ -514,14 +514,14 @@ export default function Admin() {
                 
                 <h3 className="font-bold text-[#0D483F] text-lg mb-4 uppercase font-condensed">Live Buzzer</h3>
                 
-                {adminState.buzzState.locked ? (
+                {adminState.buzzState?.locked ? (
                   <div className="p-4 bg-neonPink/10 border border-neonPink/30 text-center">
                     <div className="w-10 h-10 bg-neonPink rounded-full flex items-center justify-center font-bold text-white text-lg mx-auto mb-2">
                       🔥
                     </div>
                     <span className="text-xs text-gray-500 block font-semibold">BUZZ WINNER</span>
-                    <span className="font-black text-[#0D483F] text-lg block leading-tight my-1">{adminState.buzzState.player?.name}</span>
-                    <span className="text-xs text-neonPink font-bold uppercase tracking-wider block mb-4">{adminState.buzzState.team}</span>
+                    <span className="font-black text-[#0D483F] text-lg block leading-tight my-1">{adminState.buzzState?.player?.name}</span>
+                    <span className="text-xs text-neonPink font-bold uppercase tracking-wider block mb-4">{adminState.buzzState?.team}</span>
 
                     <button
                       onClick={() => sendControl('RESET_BUZZ')}
@@ -540,11 +540,11 @@ export default function Admin() {
               {/* Team Scores Override list */}
               <div className="bg-white border-2 border-[#0D483F] shadow-[6px_6px_0_#0D483F] p-6 rounded-none">
                 <h3 className="font-bold text-[#0D483F] text-lg mb-4 uppercase font-condensed">Teams & Scores</h3>
-                {Object.keys(adminState.teams).length === 0 ? (
+                {Object.keys(adminState.teams || {}).length === 0 ? (
                   <p className="text-xs text-gray-500">No teams registered yet.</p>
                 ) : (
                   <div className="space-y-4">
-                    {Object.keys(adminState.teams).map(tName => {
+                    {Object.keys(adminState.teams || {}).map(tName => {
                       const team = adminState.teams[tName];
                       return (
                         <div key={tName} className="p-3 bg-neonPurple/5 border border-neonPurple/10">
@@ -595,7 +595,7 @@ export default function Admin() {
                 <h3 className="font-bold text-[#0D483F] text-lg mb-2 uppercase font-condensed">Connected Sockets</h3>
                 
                 <div className="space-y-2 max-h-48 overflow-y-auto pr-1">
-                  {adminState.players.map((p, idx) => (
+                  {(adminState.players || []).map((p, idx) => (
                     <div key={idx} className="flex justify-between items-center bg-[#FAF6EE] border border-[#0D483F]/10 px-2.5 py-1.5 text-xs">
                       <div className="truncate">
                         <strong className="text-neonPurple block">{p.name}</strong>
@@ -787,7 +787,7 @@ export default function Admin() {
                       </div>
 
                       <div className="text-[10px] text-gray-500 font-semibold uppercase">
-                        <strong>Answers:</strong> {q.answers.map(a => `${a.text} (${a.points})`).join(', ')}
+                        <strong>Answers:</strong> {(q.answers || []).map(a => `${a.text} (${a.points})`).join(', ')}
                       </div>
                     </div>
                   ))}
