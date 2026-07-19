@@ -14,6 +14,8 @@ function AppShell() {
   useEffect(() => {
     if (!socket) return;
     const playSound = ({ type }) => {
+      if (type === 'BUZZ' && isDisplayRoute) return;
+      
       const soundMap = {
         ROUND_START: sounds.playRoundComplete,
         CORRECT: sounds.playCorrect,
@@ -27,7 +29,7 @@ function AppShell() {
     };
     socket.on('play_sound', playSound);
     return () => socket.off('play_sound', playSound);
-  }, [socket]);
+  }, [socket, isDisplayRoute]);
 
   return (
       <div className="relative min-h-screen overflow-hidden bg-darkBg">

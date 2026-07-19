@@ -3,6 +3,7 @@ class SoundSynthesizer {
   constructor() {
     this.ctx = null;
     this.muted = false;
+    this.buzzAudio = null;
   }
 
   init() {
@@ -11,6 +12,10 @@ class SoundSynthesizer {
     }
     if (this.ctx.state === 'suspended') {
       this.ctx.resume();
+    }
+    if (!this.buzzAudio) {
+      this.buzzAudio = new Audio('/buzzersound.mp3');
+      this.buzzAudio.preload = 'auto';
     }
   }
 
@@ -87,35 +92,12 @@ class SoundSynthesizer {
     this.init();
     if (this.muted) return;
 
-    const now = this.ctx.currentTime;
-    const osc1 = this.ctx.createOscillator();
-    const osc2 = this.ctx.createOscillator();
-    const gainNode = this.ctx.createGain();
-    const filter = this.ctx.createBiquadFilter();
-
-    osc1.type = 'sawtooth';
-    osc1.frequency.setValueAtTime(110, now); // Low A2
-
-    osc2.type = 'square';
-    osc2.frequency.setValueAtTime(112, now); // Slightly detuned for chorusing buzz
-
-    filter.type = 'lowpass';
-    filter.frequency.setValueAtTime(900, now); // Allow more high-frequency buzz for extra loudness
-
-    gainNode.gain.setValueAtTime(0, now);
-    gainNode.gain.linearRampToValueAtTime(0.9, now + 0.05); // High gain/volume
-    gainNode.gain.setValueAtTime(0.9, now + 0.45);
-    gainNode.gain.exponentialRampToValueAtTime(0.0001, now + 0.6);
-
-    osc1.connect(filter);
-    osc2.connect(filter);
-    filter.connect(gainNode);
-    gainNode.connect(this.ctx.destination);
-
-    osc1.start(now);
-    osc2.start(now);
-    osc1.stop(now + 0.6);
-    osc2.stop(now + 0.6);
+    if (this.buzzAudio) {
+      this.buzzAudio.currentTime = 0;
+      this.buzzAudio.play().catch(err => {
+        console.error("Failed to play custom buzzer audio:", err);
+      });
+    }
   }
 
   playCountdown() {
