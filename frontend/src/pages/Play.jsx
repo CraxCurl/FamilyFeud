@@ -111,18 +111,16 @@ export default function Play() {
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          className="w-full max-w-md p-8 rounded-2xl glass-panel border-[#0D483F]/15 flex flex-col items-center shadow-lg relative"
+          className="w-full max-w-md p-8 bg-white border-2 border-[#0D483F] shadow-[8px_8px_0_#0D483F] flex flex-col items-center relative"
         >
-          <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-neonPurple via-neonPink to-neonCyan" />
-          
-          <div className="w-16 h-16 bg-neonPink/10 border border-neonPink/20 rounded-full flex items-center justify-center mb-4 text-neonPink text-3xl">
+          <div className="w-16 h-16 bg-[#0D483F]/5 border-2 border-[#0D483F] rounded-none flex items-center justify-center mb-4 text-neonPink text-3xl">
             ⏳
           </div>
 
           <h2 className="text-3xl font-condensed font-bold uppercase tracking-tight text-neonPurple mb-2">Game in Progress</h2>
           <p className="text-xs text-neonPink font-extrabold uppercase tracking-widest mb-6">Wait in queue patiently</p>
           
-          <div className="p-4 bg-neonPurple/5 border border-neonPurple/10 rounded-xl mb-6 text-sm text-[#0D483F] text-left">
+          <div className="p-4 bg-[#FAF6EE] border-2 border-[#0D483F] rounded-none mb-6 text-sm text-[#0D483F] text-left">
             <p className="mb-2 font-condensed font-bold text-center text-neonPurple uppercase tracking-wider text-sm">About Android Club VIT Chennai</p>
             <p className="text-xs text-[#0D483F]/80 leading-relaxed">
               We are a community of passionate developers building future-ready mobile apps, organizing top-tier hackathons, and fostering innovation. Discover recruitments and more at our booth!
@@ -135,7 +133,7 @@ export default function Play() {
               href="https://www.instagram.com/androidvitc/"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center justify-center gap-2 py-3 bg-[#0D483F] text-white font-condensed font-bold uppercase tracking-wider rounded-xl text-sm hover:opacity-90 transition cursor-pointer"
+              className="flex items-center justify-center gap-2 py-3 bg-[#0D483F] text-white border-2 border-[#0D483F] font-condensed font-bold uppercase tracking-wider text-sm hover:opacity-90 transition cursor-pointer shadow-[3px_3px_0_#D2F128] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none"
             >
               <InstagramIcon className="w-4 h-4" /> Instagram
             </a>
@@ -143,7 +141,7 @@ export default function Play() {
               href="https://www.androidclub.in/"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center justify-center gap-2 py-3 bg-[#D2F128] text-[#0D483F] border border-[#0D483F] font-condensed font-bold uppercase tracking-wider rounded-xl text-sm hover:bg-[#0D483F] hover:text-white transition cursor-pointer"
+              className="flex items-center justify-center gap-2 py-3 bg-[#D2F128] text-[#0D483F] border-2 border-[#0D483F] font-condensed font-bold uppercase tracking-wider text-sm hover:bg-[#0D483F] hover:text-white transition cursor-pointer shadow-[3px_3px_0_#0D483F] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none"
             >
               <Globe className="w-4 h-4" /> Website
             </a>
@@ -173,30 +171,28 @@ export default function Play() {
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          className="w-full max-w-md p-8 rounded-2xl glass-panel border-[#0D483F]/15 flex flex-col items-center shadow-lg relative"
+          className="w-full max-w-md p-8 bg-white border-2 border-[#0D483F] shadow-[8px_8px_0_#0D483F] flex flex-col items-center relative"
         >
-          <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-neonPurple via-neonPink to-neonCyan" />
-          
-          <div className="w-16 h-16 bg-neonPurple/10 border border-neonPurple/20 rounded-full flex items-center justify-center mb-4 text-neonPurple text-3xl">
+          <div className="w-16 h-16 bg-[#0D483F]/5 border-2 border-[#0D483F] rounded-none flex items-center justify-center mb-4 text-neonPurple text-3xl">
             🎭
           </div>
 
           <h2 className="text-3xl font-condensed font-bold uppercase tracking-tight text-[#0D483F] mb-1">Assign Team Identity</h2>
           <p className="text-xs font-condensed font-bold text-neonPink tracking-widest uppercase mb-6">VIT CHENNAI CLUB EXPO SPECIAL</p>
           
-          <div className="p-5 bg-neonPurple/5 border border-neonPurple/10 rounded-xl mb-6 text-sm text-[#0D483F] text-left space-y-2">
+          <div className="p-5 bg-[#FAF6EE] border-2 border-[#0D483F] rounded-none mb-6 text-sm text-[#0D483F] text-left space-y-2">
             <p className="font-condensed font-bold text-center text-neonPurple uppercase tracking-widest text-xs">How it works</p>
-            <p className="text-xs text-[#0D483F]/80 leading-relaxed text-center">
+            <p className="text-xs text-[#0D483F]/85 leading-relaxed text-center font-medium">
               Pick your player identity before the host starts. You’ll be placed in Team Alpha or Team Beta (up to 3 players per team).
             </p>
-            <p className="text-xs text-[#0D483F]/60 text-center italic">
+            <p className="text-xs text-[#0D483F]/60 text-center italic font-medium">
               Teams lock as soon as the game begins.
             </p>
           </div>
 
           <button
             onClick={() => socket.emit('draw_identity')}
-            className="w-full py-3.5 bg-[#0D483F] text-white font-condensed font-bold uppercase tracking-wider rounded-xl text-sm hover:opacity-90 active:scale-[0.98] transition cursor-pointer shadow-md mb-6"
+            className="w-full py-3.5 bg-[#D2F128] text-[#0D483F] border-2 border-[#0D483F] font-condensed font-bold uppercase tracking-wider rounded-none text-base hover:bg-[#0D483F] hover:text-white transition cursor-pointer shadow-[4px_4px_0_#0D483F] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none mb-6"
           >
             Draw Alias & Join Team
           </button>
@@ -214,11 +210,9 @@ export default function Play() {
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          className="w-full max-w-md p-8 rounded-2xl glass-panel relative overflow-hidden flex flex-col items-center border-[#0D483F]/10"
+          className="w-full max-w-md p-8 bg-white border-2 border-[#0D483F] shadow-[8px_8px_0_#0D483F] relative overflow-hidden flex flex-col items-center"
         >
-          <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-neonPurple via-neonPink to-neonCyan" />
-          
-          <div className="w-16 h-16 bg-neonPurple/10 rounded-full flex items-center justify-center mb-4 text-neonPurple text-3xl">
+          <div className="w-16 h-16 bg-[#0D483F]/5 border-2 border-[#0D483F] rounded-none flex items-center justify-center mb-4 text-neonPurple text-3xl">
             🤖
           </div>
 
@@ -229,7 +223,7 @@ export default function Play() {
             {isDraw ? 'Both teams finished level.' : isWinner ? `${team} wins AC FEUD!` : `${gameState.winner || 'The other team'} takes this one.`}
           </p>
           
-          <div className="p-4 bg-neonPurple/5 border border-neonPurple/15 rounded-xl mb-6 text-sm text-[#0D483F]">
+          <div className="p-4 bg-[#FAF6EE] border-2 border-[#0D483F] rounded-none mb-6 text-sm text-[#0D483F] w-full">
             <p className="mb-2 font-condensed font-bold text-[#0D483F] uppercase tracking-wider text-sm">Stay in the Android Club loop</p>
             <p className="text-xs text-[#0D483F]/80">
               Follow Android Club VIT Chennai for projects, workshops, events, and the next chance to play.
@@ -242,7 +236,7 @@ export default function Play() {
               href="https://www.instagram.com/androidvitc/"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center justify-center gap-2 py-3 bg-[#0D483F] text-white font-condensed font-bold uppercase tracking-wider rounded-xl text-sm hover:opacity-90 transition cursor-pointer"
+              className="flex items-center justify-center gap-2 py-3 bg-[#0D483F] text-white border-2 border-[#0D483F] font-condensed font-bold uppercase tracking-wider text-sm hover:opacity-90 transition cursor-pointer shadow-[3px_3px_0_#D2F128] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none"
             >
               <InstagramIcon className="w-4 h-4" /> Instagram
             </a>
@@ -250,7 +244,7 @@ export default function Play() {
               href="https://www.androidclub.in/"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center justify-center gap-2 py-3 bg-[#D2F128] border border-[#0D483F] font-condensed font-bold uppercase tracking-wider rounded-xl text-[#0D483F] hover:bg-[#0D483F] hover:text-white transition cursor-pointer"
+              className="flex items-center justify-center gap-2 py-3 bg-[#D2F128] border-2 border-[#0D483F] font-condensed font-bold uppercase tracking-wider text-[#0D483F] hover:bg-[#0D483F] hover:text-white transition cursor-pointer shadow-[3px_3px_0_#0D483F] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none"
             >
               <Globe className="w-4 h-4" /> Website
             </a>
@@ -275,7 +269,7 @@ export default function Play() {
   return (
     <div className="flex flex-col min-h-screen px-4 py-6">
       {/* Player Header */}
-      <div className="flex justify-between items-center mb-6 glass-panel px-4 py-3 rounded-xl border-[#0D483F]/10">
+      <div className="flex justify-between items-center mb-6 bg-white px-4 py-3 border-2 border-[#0D483F] shadow-[4px_4px_0_#0D483F]">
         <div>
           <span className="text-[10px] text-[#0D483F]/60 block font-bold">PLAYER</span>
           <span className="font-extrabold text-[#0D483F] text-sm">{name}</span>
@@ -295,7 +289,7 @@ export default function Play() {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="text-center p-8 glass-panel rounded-2xl max-w-sm w-full border-[#0D483F]/10"
+              className="text-center p-8 bg-white border-2 border-[#0D483F] shadow-[6px_6px_0_#0D483F] max-w-sm w-full"
             >
               <div className="w-12 h-12 rounded-full border-2 border-dashed border-[#0D483F] animate-spin mx-auto mb-4" />
               <h3 className="text-xl font-condensed font-bold uppercase tracking-wider text-[#0D483F] mb-2">Waiting for Host...</h3>
@@ -303,7 +297,7 @@ export default function Play() {
                 The game will start automatically when the host launches the first round. Get ready!
               </p>
               
-              <div className="p-3 bg-[#FAF6EE] border border-[#0D483F]/10 rounded-xl mb-4 text-xs space-y-1 text-left">
+              <div className="p-3 bg-[#FAF6EE] border-2 border-[#0D483F]/20 rounded-none mb-4 text-xs space-y-1 text-left">
                 <div className="font-condensed uppercase tracking-wider"><span className="font-bold text-[#0D483F]/60">Your Alias:</span> <strong className="text-[#0D483F]">{name}</strong></div>
                 <div className="font-condensed uppercase tracking-wider"><span className="font-bold text-[#0D483F]/60">Your Team:</span> <strong className="text-[#0D483F]">{team || 'Lobby'}</strong></div>
               </div>
@@ -320,7 +314,7 @@ export default function Play() {
               <span className="text-xs font-condensed font-bold tracking-[0.16em] text-neonPink mb-3 uppercase">OPENING BUZZ</span>
               <h3 className="text-2xl font-condensed font-bold uppercase tracking-wider text-[#0D483F] mb-3">Who starts this round?</h3>
               <p className="text-sm text-[#0D483F]/70 mb-7">First buzz chooses the opening team. Then turns alternate every 15 seconds.</p>
-              <button onClick={handleBuzz} className="w-56 h-56 rounded-full bg-[#0D483F] border-[7px] border-[#D2F128] text-[#D2F128] font-condensed font-black text-4xl shadow-[0_12px_0_rgba(13,72,63,0.2)] hover:scale-105 active:scale-95 transition cursor-pointer">
+              <button onClick={handleBuzz} className="w-56 h-56 rounded-full bg-[#0D483F] border-[7px] border-[#D2F128] text-[#D2F128] font-condensed font-black text-4xl shadow-[0_12px_0_rgba(13,72,63,0.3)] hover:scale-105 active:scale-95 transition cursor-pointer">
                 BUZZ
               </button>
             </motion.div>
@@ -333,10 +327,8 @@ export default function Play() {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -30 }}
-              className="w-full max-w-md p-6 rounded-2xl glass-panel relative overflow-hidden"
+              className="w-full max-w-md p-6 bg-white border-2 border-[#0D483F] shadow-[8px_8px_0_#0D483F] relative overflow-hidden"
             >
-              <div className="absolute top-0 left-0 right-0 h-[3px] bg-[#0D483F]" />
-              
               <div className="flex justify-between items-center mb-4">
                 <span className="text-xs font-condensed font-bold text-[#0D483F] tracking-widest uppercase">YOUR TURN TO ANSWER</span>
                 <div className="flex items-center gap-1 text-neonPink text-xs font-bold">
@@ -356,13 +348,13 @@ export default function Play() {
                   disabled={submitted}
                   required
                   autoFocus
-                  className="w-full px-4 py-3 bg-[#FAF6EE] border border-[#0D483F]/20 rounded-xl text-[#0D483F] placeholder-[#0D483F]/40 focus:outline-none focus:border-[#0D483F]/50 focus:ring-1 focus:ring-[#0D483F]/50 transition text-lg"
+                  className="w-full px-4 py-3 bg-[#FAF6EE] border-2 border-[#0D483F] rounded-none text-[#0D483F] placeholder-[#0D483F]/40 focus:outline-none focus:bg-white transition text-lg font-medium"
                 />
 
                 <button
                   type="submit"
                   disabled={submitted}
-                  className="w-full py-3 bg-[#0D483F] text-white font-condensed font-bold uppercase tracking-wider rounded-xl hover:bg-[#0D483F]/90 active:scale-[0.98] transition duration-200 flex items-center justify-center gap-2 cursor-pointer"
+                  className="w-full py-3 bg-[#D2F128] text-[#0D483F] border-2 border-[#0D483F] font-condensed font-bold uppercase tracking-wider hover:bg-[#0D483F] hover:text-white transition duration-200 flex items-center justify-center gap-2 cursor-pointer shadow-[3px_3px_0_#0D483F] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none"
                 >
                   <Send className="w-4 h-4" /> {submitted ? 'Sending...' : 'Submit Answer'}
                 </button>
@@ -390,10 +382,10 @@ export default function Play() {
               key="round-end"
               initial={{ opacity: 0, scale: 0.96 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="text-center p-8 glass-panel rounded-2xl max-w-sm w-full border-[#0D483F]/10"
+              className="text-center p-8 bg-white border-2 border-[#0D483F] shadow-[6px_6px_0_#0D483F] max-w-sm w-full"
             >
               <Award className="w-12 h-12 text-neonPink mx-auto mb-4" />
-              <h3 className="text-xl font-bold text-neonPurple mb-2">Round Complete</h3>
+              <h3 className="text-xl font-condensed font-bold uppercase tracking-wider text-neonPurple mb-2">Round Complete</h3>
               <p className="text-xs text-[#0D483F]/70">
                 Both teams completed their three turns. Watch the board for the next question.
               </p>
