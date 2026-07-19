@@ -15,8 +15,8 @@ export default function Display() {
   const [authError, setAuthError] = useState('');
   const isAuthenticated = !!adminState && !!adminKey;
 
-  // Strike visual states
   const [showStrikeOverlay, setShowStrikeOverlay] = useState(false);
+  const [showLobbyQR, setShowLobbyQR] = useState(true);
 
   // Question Builder/Management Tab States
   const [builderTab, setBuilderTab] = useState('controls'); // controls, builder
@@ -80,6 +80,13 @@ export default function Display() {
       }, 250);
 
       return () => clearInterval(interval);
+    }
+  }, [gameState.status]);
+
+  // Re-open QR popup whenever the game transitions back to LOBBY
+  useEffect(() => {
+    if (gameState.status === 'LOBBY') {
+      setShowLobbyQR(true);
     }
   }, [gameState.status]);
 
@@ -466,7 +473,7 @@ export default function Display() {
  
       {/* LOBBY JOIN QR POPUP */}
       <AnimatePresence>
-        {gameState.status === 'LOBBY' && (
+        {gameState.status === 'LOBBY' && showLobbyQR && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -479,6 +486,14 @@ export default function Display() {
               exit={{ scale: 0.9, y: 30 }}
               className="w-full max-w-lg bg-white border-4 border-[#0D483F] p-8 text-center relative shadow-[12px_12px_0_#0D483F] flex flex-col items-center"
             >
+              {/* Close Button */}
+              <button
+                onClick={() => setShowLobbyQR(false)}
+                className="absolute top-4 right-4 p-1 hover:bg-[#0D483F]/10 rounded-lg text-[#0D483F]/70 hover:text-[#0D483F] transition cursor-pointer"
+              >
+                <X className="w-6 h-6" />
+              </button>
+
               <h2 className="text-4xl font-condensed font-bold uppercase tracking-tight text-[#0D483F] mb-2">Join the Feud!</h2>
               <p className="text-xs font-condensed font-bold text-neonPink tracking-widest uppercase mb-6">Scan to join Team Alpha or Team Beta</p>
               
