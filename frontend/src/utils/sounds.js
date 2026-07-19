@@ -3,8 +3,10 @@ class SoundSynthesizer {
   constructor() {
     this.ctx = null;
     this.muted = false;
-    this.buzzBuffer = null;
-    this.loadingBuzz = false;
+    this.buzzAudio = new Audio('/buzzersound.mp3');
+    this.buzzAudio.preload = 'auto';
+    this.buzzAudio.load();
+    this.lastBuzzTime = 0;
   }
 
   init() {
@@ -13,25 +15,6 @@ class SoundSynthesizer {
     }
     if (this.ctx.state === 'suspended') {
       this.ctx.resume();
-    }
-    if (!this.buzzBuffer && !this.loadingBuzz) {
-      this.loadingBuzz = true;
-      fetch('/buzzersound.mp3')
-        .then(res => res.arrayBuffer())
-        .then(arrayBuffer => {
-          if (this.ctx) {
-            return this.ctx.decodeAudioData(arrayBuffer);
-          }
-          throw new Error('AudioContext not initialized');
-        })
-        .then(decodedBuffer => {
-          this.buzzBuffer = decodedBuffer;
-          this.loadingBuzz = false;
-        })
-        .catch(err => {
-          console.error("Failed to load/decode custom buzzer audio:", err);
-          this.loadingBuzz = false;
-        });
     }
   }
 
@@ -108,45 +91,17 @@ class SoundSynthesizer {
     this.init();
     if (this.muted) return;
 
-    if (this.buzzBuffer) {
-      try {
-        const source = this.ctx.createBufferSource();
-        source.buffer = this.buzzBuffer;
-        source.connect(this.ctx.destination);
-        source.start(0);
-      } catch (err) {
-        console.error("Failed to play decoded buzzer sound buffer:", err);
-      }
-    } else {
-      const now = this.ctx.currentTime;
-      const osc1 = this.ctx.createOscillator();
-      const osc2 = this.ctx.createOscillator();
-      const gainNode = this.ctx.createGain();
-      const filter = this.ctx.createBiquadFilter();
+    const now = Date.now();
+    if (this.lastBuzzTime && now - this.lastBuzzTime < 1000) {
+      return;
+    }
+    this.lastBuzzTime = now;
 
-      osc1.type = 'sawtooth';
-      osc1.frequency.setValueAtTime(110, now);
-
-      osc2.type = 'square';
-      osc2.frequency.setValueAtTime(112, now);
-
-      filter.type = 'lowpass';
-      filter.frequency.setValueAtTime(900, now);
-
-      gainNode.gain.setValueAtTime(0, now);
-      gainNode.gain.linearRampToValueAtTime(0.8, now + 0.05);
-      gainNode.gain.setValueAtTime(0.8, now + 0.4);
-      gainNode.gain.exponentialRampToValueAtTime(0.0001, now + 0.5);
-
-      osc1.connect(filter);
-      osc2.connect(filter);
-      filter.connect(gainNode);
-      gainNode.connect(this.ctx.destination);
-
-      osc1.start(now);
-      osc2.start(now);
-      osc1.stop(now + 0.5);
-      osc2.stop(now + 0.5);
+    if (this.buzzAudio) {
+      this.buzzAudio.currentTime = 0;
+      this.buzzAudio.play().catch(err => {
+        console.error("Failed to play custom buzzer audio:", err);
+      });
     }
   }
 

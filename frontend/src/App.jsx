@@ -1,8 +1,7 @@
 import React, { useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import Landing from './pages/Landing';
 import Play from './pages/Play';
-import Admin from './pages/Admin';
 import Display from './pages/Display';
 import { useSocket } from './context/SocketContext';
 import { sounds } from './utils/sounds';
@@ -12,8 +11,7 @@ function AppShell() {
   const location = useLocation();
   const isDisplayRoute = location.pathname === '/display/admin';
   const isPlayRoute = location.pathname === '/play';
-  const isAdminRoute = location.pathname === '/admin';
-  const showGlobalHeader = !isDisplayRoute && !isPlayRoute && !isAdminRoute;
+  const showGlobalHeader = !isDisplayRoute && !isPlayRoute;
 
   useEffect(() => {
     if (!socket) return;
@@ -55,7 +53,6 @@ function AppShell() {
         <Routes>
           <Route path="/" element={<Landing />} />
           <Route path="/play" element={<Play />} />
-          <Route path="/admin" element={<Admin />} />
           <Route path="/display/admin" element={<Display />} />
         </Routes>
       </div>

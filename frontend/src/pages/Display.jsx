@@ -314,7 +314,7 @@ export default function Display() {
           )}
           
           <button
-            onClick={() => { window.location.pathname = '/admin'; }}
+            onClick={() => setShowHostPanel(true)}
             className="p-3 bg-neonPurple/5 border border-neonPurple/15 rounded-xl hover:bg-neonPurple/10 text-[#0D483F] transition cursor-pointer"
             title="Host Controls Dashboard"
           >
@@ -494,7 +494,7 @@ export default function Display() {
                   Instagram Link
                 </a>
                 <button
-                  onClick={() => { window.location.pathname = '/admin'; }}
+                  onClick={() => setShowHostPanel(true)}
                   className="px-6 py-2.5 bg-[#D2F128] text-[#0D483F] border border-[#0D483F] font-bold text-xs rounded-xl hover:bg-[#0D483F] hover:text-white transition cursor-pointer"
                 >
                   Host Panel Options

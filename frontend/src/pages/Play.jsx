@@ -67,6 +67,15 @@ export default function Play() {
   useEffect(() => {
     const resumeAudio = () => {
       sounds.init();
+      if (sounds.buzzAudio) {
+        sounds.buzzAudio.load();
+        sounds.buzzAudio.play()
+          .then(() => {
+            sounds.buzzAudio.pause();
+            sounds.buzzAudio.currentTime = 0;
+          })
+          .catch(() => {});
+      }
     };
     window.addEventListener('click', resumeAudio);
     window.addEventListener('touchstart', resumeAudio);
@@ -148,7 +157,10 @@ export default function Play() {
   };
 
   const handleBuzz = () => {
-    if (socket && !gameState.buzzState.locked && !gameState.activeInputTeam) socket.emit('player_buzz');
+    if (socket && !gameState.buzzState.locked && !gameState.activeInputTeam) {
+      sounds.playBuzz();
+      socket.emit('player_buzz');
+    }
   };
 
   const handleLeave = () => {
