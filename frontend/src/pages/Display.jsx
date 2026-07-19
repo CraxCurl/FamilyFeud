@@ -10,10 +10,10 @@ export default function Display() {
   
   // Host Panel Auth & Visibility
   const [showHostPanel, setShowHostPanel] = useState(false);
-  const isAuthenticated = !!adminState && !!adminKey;
   const [adminKey, setAdminKey] = useState('');
   const [passcodeInput, setPasscodeInput] = useState('');
   const [authError, setAuthError] = useState('');
+  const isAuthenticated = !!adminState && !!adminKey;
 
   // Strike visual states
   const [showStrikeOverlay, setShowStrikeOverlay] = useState(false);
