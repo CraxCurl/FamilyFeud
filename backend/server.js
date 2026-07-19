@@ -640,8 +640,9 @@ io.on('connection', (socket) => {
         break;
 
       case 'RESET_BUZZ':
+        stopTimer();
+        gameState.activeInputTeam = null;
         gameState.buzzState = { locked: false, player: null, team: null, time: null };
-        startTurnCycle();
         break;
 
       case 'REMOVE_TEAM':

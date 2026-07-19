@@ -88,23 +88,34 @@ class SoundSynthesizer {
     if (this.muted) return;
 
     const now = this.ctx.currentTime;
-    const osc = this.ctx.createOscillator();
+    const osc1 = this.ctx.createOscillator();
+    const osc2 = this.ctx.createOscillator();
     const gainNode = this.ctx.createGain();
+    const filter = this.ctx.createBiquadFilter();
 
-    osc.type = 'square';
-    // Retro arcade laser sound
-    osc.frequency.setValueAtTime(880, now); // A5
-    osc.frequency.exponentialRampToValueAtTime(440, now + 0.15);
+    osc1.type = 'sawtooth';
+    osc1.frequency.setValueAtTime(110, now); // Low A2
+
+    osc2.type = 'square';
+    osc2.frequency.setValueAtTime(112, now); // Slightly detuned for chorusing buzz
+
+    filter.type = 'lowpass';
+    filter.frequency.setValueAtTime(600, now); // Cut harsh high frequencies
 
     gainNode.gain.setValueAtTime(0, now);
-    gainNode.gain.linearRampToValueAtTime(0.2, now + 0.02);
-    gainNode.gain.exponentialRampToValueAtTime(0.0001, now + 0.2);
+    gainNode.gain.linearRampToValueAtTime(0.4, now + 0.05);
+    gainNode.gain.setValueAtTime(0.4, now + 0.45);
+    gainNode.gain.exponentialRampToValueAtTime(0.0001, now + 0.6);
 
-    osc.connect(gainNode);
+    osc1.connect(filter);
+    osc2.connect(filter);
+    filter.connect(gainNode);
     gainNode.connect(this.ctx.destination);
 
-    osc.start(now);
-    osc.stop(now + 0.2);
+    osc1.start(now);
+    osc2.start(now);
+    osc1.stop(now + 0.6);
+    osc2.stop(now + 0.6);
   }
 
   playCountdown() {

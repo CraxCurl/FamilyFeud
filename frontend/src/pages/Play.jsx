@@ -326,41 +326,64 @@ export default function Play() {
           {showAnswerInput && (
             <motion.div
               key="answer"
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -30 }}
-              className="w-full max-w-md p-6 bg-white border-2 border-[#0D483F] shadow-[8px_8px_0_#0D483F] relative overflow-hidden"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="w-full max-w-md p-8 bg-white border-2 border-[#0D483F] shadow-[8px_8px_0_#0D483F] relative overflow-hidden flex flex-col items-center text-center"
             >
-              <div className="flex justify-between items-center mb-4">
-                <span className="text-xs font-condensed font-bold text-[#0D483F] tracking-widest uppercase">YOUR TURN TO ANSWER</span>
-                <div className="flex items-center gap-1 text-neonPink text-xs font-bold">
-                  <Clock className="w-4 h-4 animate-pulse" />
-                  <span>{gameState.timer}s</span>
+              <div className="absolute top-0 left-0 right-0 h-1.5 bg-[#D2F128]" />
+              
+              <span className="text-xs font-condensed font-black tracking-[0.2em] text-neonPink uppercase mb-2">
+                YOUR TEAM'S TURN
+              </span>
+              
+              <h4 className="text-xl font-condensed font-bold uppercase tracking-tight text-[#0D483F] mb-6 px-2">
+                {gameState.currentQuestion?.question}
+              </h4>
+
+              {/* Big, Beautiful Circular Countdown Timer */}
+              <div className="relative w-40 h-40 flex items-center justify-center mb-6">
+                <svg className="absolute w-full h-full transform -rotate-90">
+                  <circle
+                    cx="80"
+                    cy="80"
+                    r="70"
+                    stroke="#FAF6EE"
+                    strokeWidth="10"
+                    fill="transparent"
+                  />
+                  <motion.circle
+                    cx="80"
+                    cy="80"
+                    r="70"
+                    stroke={gameState.timer <= 5 ? "#FF2E93" : "#0D483F"}
+                    strokeWidth="10"
+                    fill="transparent"
+                    strokeDasharray={440}
+                    animate={{
+                      strokeDashoffset: (1 - (gameState.timer / (gameState.turnSeconds || 15))) * 440
+                    }}
+                    transition={{ duration: 0.5, ease: "linear" }}
+                  />
+                </svg>
+                <div className="flex flex-col items-center justify-center">
+                  <span className={`text-5xl font-black font-condensed tracking-tighter ${gameState.timer <= 5 ? 'text-neonPink animate-pulse' : 'text-[#0D483F]'}`}>
+                    {gameState.timer}
+                  </span>
+                  <span className="text-[10px] font-condensed font-bold text-[#0D483F]/50 uppercase tracking-widest mt-1">
+                    Seconds Left
+                  </span>
                 </div>
               </div>
 
-              <h4 className="text-lg font-condensed font-bold uppercase tracking-wide text-[#0D483F] mb-4">{gameState.currentQuestion?.question}</h4>
-
-              <form onSubmit={handleSubmitAnswer} className="space-y-4">
-                <input
-                  type="text"
-                  value={answerInput}
-                  onChange={(e) => setAnswerInput(e.target.value)}
-                  placeholder="Type your answer..."
-                  disabled={submitted}
-                  required
-                  autoFocus
-                  className="w-full px-4 py-3 bg-[#FAF6EE] border-2 border-[#0D483F] rounded-none text-[#0D483F] placeholder-[#0D483F]/40 focus:outline-none focus:bg-white transition text-lg font-medium"
-                />
-
-                <button
-                  type="submit"
-                  disabled={submitted}
-                  className="w-full py-3 bg-[#D2F128] text-[#0D483F] border-2 border-[#0D483F] font-condensed font-bold uppercase tracking-wider hover:bg-[#0D483F] hover:text-white transition duration-200 flex items-center justify-center gap-2 cursor-pointer shadow-[3px_3px_0_#0D483F] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none"
-                >
-                  <Send className="w-4 h-4" /> {submitted ? 'Sending...' : 'Submit Answer'}
-                </button>
-              </form>
+              <div className="p-4 bg-[#FAF6EE] border-2 border-dashed border-[#0D483F]/30 w-full">
+                <p className="text-sm font-bold text-[#0D483F] uppercase tracking-wide">
+                  Answer Verbally Now!
+                </p>
+                <p className="text-xs text-[#0D483F]/70 mt-1 leading-relaxed">
+                  Call out your answer to the host. The host will reveal it and award points on the admin board.
+                </p>
+              </div>
             </motion.div>
           )}
 

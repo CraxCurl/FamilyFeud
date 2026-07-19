@@ -379,9 +379,9 @@ export default function Admin() {
                 </button>
                 <button
                   onClick={() => sendControl('RESET_BUZZ')}
-                  className="py-2.5 bg-white/5 border border-white/10 text-xs font-semibold rounded-xl text-gray-400 hover:text-white transition"
+                  className="py-2.5 bg-amber-500/10 border border-amber-500/30 text-amber-400 hover:bg-amber-500/20 text-xs font-bold rounded-xl transition"
                 >
-                  Reset Buzzer
+                  Unlock Buzzer
                 </button>
                 <button
                   onClick={() => sendControl('SKIP_QUESTION')}
@@ -502,9 +502,9 @@ export default function Admin() {
 
                   <button
                     onClick={() => sendControl('RESET_BUZZ')}
-                    className="mt-4 px-4 py-2 bg-pink-500/20 border border-pink-500/40 text-pink-300 rounded-lg text-xs font-bold"
+                    className="mt-4 w-full py-2.5 bg-amber-500/20 border border-amber-500/40 text-amber-300 hover:bg-amber-500/30 rounded-xl text-xs font-bold transition"
                   >
-                    Clear Locked Buzz
+                    Unlock Buzzer
                   </button>
                 </div>
               ) : (
