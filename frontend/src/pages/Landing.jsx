@@ -25,19 +25,12 @@ export default function Landing() {
         initial={{ opacity: 0, y: 26 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.12, duration: 0.55 }}
-        className="acfeud-choices"
+        className="flex justify-center w-full max-w-sm mt-10"
       >
-        <button onClick={() => navigate('/play')} className="acfeud-choice acfeud-choice--dark">
+        <button onClick={() => navigate('/play')} className="acfeud-choice acfeud-choice--dark w-full">
           <span className="acfeud-choice__icon"><Gamepad2 size={26} /></span>
           <span className="acfeud-choice__label">PLAY THE FEUD</span>
           <span className="acfeud-choice__text">Join a team and send your answers during your timed turn.</span>
-          <ArrowUpRight className="acfeud-choice__arrow" size={23} />
-        </button>
-
-        <button onClick={() => navigate('/display')} className="acfeud-choice acfeud-choice--lime">
-          <span className="acfeud-choice__icon"><Monitor size={26} /></span>
-          <span className="acfeud-choice__label">OPEN THE BOARD</span>
-          <span className="acfeud-choice__text">Run the room with the live scores, question board, and host controls.</span>
           <ArrowUpRight className="acfeud-choice__arrow" size={23} />
         </button>
       </motion.section>

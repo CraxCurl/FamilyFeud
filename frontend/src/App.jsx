@@ -9,7 +9,7 @@ import { sounds } from './utils/sounds';
 function AppShell() {
   const { socket } = useSocket();
   const location = useLocation();
-  const isDisplayRoute = location.pathname === '/display' || location.pathname === '/admin';
+  const isDisplayRoute = location.pathname === '/display/admin';
 
   useEffect(() => {
     if (!socket) return;
@@ -47,8 +47,7 @@ function AppShell() {
         <Routes>
           <Route path="/" element={<Landing />} />
           <Route path="/play" element={<Play />} />
-          <Route path="/display" element={<Display />} />
-          <Route path="/admin" element={<Display />} />
+          <Route path="/display/admin" element={<Display />} />
         </Routes>
       </div>
   );

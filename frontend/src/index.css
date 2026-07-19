@@ -10,6 +10,7 @@
   
   --font-sans: 'DM Sans', Arial, sans-serif;
   --font-serif: 'DM Sans', Arial, sans-serif;
+  --font-condensed: 'Roboto Condensed', sans-serif;
 }
 
 @layer base {
