@@ -676,6 +676,31 @@ io.on('connection', (socket) => {
         }
         break;
 
+      case 'KICK_PLAYER':
+        const targetPlayerId = payload.playerId;
+        const targetSocketId = payload.socketId;
+        const socketIdToKick = Object.keys(gameState.players).find(
+          sId => sId === targetSocketId || gameState.players[sId].id === targetPlayerId
+        );
+        if (socketIdToKick) {
+          const playerToKick = gameState.players[socketIdToKick];
+          console.log(`Host kicked player: ${playerToKick.name}`);
+          
+          if (playerToKick.team && gameState.teams[playerToKick.team]) {
+            gameState.teams[playerToKick.team].members = gameState.teams[playerToKick.team].members.filter(
+              m => m.id !== playerToKick.id && m.socketId !== socketIdToKick
+            );
+          }
+          delete gameState.players[socketIdToKick];
+
+          const targetSocket = io.sockets.sockets.get(socketIdToKick);
+          if (targetSocket) {
+            targetSocket.emit('join_blocked');
+            targetSocket.disconnect(true);
+          }
+        }
+        break;
+
       default:
         break;
     }

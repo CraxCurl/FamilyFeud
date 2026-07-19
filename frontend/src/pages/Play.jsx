@@ -123,7 +123,7 @@ export default function Play() {
           <div className="p-4 bg-[#FAF6EE] border-2 border-[#0D483F] rounded-none mb-6 text-sm text-[#0D483F] text-left">
             <p className="mb-2 font-condensed font-bold text-center text-neonPurple uppercase tracking-wider text-sm">About Android Club VIT Chennai</p>
             <p className="text-xs text-[#0D483F]/80 leading-relaxed">
-              We are a community of passionate developers building future-ready mobile apps, organizing top-tier hackathons, and fostering innovation. Discover recruitments and more at our booth!
+              We are a community of passionate developers building future-ready mobile apps, organizing top-tier hackathons, and fostering innovation. Discover workshops, projects, and more at our booth!
             </p>
           </div>
 
@@ -251,7 +251,7 @@ export default function Play() {
           </div>
 
           <div className="text-[11px] font-condensed font-bold tracking-widest text-[#0D483F]/60 uppercase mb-4">
-            FIND RECRUITMENTS & MORE AT OUR BOOTH!
+            FIND EVENTS, HACKATHONS & MORE AT OUR BOOTH!
           </div>
 
           <button

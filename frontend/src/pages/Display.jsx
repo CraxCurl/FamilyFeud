@@ -418,21 +418,25 @@ export default function Display() {
                 </div>
               </div>
 
-              {/* Recruitment details & QR */}
+              {/* Instagram QR Code & Details */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center w-full max-w-lg mb-6 text-left">
                 <div className="space-y-4">
-                  <h4 className="text-lg font-black text-neonPurple border-b border-[#0D483F]/10 pb-2">Join Android Club VITC!</h4>
+                  <h4 className="text-lg font-black text-neonPurple border-b border-[#0D483F]/10 pb-2">Android Club VITC</h4>
                   <p className="text-xs text-[#0D483F]/85 leading-relaxed font-semibold">
-                    We are VIT Chennai's premier mobile & IoT development community. Meet our team at the Expo Booth to explore recruitments, workshops, and projects!
+                    We are VIT Chennai's premier mobile & IoT development community. Meet our team at the Expo Booth to explore our workshops, hackathons, and projects!
                   </p>
-                  <p className="text-xs font-bold text-neonPink animate-pulse">
-                    ✨ Recruitments are LIVE! Scan the QR to apply.
+                  <p className="text-xs font-bold text-[#0D483F] animate-pulse">
+                    ✨ Scan the QR to follow us on Instagram.
                   </p>
                 </div>
 
                 <div className="flex flex-col items-center justify-center p-4 bg-neonPurple/5 border border-neonPurple/10 rounded-2xl">
                   <div className="p-2 bg-white rounded-xl shadow-sm mb-2">
-                    <QrCode className="w-28 h-28 text-neonPurple" />
+                    <img 
+                      src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&color=0d483f&data=https://www.instagram.com/androidvitc/" 
+                      alt="Instagram QR Code" 
+                      className="w-28 h-28 object-contain"
+                    />
                   </div>
                   <span className="text-[10px] text-[#0D483F]/70 font-semibold tracking-wider uppercase">Scan to follow Instagram</span>
                   <span className="text-neonPink font-mono text-xs font-bold">@androidvitc</span>
@@ -775,6 +779,30 @@ export default function Display() {
                               </div>
                             );
                           })}
+                        </div>
+
+                        {/* Connected Members */}
+                        <div className="glass-panel p-4 rounded-xl space-y-3 border-[#0D483F]/10">
+                          <span className="text-xs font-bold text-[#0D483F]/60 uppercase tracking-widest block border-b border-[#0D483F]/10 pb-1">Connected Members</span>
+                          <div className="space-y-2 max-h-48 overflow-y-auto pr-1">
+                            {adminState?.players?.map((player) => (
+                              <div key={player.socketId || player.id} className="flex justify-between items-center bg-[#FAF6EE] px-2.5 py-1.5 rounded-lg border border-[#0D483F]/10 text-xs">
+                                <div className="truncate pr-2">
+                                  <strong className="text-neonPurple block leading-tight">{player.name}</strong>
+                                  <span className="text-[9px] text-gray-500 block uppercase font-bold">{player.team || 'Lobby'}</span>
+                                </div>
+                                <button
+                                  onClick={() => sendControl('KICK_PLAYER', { playerId: player.id, socketId: player.socketId })}
+                                  className="px-2 py-1 bg-red-500/10 border border-red-500/30 text-red-500 rounded text-[10px] font-bold hover:bg-red-500 hover:text-white transition cursor-pointer"
+                                >
+                                  Remove
+                                </button>
+                              </div>
+                            ))}
+                            {(!adminState?.players || adminState.players.length === 0) && (
+                              <div className="text-center py-3 text-gray-500 text-xs">No active players connected.</div>
+                            )}
+                          </div>
                         </div>
                       </div>
                     </div>
