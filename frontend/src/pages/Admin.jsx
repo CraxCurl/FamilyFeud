@@ -408,7 +408,19 @@ export default function Admin() {
                     return (
                       <div
                         key={idx}
-                        className="flex justify-between items-center p-3 rounded-xl border border-white/5 bg-white/5 hover:bg-white/10 transition"
+                        onClick={() => {
+                          if (!isRevealed) {
+                            sendControl('REVEAL_ANSWER', { 
+                              index: idx, 
+                              awardToTeam: adminState.activeInputTeam || undefined 
+                            });
+                          }
+                        }}
+                        className={`flex justify-between items-center p-3 rounded-xl border transition ${
+                          isRevealed 
+                            ? 'border-emerald-500/30 bg-emerald-500/5 cursor-default' 
+                            : 'border-white/5 bg-white/5 hover:bg-white/10 hover:border-emerald-500/30 cursor-pointer'
+                        }`}
                       >
                         <div className="flex items-center gap-3">
                           <span className="w-7 h-7 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center font-bold text-sm text-gray-400">
@@ -417,38 +429,38 @@ export default function Admin() {
                           <span className="font-semibold text-white">{ans.text}</span>
                         </div>
 
-                        <div className="flex items-center gap-3">
-                          <span className="font-extrabold text-neonPink text-sm">{ans.points} Pts</span>
+                        <div className="flex items-center gap-3" onClick={(e) => e.stopPropagation()}>
+                          <span className="font-extrabold text-neonPink text-sm mr-2">{ans.points} Pts</span>
                           {isRevealed ? (
                             <button
-                              onClick={() => sendControl('HIDE_ANSWER', { index: idx })}
-                              className="px-3 py-1.5 bg-pink-500/10 border border-pink-500/30 text-pink-400 rounded-lg text-xs font-bold flex items-center gap-1"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                sendControl('HIDE_ANSWER', { index: idx });
+                              }}
+                              className="px-3 py-1.5 bg-pink-500/10 border border-pink-500/30 text-pink-400 rounded-lg text-xs font-bold flex items-center gap-1 cursor-pointer"
                             >
                               <EyeOff className="w-3.5 h-3.5" /> Mask
                             </button>
                           ) : (
                             <div className="flex gap-2">
                               <button
-                                onClick={() => sendControl('REVEAL_ANSWER', { index: idx })}
-                                className="px-3 py-1.5 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 rounded-lg text-xs font-bold flex items-center gap-1"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  sendControl('REVEAL_ANSWER', { index: idx });
+                                }}
+                                className="px-3 py-1.5 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 rounded-lg text-xs font-bold flex items-center gap-1 cursor-pointer"
                               >
                                 <Eye className="w-3.5 h-3.5" /> Reveal Only
                               </button>
                               
-                              {adminState.activeInputTeam && (
-                                <button
-                                  onClick={() => sendControl('REVEAL_ANSWER', { index: idx, awardToTeam: adminState.activeInputTeam })}
-                                  className="px-2.5 py-1.5 bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 rounded-lg text-xs font-extrabold"
-                                >
-                                  + Active
-                                </button>
-                              )}
-                              
                               {Object.keys(adminState.teams).map(tName => (
                                 <button
                                   key={tName}
-                                  onClick={() => sendControl('REVEAL_ANSWER', { index: idx, awardToTeam: tName })}
-                                  className="px-2 py-1.5 bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 rounded-lg text-xs font-bold"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    sendControl('REVEAL_ANSWER', { index: idx, awardToTeam: tName });
+                                  }}
+                                  className="px-2 py-1.5 bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 rounded-lg text-xs font-bold cursor-pointer"
                                 >
                                   + {tName === 'Team Alpha' ? 'Alpha' : tName === 'Team Beta' ? 'Beta' : tName}
                                 </button>

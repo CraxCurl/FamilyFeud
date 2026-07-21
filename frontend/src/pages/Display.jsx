@@ -748,30 +748,54 @@ export default function Display() {
                               {adminState?.currentQuestion?.answers?.map((ans, idx) => {
                                 const isRevealed = adminState?.revealedAnswers?.[idx];
                                 return (
-                                  <div key={idx} className="flex justify-between items-center bg-neonPurple/5 px-3 py-2 rounded-lg border border-neonPurple/10">
+                                  <div 
+                                    key={idx} 
+                                    onClick={() => {
+                                      if (!isRevealed) {
+                                        sendControl('REVEAL_ANSWER', { 
+                                          index: idx, 
+                                          awardToTeam: adminState?.activeInputTeam || undefined 
+                                        });
+                                      }
+                                    }}
+                                    className={`flex justify-between items-center px-3 py-2 rounded-lg border transition ${
+                                      isRevealed 
+                                        ? 'bg-neonPurple/5 border-neonPurple/10 cursor-default' 
+                                        : 'bg-neonPurple/5 border-neonPurple/10 hover:border-emerald-500/40 cursor-pointer'
+                                    }`}
+                                  >
                                     <span className="text-xs font-bold text-neonPurple">{idx+1}. {ans.text} ({ans.points} Pts)</span>
                                     
-                                    <div className="flex gap-1.5">
+                                    <div className="flex gap-1.5" onClick={(e) => e.stopPropagation()}>
                                       {isRevealed ? (
                                         <button
-                                          onClick={() => sendControl('HIDE_ANSWER', { index: idx })}
-                                          className="px-2 py-1 bg-pink-500/10 border border-pink-500/30 text-pink-400 rounded text-[10px] font-bold"
+                                          onClick={(e) => {
+                                            e.stopPropagation();
+                                            sendControl('HIDE_ANSWER', { index: idx });
+                                          }}
+                                          className="px-2 py-1 bg-pink-500/10 border border-pink-500/30 text-pink-400 rounded text-[10px] font-bold cursor-pointer"
                                         >
                                           Hide
                                         </button>
                                       ) : (
                                         <>
                                           <button
-                                            onClick={() => sendControl('REVEAL_ANSWER', { index: idx })}
-                                            className="px-2 py-1 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 rounded text-[10px] font-bold"
+                                            onClick={(e) => {
+                                              e.stopPropagation();
+                                              sendControl('REVEAL_ANSWER', { index: idx });
+                                            }}
+                                            className="px-2 py-1 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 rounded text-[10px] font-bold cursor-pointer"
                                           >
                                             Reveal
                                           </button>
                                           {Object.keys(adminState?.teams || {}).map(tName => (
                                             <button
                                               key={tName}
-                                              onClick={() => sendControl('REVEAL_ANSWER', { index: idx, awardToTeam: tName })}
-                                              className="px-1.5 py-1 bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 rounded text-[9px]"
+                                              onClick={(e) => {
+                                                e.stopPropagation();
+                                                sendControl('REVEAL_ANSWER', { index: idx, awardToTeam: tName });
+                                              }}
+                                              className="px-1.5 py-1 bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 rounded text-[9px] cursor-pointer"
                                             >
                                               + {tName === 'Team Alpha' ? 'Alpha' : 'Beta'}
                                             </button>
