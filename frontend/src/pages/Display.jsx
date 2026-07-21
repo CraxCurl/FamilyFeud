@@ -823,7 +823,28 @@ export default function Display() {
                             <div className="text-center p-3 bg-neonPurple/5 border border-neonPurple/15 rounded-lg">
                               <span className="text-[10px] text-[#0D483F]/60 font-bold tracking-widest block">NOW PLAYING</span>
                               <strong className="text-sm text-neonPurple block my-1">{adminState.activeInputTeam}</strong>
-                              <div className="text-[10px] text-[#0D483F]/70"><b className="text-neonPink">{adminState.timer || 0}s</b> &middot; turn {adminState.turnsTaken?.[adminState.activeInputTeam] || 0} of {adminState.turnsPerTeam || 3}</div>
+                              <div className="text-[10px] text-[#0D483F]/70 mb-3.5"><b className="text-neonPink">{adminState.timer || 0}s</b> &middot; turn {adminState.turnsTaken?.[adminState.activeInputTeam] || 0} of {adminState.turnsPerTeam || 3}</div>
+                              
+                              <div className="flex justify-center gap-1.5 mt-2">
+                                <button
+                                  onClick={() => sendControl('AWARD_POINTS', { team: adminState.activeInputTeam, points: 10 })}
+                                  className="px-2 py-1 bg-[#d2f128]/10 hover:bg-[#d2f128]/25 border border-[#d2f128]/35 text-[#0D483F] rounded text-[9px] font-bold cursor-pointer"
+                                >
+                                  +10 Pts
+                                </button>
+                                <button
+                                  onClick={() => sendControl('AWARD_POINTS', { team: adminState.activeInputTeam, points: 50 })}
+                                  className="px-2 py-1 bg-[#d2f128]/10 hover:bg-[#d2f128]/25 border border-[#d2f128]/35 text-[#0D483F] rounded text-[9px] font-bold cursor-pointer"
+                                >
+                                  +50 Pts
+                                </button>
+                                <button
+                                  onClick={() => sendControl('AWARD_POINTS', { team: adminState.activeInputTeam, points: -10 })}
+                                  className="px-2 py-1 bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 text-red-600 rounded text-[9px] font-bold cursor-pointer"
+                                >
+                                  -10 Pts
+                                </button>
+                              </div>
                             </div>
                           ) : (
                             <div className="text-center py-4 text-gray-500 text-xs">Start a turn cycle to put a team on the clock.</div>
