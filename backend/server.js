@@ -75,7 +75,15 @@ const RANDOM_NAMES = [
   "Proxy Master", "Kotlin Knight", "Vite Wizard", "Bug Hunter",
   "Code Ninja", "UI Wizard", "Coffee Dev", "Git Guru",
   "Flutter Flyer", "Stack Overflowed", "Terminal Hacker", "Ctrl-Alt-Elite",
-  "Latecomer", "App Pioneer", "Gradle Groovy", "Logcat Lover"
+  "Latecomer", "App Pioneer", "Gradle Groovy", "Logcat Lover",
+  "Async Avenger", "Thread Ripper", "Null Pointer", "JSON Derulo",
+  "Merge Conflict", "Pixel Pusher", "Callback Queen", "Heap Leaker",
+  "Stack Trace", "Cyber Punk", "Prompt Engineer", "Byte Sized",
+  "Cache Money", "Bit Flip", "Kernel Panic", "Binary Boss",
+  "Cookie Monster", "DOM Terminator", "Flexbox Fanatic", "Sudo Samurai",
+  "YAML Wrangler", "RAM Raider", "Ping Ponger", "Docker Captain",
+  "Git Pushy", "Data Miner", "Cyber Sentinel", "SDK Sorcerer",
+  "DNS Wizard", "Bug Whisperer"
 ];
 
 const app = express();
