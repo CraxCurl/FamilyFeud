@@ -478,18 +478,27 @@ export default function Admin() {
                                 <Eye className="w-3.5 h-3.5" /> Reveal Only
                               </button>
                               
-                              {Object.keys(adminState.teams).map(tName => (
-                                <button
-                                  key={tName}
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    sendControl('REVEAL_ANSWER', { index: idx, awardToTeam: tName });
-                                  }}
-                                  className="px-2 py-1.5 bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 rounded-lg text-xs font-bold cursor-pointer"
-                                >
-                                  + {tName === 'Team Alpha' ? 'Alpha' : tName === 'Team Beta' ? 'Beta' : tName}
-                                </button>
-                              ))}
+                              {Object.keys(adminState.teams).map(tName => {
+                                const isInactiveTeam = adminState.activeInputTeam && tName !== adminState.activeInputTeam;
+                                return (
+                                  <button
+                                    key={tName}
+                                    disabled={isInactiveTeam}
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      if (isInactiveTeam) return;
+                                      sendControl('REVEAL_ANSWER', { index: idx, awardToTeam: tName });
+                                    }}
+                                    className={`px-2 py-1.5 border rounded-lg text-xs font-bold transition ${
+                                      isInactiveTeam
+                                        ? 'bg-gray-500/5 border-gray-500/10 text-gray-500 opacity-30 cursor-not-allowed'
+                                        : 'bg-cyan-500/10 border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/20 cursor-pointer'
+                                    }`}
+                                  >
+                                    + {tName === 'Team Alpha' ? 'Alpha' : tName === 'Team Beta' ? 'Beta' : tName}
+                                  </button>
+                                );
+                              })}
                             </div>
                           )}
                         </div>
