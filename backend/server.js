@@ -375,6 +375,12 @@ app.post('/api/questions', verifyAdminKey, (req, res) => {
   }
 });
 
+app.delete('/api/questions', verifyAdminKey, (req, res) => {
+  localDb.questions = [];
+  saveLocalDb();
+  res.json({ success: true, count: 0 });
+});
+
 app.delete('/api/questions/:id', verifyAdminKey, (req, res) => {
   deleteQuestion(req.params.id);
   res.json({ success: true });

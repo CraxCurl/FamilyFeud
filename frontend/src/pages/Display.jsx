@@ -211,6 +211,28 @@ export default function Display() {
     }
   };
 
+  // Clear All Questions
+  const handleClearAllQuestions = async () => {
+    if (!confirm("Are you sure you want to delete ALL questions? This action cannot be undone.")) return;
+    try {
+      const response = await fetch(
+        (import.meta.env.VITE_BACKEND_URL || `${window.location.protocol}//${window.location.hostname}:5000`) + '/api/questions',
+        { 
+          method: 'DELETE',
+          headers: { 'x-admin-key': adminKey }
+        }
+      );
+      if (response.ok) {
+        alert("All questions deleted!");
+        window.location.reload();
+      } else {
+        alert("Authorization failed.");
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
   // Duplicate Question Helper
   const handleDuplicate = (q) => {
     setNewQuestion(q.question);
@@ -1034,6 +1056,12 @@ export default function Display() {
                               className="px-3 py-1.5 bg-neonPurple/20 border border-neonPurple/30 text-neonPurple rounded text-[10px] font-bold"
                             >
                               Import
+                            </button>
+                            <button
+                              onClick={handleClearAllQuestions}
+                              className="px-3 py-1.5 bg-red-500/10 hover:bg-red-500/25 border border-red-500/30 text-red-600 rounded text-[10px] font-bold cursor-pointer"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" /> Clear All
                             </button>
                           </div>
                         </div>
