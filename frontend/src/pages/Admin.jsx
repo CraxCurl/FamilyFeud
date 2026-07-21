@@ -435,13 +435,22 @@ export default function Admin() {
                                 <Eye className="w-3.5 h-3.5" /> Reveal Only
                               </button>
                               
+                              {adminState.activeInputTeam && (
+                                <button
+                                  onClick={() => sendControl('REVEAL_ANSWER', { index: idx, awardToTeam: adminState.activeInputTeam })}
+                                  className="px-2.5 py-1.5 bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 rounded-lg text-xs font-extrabold"
+                                >
+                                  + Active
+                                </button>
+                              )}
+                              
                               {Object.keys(adminState.teams).map(tName => (
                                 <button
                                   key={tName}
                                   onClick={() => sendControl('REVEAL_ANSWER', { index: idx, awardToTeam: tName })}
                                   className="px-2 py-1.5 bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 rounded-lg text-xs font-bold"
                                 >
-                                  + {tName.split(' ')[0]}
+                                  + {tName === 'Team Alpha' ? 'Alpha' : tName === 'Team Beta' ? 'Beta' : tName}
                                 </button>
                               ))}
                             </div>
