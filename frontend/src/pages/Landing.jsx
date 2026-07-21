@@ -36,7 +36,7 @@ export default function Landing() {
   }, []);
 
   return (
-    <main className="acfeud-landing select-none relative overflow-hidden min-h-screen flex flex-col items-center justify-center bg-darkBg text-white w-full">
+    <main className="acfeud-landing select-none relative overflow-hidden">
       <motion.section
         initial={{ opacity: 0, y: 18 }}
         animate={{ opacity: 1, y: 0 }}
@@ -84,36 +84,36 @@ export default function Landing() {
             initial={{ opacity: 0, scale: 0.8, y: 10 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.8, y: -10 }}
-            className="absolute bottom-[55px] bg-[#3DDC84] text-darkBg text-xs font-bold px-3 py-1.5 rounded-xl shadow-2xl whitespace-nowrap border border-white/20 select-none"
+            className="absolute bottom-[55px] bg-[#d2f128] text-darkBg text-xs font-bold px-3 py-1.5 rounded-xl shadow-2xl whitespace-nowrap border border-white/20 select-none"
           >
             {greeting}
-            <div className="absolute bottom-[-6px] left-1/2 -translate-x-1/2 w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-t-[6px] border-t-[#3DDC84]" />
+            <div className="absolute bottom-[-6px] left-1/2 -translate-x-1/2 w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-t-[6px] border-t-[#d2f128]" />
           </motion.div>
         </AnimatePresence>
 
         {/* Android Head SVG */}
-        <svg viewBox="0 0 100 50" className="w-24 h-12 filter drop-shadow-[0_-4px_12px_rgba(61,220,132,0.3)]">
+        <svg viewBox="0 0 100 50" className="w-24 h-12 filter drop-shadow-[0_-4px_12px_rgba(210,241,40,0.3)]">
           {/* Antennae */}
           <motion.rect 
-            x="30" y="2" width="4" height="15" rx="2" transform="rotate(-20 32 17)" fill="#3DDC84"
+            x="30" y="2" width="4" height="15" rx="2" transform="rotate(-20 32 17)" fill="#d2f128"
             animate={{ rotate: [-20, -32, -20] }}
             transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
           />
           <motion.rect 
-            x="66" y="2" width="4" height="15" rx="2" transform="rotate(20 68 17)" fill="#3DDC84"
+            x="66" y="2" width="4" height="15" rx="2" transform="rotate(20 68 17)" fill="#d2f128"
             animate={{ rotate: [20, 32, 20] }}
             transition={{ repeat: Infinity, duration: 2, ease: "easeInOut", delay: 0.3 }}
           />
           {/* Head */}
-          <path d="M25,32 A25,25 0 0,1 75,32 Z" fill="#3DDC84" />
+          <path d="M25,32 A25,25 0 0,1 75,32 Z" fill="#d2f128" />
           {/* Eyes looking side-to-side */}
           <motion.circle 
-            cy="22" r="3" fill="#0D483F"
+            cy="22" r="3" fill="#112521"
             animate={{ cx: [39, 43, 39] }}
             transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
           />
           <motion.circle 
-            cy="22" r="3" fill="#0D483F"
+            cy="22" r="3" fill="#112521"
             animate={{ cx: [57, 61, 57] }}
             transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
           />
