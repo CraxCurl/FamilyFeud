@@ -193,8 +193,32 @@ export default function Play() {
     if (finalSoundPlayed.current) return;
     finalSoundPlayed.current = true;
     localStorage.removeItem('feud_user_id');
-    if (isDraw || isWinner) sounds.playWinner();
-    else sounds.playLoser();
+
+    let interval;
+    if (isDraw || isWinner) {
+      sounds.playWinner();
+      const duration = 6 * 1000;
+      const animationEnd = Date.now() + duration;
+      const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 1000 };
+
+      interval = setInterval(() => {
+        const timeLeft = animationEnd - Date.now();
+        if (timeLeft <= 0) {
+          clearInterval(interval);
+          return;
+        }
+        
+        const particleCount = 50 * (timeLeft / duration);
+        confetti({ ...defaults, particleCount, origin: { x: Math.random() * 0.3, y: Math.random() - 0.2 } });
+        confetti({ ...defaults, particleCount, origin: { x: Math.random() * 0.3 + 0.7, y: Math.random() - 0.2 } });
+      }, 250);
+    } else {
+      sounds.playLoser();
+    }
+
+    return () => {
+      if (interval) clearInterval(interval);
+    };
   }, [gameState.status, isDraw, isWinner]);
 
   // Render blocked screen if game is currently in progress
