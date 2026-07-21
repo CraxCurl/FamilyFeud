@@ -5,21 +5,16 @@ import { ArrowUpRight, Gamepad2 } from 'lucide-react';
 
 export default function Landing() {
   const navigate = useNavigate();
-  const [coords, setCoords] = useState({ x: 0, y: 150 });
+  const [footerX, setFooterX] = useState(0);
   const [greeting, setGreeting] = useState("Welcome to AC Feud! 💚");
   const [key, setKey] = useState(0);
 
   useEffect(() => {
-    const moveBugdroid = () => {
-      const margin = 120;
-      const width = window.innerWidth;
-      const height = window.innerHeight;
-
-      // Random position relative to screen center
-      const nextX = (Math.random() * (width - margin * 2)) - (width / 2) + margin;
-      const nextY = (Math.random() * (height - margin * 2)) - (height / 2) + margin;
-
-      setCoords({ x: nextX, y: nextY });
+    const moveFooterBugdroid = () => {
+      // Calculate a random X offset within a safe screen range
+      const range = window.innerWidth * 0.3;
+      const nextX = (Math.random() * range * 2) - range;
+      setFooterX(nextX);
 
       const quotes = [
         "Welcome to AC Feud! 💚",
@@ -29,14 +24,14 @@ export default function Landing() {
         "ESTD 2015! 📅",
         "Go Team Alpha! 🔴",
         "Go Team Beta! 🔵",
-        "Tap me to make me jump! 🚀",
+        "Peek-a-boo! 👀",
         "Let's see who's faster! ⚡"
       ];
       setGreeting(quotes[Math.floor(Math.random() * quotes.length)]);
       setKey(prev => prev + 1);
     };
 
-    const interval = setInterval(moveBugdroid, 5000);
+    const interval = setInterval(moveFooterBugdroid, 6000);
     return () => clearInterval(interval);
   }, []);
 
@@ -71,16 +66,13 @@ export default function Landing() {
 
       <p className="acfeud-landing__footer">ONE QUESTION. TWO TEAMS. THREE TURNS EACH.</p>
 
-      {/* Floating Bugdroid Companion */}
+      {/* Peaking Android Head in Footer */}
       <motion.div
-        drag
-        dragConstraints={{ left: -window.innerWidth/2, right: window.innerWidth/2, top: -window.innerHeight/2, bottom: window.innerHeight/2 }}
-        animate={{ x: coords.x, y: coords.y }}
-        transition={{ type: "spring", damping: 15, stiffness: 40 }}
-        className="absolute cursor-grab active:cursor-grabbing flex flex-col items-center z-20 group"
-        whileTap={{ scale: 1.2, rotate: [0, -10, 10, -10, 0] }}
+        animate={{ x: footerX }}
+        transition={{ type: "spring", damping: 18, stiffness: 30 }}
+        className="absolute bottom-0 flex flex-col items-center z-20 cursor-pointer"
+        whileHover={{ y: -5 }}
         onClick={() => {
-          setCoords(prev => ({ ...prev, y: prev.y - 45 }));
           setGreeting("Weee! 🚀");
           setKey(prev => prev + 1);
         }}
@@ -92,47 +84,39 @@ export default function Landing() {
             initial={{ opacity: 0, scale: 0.8, y: 10 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.8, y: -10 }}
-            className="absolute bottom-[85px] bg-[#3DDC84] text-darkBg text-xs font-bold px-3 py-1.5 rounded-xl shadow-2xl whitespace-nowrap border border-white/20 select-none flex items-center gap-1"
+            className="absolute bottom-[55px] bg-[#3DDC84] text-darkBg text-xs font-bold px-3 py-1.5 rounded-xl shadow-2xl whitespace-nowrap border border-white/20 select-none"
           >
             {greeting}
             <div className="absolute bottom-[-6px] left-1/2 -translate-x-1/2 w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-t-[6px] border-t-[#3DDC84]" />
           </motion.div>
         </AnimatePresence>
 
-        {/* Bugdroid SVG */}
-        <svg viewBox="0 0 100 100" className="w-16 h-16 filter drop-shadow-[0_4px_12px_rgba(61,220,132,0.45)] group-hover:scale-110 transition-transform">
+        {/* Android Head SVG */}
+        <svg viewBox="0 0 100 50" className="w-24 h-12 filter drop-shadow-[0_-4px_12px_rgba(61,220,132,0.3)]">
           {/* Antennae */}
           <motion.rect 
-            x="30" y="8" width="4" height="15" rx="2" transform="rotate(-20 32 23)" fill="#3DDC84"
-            animate={{ rotate: [-20, -35, -20] }}
+            x="30" y="2" width="4" height="15" rx="2" transform="rotate(-20 32 17)" fill="#3DDC84"
+            animate={{ rotate: [-20, -32, -20] }}
             transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
           />
           <motion.rect 
-            x="66" y="8" width="4" height="15" rx="2" transform="rotate(20 68 23)" fill="#3DDC84"
-            animate={{ rotate: [20, 35, 20] }}
+            x="66" y="2" width="4" height="15" rx="2" transform="rotate(20 68 17)" fill="#3DDC84"
+            animate={{ rotate: [20, 32, 20] }}
             transition={{ repeat: Infinity, duration: 2, ease: "easeInOut", delay: 0.3 }}
           />
           {/* Head */}
-          <path d="M25,38 A25,25 0 0,1 75,38 Z" fill="#3DDC84" />
-          {/* Eyes */}
-          <circle cx="40" cy="28" r="3" fill="#0D483F" />
-          <circle cx="60" cy="28" r="3" fill="#0D483F" />
-          {/* Body */}
-          <rect x="25" y="42" width="50" height="38" rx="4" fill="#3DDC84" />
-          {/* Arms */}
-          <motion.rect 
-            x="15" y="42" width="8" height="28" rx="4" fill="#3DDC84"
-            animate={{ rotate: [0, -10, 0] }}
-            transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
+          <path d="M25,32 A25,25 0 0,1 75,32 Z" fill="#3DDC84" />
+          {/* Eyes looking side-to-side */}
+          <motion.circle 
+            cy="22" r="3" fill="#0D483F"
+            animate={{ cx: [39, 43, 39] }}
+            transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
           />
-          <motion.rect 
-            x="77" y="42" width="8" height="28" rx="4" fill="#3DDC84"
-            animate={{ rotate: [0, 10, 0] }}
-            transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut", delay: 0.2 }}
+          <motion.circle 
+            cy="22" r="3" fill="#0D483F"
+            animate={{ cx: [57, 61, 57] }}
+            transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
           />
-          {/* Legs */}
-          <rect x="36" y="80" width="8" height="12" rx="4" fill="#3DDC84" />
-          <rect x="56" y="80" width="8" height="12" rx="4" fill="#3DDC84" />
         </svg>
       </motion.div>
     </main>
