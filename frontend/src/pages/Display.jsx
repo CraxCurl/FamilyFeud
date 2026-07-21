@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useSocket } from '../context/SocketContext';
 import confetti from 'canvas-confetti';
-import { HelpCircle, Star, QrCode, Settings, X, Play, RotateCcw, FastForward, ShieldAlert, Sparkles, FileCode, Plus, Trash2, Copy, Search, Eye, EyeOff, Key } from 'lucide-react';
+import { HelpCircle, Star, Settings, X, Play, RotateCcw, FastForward, ShieldAlert, Sparkles, FileCode, Plus, Trash2, Copy, Search, Eye, EyeOff, Key } from 'lucide-react';
 import { sounds } from '../utils/sounds';
 
 export default function Display() {
@@ -391,21 +391,11 @@ export default function Display() {
         </div>
       </div>
 
-      {/* Footer / QR Entry */}
+      {/* Footer */}
       <div className="flex justify-between items-end mt-4 border-t border-[#0D483F]/10 pt-4">
         <div>
           <span className="text-xs text-[#0D483F]/60 font-semibold block uppercase">Android Club VITC</span>
           <span className="text-xs text-[#0D483F]/70">Join real-time events, build projects, master skills.</span>
-        </div>
-
-        <div className="flex items-center gap-4 bg-neonPurple/5 border border-neonPurple/15 p-3 rounded-xl">
-          <div className="text-right">
-            <span className="text-xs text-[#0D483F]/80 block font-bold">BUZZ IN ON PHONE</span>
-            <span className="text-[10px] text-neonPink underline font-mono select-all">{playUrl}</span>
-          </div>
-          <div className="p-1.5 bg-white rounded-lg">
-            <QrCode className="w-8 h-8 text-neonPurple" />
-          </div>
         </div>
       </div>
 

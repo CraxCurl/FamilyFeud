@@ -38,13 +38,19 @@ const User = mongoose.model('User', userSchema);
 
 mongoose.set('bufferCommands', false);
 const mongoUri = process.env.MONGO_URI || 'mongodb://localhost:27017/familyfeud';
-mongoose.connect(mongoUri)
+const mongoOptions = {
+  serverSelectionTimeoutMS: 5000,
+  family: 4
+};
+
+mongoose.connect(mongoUri, mongoOptions)
   .then(() => {
     isMongoConnected = true;
     console.log(`Successfully connected to MongoDB at ${mongoUri}`);
   })
   .catch((err) => {
-    console.log(`MongoDB connection failed (${err.message}). Gracefully falling back to local file log.`);
+    isMongoConnected = false;
+    console.warn(`MongoDB connection failed (${err.message}). Gracefully falling back to local file log.`);
   });
 
 async function logPlayerAction(data) {
@@ -55,7 +61,7 @@ async function logPlayerAction(data) {
       console.error('Failed to log to MongoDB:', err.message);
     }
   }
-  
+
   // Write to local fallback file log
   try {
     const logLine = `[${new Date().toISOString()}] Round ${data.round || 0} - Player: ${data.username || 'SYSTEM'} | Team: ${data.team || 'NONE'} | Action: ${data.action}\n`;
@@ -66,8 +72,8 @@ async function logPlayerAction(data) {
 }
 
 const RANDOM_NAMES = [
-  "Proxy Master", "Kotlin Knight", "Vite Wizard", "Bug Hunter", 
-  "Code Ninja", "UI Wizard", "Coffee Dev", "Git Guru", 
+  "Proxy Master", "Kotlin Knight", "Vite Wizard", "Bug Hunter",
+  "Code Ninja", "UI Wizard", "Coffee Dev", "Git Guru",
   "Flutter Flyer", "Stack Overflowed", "Terminal Hacker", "Ctrl-Alt-Elite",
   "Latecomer", "App Pioneer", "Gradle Groovy", "Logcat Lover"
 ];
@@ -97,7 +103,8 @@ try {
 // Local Database State
 let localDb = {
   questions: questionsList,
-  games: {}
+  games: {},
+  usedQuestionIds: []
 };
 
 // Save helper for persistence
@@ -116,6 +123,9 @@ try {
   if (fs.existsSync(dbPath)) {
     const content = fs.readFileSync(dbPath, 'utf8');
     localDb = JSON.parse(content);
+    if (!localDb.usedQuestionIds) {
+      localDb.usedQuestionIds = [];
+    }
     console.log("Loaded existing database from local JSON file.");
   }
 } catch (e) {
@@ -125,6 +135,62 @@ try {
 // Fetch all questions helper
 function getQuestions() {
   return localDb.questions;
+}
+
+// Draw questions helper
+function drawQuestions(count, currentQuestionsToExclude = []) {
+  const allQuestions = getQuestions();
+  if (allQuestions.length === 0) return [];
+
+  // Filter out any questions we want to exclude
+  let available = allQuestions.filter(q => !currentQuestionsToExclude.includes(q.id));
+  if (available.length === 0) {
+    available = allQuestions;
+  }
+
+  if (!localDb.usedQuestionIds) {
+    localDb.usedQuestionIds = [];
+  }
+
+  // Separate into unused and used
+  let unused = available.filter(q => !localDb.usedQuestionIds.includes(q.id));
+
+  // Shuffle array helper
+  const shuffle = (array) => array.map(value => ({ value, sort: Math.random() }))
+                                 .sort((a, b) => a.sort - b.sort)
+                                 .map(({ value }) => value);
+
+  let selected = [];
+
+  if (unused.length >= count) {
+    // We have enough unused questions
+    selected = shuffle(unused).slice(0, count);
+  } else {
+    // We don't have enough unused questions
+    selected = shuffle(unused);
+    const needed = count - selected.length;
+
+    // Reset used list (excluding the ones we just selected)
+    localDb.usedQuestionIds = selected.map(q => q.id);
+
+    let poolForRemaining = available.filter(q => !localDb.usedQuestionIds.includes(q.id));
+    if (poolForRemaining.length === 0) {
+      poolForRemaining = available;
+    }
+
+    const remaining = shuffle(poolForRemaining).slice(0, needed);
+    selected = selected.concat(remaining);
+  }
+
+  // Add the newly selected questions to the used list
+  selected.forEach(q => {
+    if (!localDb.usedQuestionIds.includes(q.id)) {
+      localDb.usedQuestionIds.push(q.id);
+    }
+  });
+
+  saveLocalDb();
+  return selected;
 }
 
 // Save question helper
@@ -224,13 +290,13 @@ function startTimer(seconds, onTick, onComplete) {
   gameState.timer = seconds;
   broadcastState();
   sendAdminState();
-  
+
   gameTimerInterval = setInterval(() => {
     gameState.timer--;
     if (onTick) onTick(gameState.timer);
     broadcastState();
     sendAdminState();
-    
+
     if (gameState.timer <= 0) {
       clearInterval(gameTimerInterval);
       if (onComplete) onComplete();
@@ -255,13 +321,13 @@ function clearPlayerTeams() {
   if (gameState.teams['Team Beta']) {
     gameState.teams['Team Beta'].members = [];
   }
-  
+
   Object.keys(gameState.players).forEach(socketId => {
     gameState.players[socketId].team = null;
   });
 
   logPlayerAction({ action: 'round_reset', round: gameState.currentRound });
-  
+
   broadcastState();
   sendAdminState();
 }
@@ -362,7 +428,7 @@ function beginTeamTurn(team, buzzed = false) {
   gameState.status = 'PLAYING';
   gameState.activeInputTeam = team;
   gameState.turnsTaken[team] += 1;
-  
+
   if (!buzzed) {
     // If not triggered by a buzz (e.g. automatic turn transition), clear the buzz state.
     gameState.buzzState = { locked: false, player: null, team: null, time: null };
@@ -418,7 +484,7 @@ io.on('connection', (socket) => {
         try {
           let user = await User.findOne({ userId: id });
           if (!user) {
-            const randomName = RANDOM_NAMES[Math.floor(Math.random() * RANDOM_NAMES.length)] || `User_${Math.floor(Math.random()*1000)}`;
+            const randomName = RANDOM_NAMES[Math.floor(Math.random() * RANDOM_NAMES.length)] || `User_${Math.floor(Math.random() * 1000)}`;
             user = await User.create({ userId: id, username: randomName });
           }
           resolvedUsername = user.username;
@@ -429,7 +495,7 @@ io.on('connection', (socket) => {
 
       // If database was not connected or query failed, fallback to memory
       if (!resolvedUsername) {
-        const randomName = RANDOM_NAMES[Math.floor(Math.random() * RANDOM_NAMES.length)] || `User_${Math.floor(Math.random()*1000)}`;
+        const randomName = RANDOM_NAMES[Math.floor(Math.random() * RANDOM_NAMES.length)] || `User_${Math.floor(Math.random() * 1000)}`;
         resolvedUsername = randomName;
       }
 
@@ -554,13 +620,12 @@ io.on('connection', (socket) => {
       socket.emit('admin_auth_failed');
       return;
     }
-    
+
     console.log(`Admin control received: ${action}`, payload);
-    
+
     switch (action) {
       case 'START_GAME':
-        const allQs = getQuestions();
-        gameState.questions = allQs.sort(() => 0.5 - Math.random()).slice(0, gameState.maxRounds);
+        gameState.questions = drawQuestions(gameState.maxRounds);
         gameState.status = 'PLAYING';
         gameState.currentRound = 1;
         gameState.currentQuestion = gameState.questions[0] || null;
@@ -642,10 +707,11 @@ io.on('connection', (socket) => {
         if (gameState.currentQuestion && index >= 0 && index < gameState.revealedAnswers.length) {
           gameState.revealedAnswers[index] = true;
           io.emit('play_sound', { type: 'CORRECT' });
-          
+
           if (payload.awardToTeam && gameState.teams[payload.awardToTeam]) {
             const pts = gameState.currentQuestion.answers[index].points;
             gameState.teams[payload.awardToTeam].score += pts;
+            io.emit('play_sound', { type: 'POINTS_SCORED' });
           }
         }
         break;
@@ -662,7 +728,7 @@ io.on('connection', (socket) => {
         const ptsToAward = payload.points;
         if (gameState.teams[targetTeamName]) {
           gameState.teams[targetTeamName].score += ptsToAward;
-          io.emit('play_sound', { type: 'ROUND_COMPLETE' });
+          io.emit('play_sound', { type: 'POINTS_SCORED' });
         }
         break;
 
@@ -708,11 +774,12 @@ io.on('connection', (socket) => {
         gameState.turnsTaken = { 'Team Alpha': 0, 'Team Beta': 0 };
         beginTeamTurn(payload.team || 'Team Alpha');
         break;
-      
+
       case 'SKIP_QUESTION':
-        const replacementQs = getQuestions().filter(q => q.id !== gameState.currentQuestion.id);
+        const currentInGameIds = gameState.questions.map(q => q.id);
+        const replacementQs = drawQuestions(1, currentInGameIds);
         if (replacementQs.length > 0) {
-          const newQ = replacementQs[Math.floor(Math.random() * replacementQs.length)];
+          const newQ = replacementQs[0];
           gameState.questions[gameState.currentRound - 1] = newQ;
           gameState.currentQuestion = newQ;
           gameState.revealedAnswers = Array(newQ.answers.length).fill(false);
@@ -733,7 +800,7 @@ io.on('connection', (socket) => {
         if (socketIdToKick) {
           const playerToKick = gameState.players[socketIdToKick];
           console.log(`Host kicked player: ${playerToKick.name}`);
-          
+
           if (playerToKick.team && gameState.teams[playerToKick.team]) {
             gameState.teams[playerToKick.team].members = gameState.teams[playerToKick.team].members.filter(
               m => m.id !== playerToKick.id && m.socketId !== socketIdToKick
@@ -798,8 +865,9 @@ io.on('connection', (socket) => {
       gameState.revealedAnswers[matchedIndex] = true;
       const pts = gameState.currentQuestion.answers[matchedIndex].points;
       gameState.teams[player.team].score += pts;
-      
+
       io.emit('play_sound', { type: 'CORRECT' });
+      io.emit('play_sound', { type: 'POINTS_SCORED' });
       // Keep the current 15-second team turn running after a correct answer.
     } else {
       gameState.strikes = 1;
@@ -845,7 +913,7 @@ io.on('connection', (socket) => {
     if (player) {
       delete gameState.players[socket.id];
     }
-    
+
     gameState.queue = gameState.queue.filter(p => p.socketId !== socket.id);
     gameState.queue.forEach((p, idx) => {
       io.to(p.socketId).emit('joined_queue', { position: idx + 1 });
@@ -871,7 +939,23 @@ if (fs.existsSync(distPath)) {
   });
 }
 
-const PORT = process.env.PORT || 5000;
-server.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+function startServer(port) {
+  server.once('error', (err) => {
+    if (err.code === 'EADDRINUSE') {
+      const nextPort = port + 1;
+      console.warn(`Port ${port} is already in use. Trying ${nextPort} instead.`);
+      startServer(nextPort);
+      return;
+    }
+
+    console.error('Failed to start server:', err);
+    process.exit(1);
+  });
+
+  server.listen(port, () => {
+    console.log(`Server running on port ${port}`);
+  });
+}
+
+const PORT = Number(process.env.PORT || 5000);
+startServer(PORT);

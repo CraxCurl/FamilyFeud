@@ -26,11 +26,25 @@ function AppShell() {
         COUNTDOWN: sounds.playCountdown,
         TIMER_END: sounds.playTimerEnd,
         ROUND_COMPLETE: sounds.playRoundComplete,
+        POINTS_SCORED: sounds.playPointsScored,
       };
       soundMap[type]?.();
     };
     socket.on('play_sound', playSound);
-    return () => socket.off('play_sound', playSound);
+
+    const onGameOver = ({ winner }) => {
+      if (winner === 'DRAW') {
+        sounds.playRoundComplete();
+      } else {
+        sounds.playWinner();
+      }
+    };
+    socket.on('game_over_trigger', onGameOver);
+
+    return () => {
+      socket.off('play_sound', playSound);
+      socket.off('game_over_trigger', onGameOver);
+    };
   }, [socket, isDisplayRoute]);
 
   return (
@@ -38,8 +52,8 @@ function AppShell() {
         {showGlobalHeader && (
           <div className="moxie-marquee" aria-label="Game information">
             <div className="moxie-marquee__track">
-              <span>15 SECONDS PER TEAM</span><b>&bull;</b><span>THREE TURNS EACH</span><b>&bull;</b><span>NO BUZZER NEEDED</span><b>&bull;</b><span>PLAY FAIR. PLAY LOUD.</span><b>&bull;</b>
-              <span>15 SECONDS PER TEAM</span><b>&bull;</b><span>THREE TURNS EACH</span><b>&bull;</b><span>NO BUZZER NEEDED</span><b>&bull;</b><span>PLAY FAIR. PLAY LOUD.</span><b>&bull;</b>
+              <span>CLUB EXPO 2026</span><b>&bull;</b><span>ANDROID CLUB VITC</span><b>&bull;</b><span>11 GLORIOUS YEARS</span><b>&bull;</b><span>11.11 MANIFESTING BUGS TO FEATURES</span><b>&bull;</b><span>ESTD 2015</span><b>&bull;</b><span>FEUD MODE ACTIVATED</span><b>&bull;</b>
+              <span>CLUB EXPO 2026</span><b>&bull;</b><span>ANDROID CLUB VITC</span><b>&bull;</b><span>11 GLORIOUS YEARS</span><b>&bull;</b><span>11.11 MANIFESTING BUGS TO FEATURES</span><b>&bull;</b><span>ESTD 2015</span><b>&bull;</b><span>FEUD MODE ACTIVATED</span><b>&bull;</b>
             </div>
           </div>
         )}
