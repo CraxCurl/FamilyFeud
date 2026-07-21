@@ -26,7 +26,10 @@ function AppShell() {
         COUNTDOWN: sounds.playCountdown,
         TIMER_END: sounds.playTimerEnd,
         ROUND_COMPLETE: sounds.playRoundComplete,
-        POINTS_SCORED: sounds.playPointsScored,
+        POINTS_SCORED: () => {
+          sounds.playPointsScored();
+          sounds.playClap();
+        },
       };
       soundMap[type]?.();
     };

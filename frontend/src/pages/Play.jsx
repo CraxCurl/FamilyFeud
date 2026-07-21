@@ -31,6 +31,8 @@ export default function Play() {
 
   const currentScore = (team && gameState.teams && gameState.teams[team]) ? (gameState.teams[team].score || 0) : 0;
 
+  const prevStrikeFlashRef = useRef(null);
+
   // Monitor score increases for team celebration confetti & pop-up
   useEffect(() => {
     if (!team) return;
@@ -52,6 +54,9 @@ export default function Play() {
         origin: { y: 0.7 }
       });
 
+      // Play local clapping sound for the scoring team
+      sounds.playClap();
+
       const timer = setTimeout(() => {
         setShowCelebration(false);
       }, 1500);
@@ -62,6 +67,26 @@ export default function Play() {
       prevScoreRef.current = currentScore;
     }
   }, [currentScore, team]);
+
+  // Monitor strikes for incorrect answer sound effect on player's screen
+  useEffect(() => {
+    if (!team || gameState.strikeFlash === undefined) return;
+
+    if (prevStrikeFlashRef.current === null) {
+      prevStrikeFlashRef.current = gameState.strikeFlash;
+      return;
+    }
+
+    if (gameState.strikeFlash > prevStrikeFlashRef.current) {
+      // If it was our team that got the strike
+      if (gameState.activeInputTeam === team) {
+        sounds.playWrong();
+      }
+      prevStrikeFlashRef.current = gameState.strikeFlash;
+    } else {
+      prevStrikeFlashRef.current = gameState.strikeFlash;
+    }
+  }, [gameState.strikeFlash, gameState.activeInputTeam, team]);
 
   // Mobile Audio Unlocker for programmatic sounds (e.g. buzzer)
   useEffect(() => {

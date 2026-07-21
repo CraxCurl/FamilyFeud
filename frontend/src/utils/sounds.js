@@ -174,6 +174,69 @@ class SoundSynthesizer {
     });
   }
 
+  playClap() {
+    this.init();
+    if (this.muted) return;
+
+    const now = this.ctx.currentTime;
+    
+    // Create a noise buffer
+    const bufferSize = this.ctx.sampleRate * 0.4;
+    const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
+    const data = buffer.getChannelData(0);
+    for (let i = 0; i < bufferSize; i++) {
+      data[i] = Math.random() * 2 - 1;
+    }
+
+    const playBurst = (delay) => {
+      const noiseSource = this.ctx.createBufferSource();
+      noiseSource.buffer = buffer;
+
+      const filter = this.ctx.createBiquadFilter();
+      filter.type = 'bandpass';
+      filter.frequency.setValueAtTime(1000, now + delay);
+      filter.Q.setValueAtTime(4, now + delay);
+
+      const gain = this.ctx.createGain();
+      gain.gain.setValueAtTime(0, now + delay);
+      gain.gain.linearRampToValueAtTime(0.25, now + delay + 0.01);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + delay + 0.08);
+
+      noiseSource.connect(filter);
+      filter.connect(gain);
+      gain.connect(this.ctx.destination);
+
+      noiseSource.start(now + delay);
+      noiseSource.stop(now + delay + 0.08);
+    };
+
+    // 3 quick mini-bursts (simulating reverberant hand clap onset)
+    playBurst(0.0);
+    playBurst(0.02);
+    playBurst(0.04);
+    
+    // Main burst
+    const noiseSource = this.ctx.createBufferSource();
+    noiseSource.buffer = buffer;
+
+    const filter = this.ctx.createBiquadFilter();
+    filter.type = 'bandpass';
+    filter.frequency.setValueAtTime(1000, now + 0.06);
+    filter.Q.setValueAtTime(3, now + 0.06);
+
+    const gain = this.ctx.createGain();
+    gain.gain.setValueAtTime(0, now + 0.06);
+    gain.gain.linearRampToValueAtTime(0.3, now + 0.06 + 0.01);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.06 + 0.25);
+
+    noiseSource.connect(filter);
+    filter.connect(gain);
+    gain.connect(this.ctx.destination);
+
+    noiseSource.start(now + 0.06);
+    noiseSource.stop(now + 0.06 + 0.25);
+  }
+
   playCountdown() {
     this.init();
     if (this.muted) return;
