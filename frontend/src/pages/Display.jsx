@@ -264,7 +264,7 @@ export default function Display() {
     reader.readAsText(file);
   };
 
-  const playUrl = `${window.location.protocol}//${window.location.host}/#/play`;
+  const playUrl = `${window.location.protocol}//${window.location.host}/`;
   const answers = gameState.currentQuestion?.answers || [];
   const cards = Array(8).fill(null).map((_, i) => answers[i] || null);
 
