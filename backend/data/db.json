@@ -1,1204 +1,178 @@
 {
   "questions": [
     {
-      "id": "q_1",
-      "question": "Name something you keep hidden from your roommate",
-      "category": "Hostel Life",
-      "answers": []
-    },
-    {
-      "id": "q_2",
-      "question": "Name a reason hostel students give for skipping breakfast",
-      "category": "Hostel Life",
-      "answers": []
-    },
-    {
-      "id": "q_3",
-      "question": "Name something students fight over in a hostel room",
-      "category": "Hostel Life",
-      "answers": []
-    },
-    {
-      "id": "q_4",
-      "question": "Name an excuse for a messy hostel room",
-      "category": "Hostel Life",
-      "answers": []
-    },
-    {
-      "id": "q_5",
-      "question": "Name something students borrow from roommates without asking",
-      "category": "Hostel Life",
-      "answers": []
-    },
-    {
-      "id": "q_6",
-      "question": "Name a common excuse for breaking hostel curfew",
-      "category": "Hostel Life",
-      "answers": []
-    },
-    {
-      "id": "q_7",
-      "question": "Name something students order at midnight in the hostel",
-      "category": "Hostel Life",
-      "answers": []
-    },
-    {
-      "id": "q_8",
-      "question": "Name a reason students give for slow hostel wifi",
-      "category": "Hostel Life",
-      "answers": []
-    },
-    {
-      "id": "q_9",
-      "question": "Name something students do during a power cut in hostel",
-      "category": "Hostel Life",
-      "answers": []
-    },
-    {
-      "id": "q_10",
-      "question": "Name something every hostel room must have",
-      "category": "Hostel Life",
-      "answers": []
-    },
-    {
-      "id": "q_11",
-      "question": "Name a reason for noise complaints in a hostel",
-      "category": "Hostel Life",
-      "answers": []
-    },
-    {
-      "id": "q_12",
-      "question": "Name something a hostel warden is famous for saying",
-      "category": "Hostel Life",
-      "answers": []
-    },
-    {
-      "id": "q_13",
-      "question": "Name a common laundry day excuse",
-      "category": "Hostel Life",
-      "answers": []
-    },
-    {
-      "id": "q_14",
-      "question": "Name something students do to beat the Chennai heat in hostel",
-      "category": "Hostel Life",
-      "answers": []
-    },
-    {
-      "id": "q_15",
-      "question": "Name a reason for late night hostel gossip",
-      "category": "Hostel Life",
-      "answers": []
-    },
-    {
-      "id": "q_16",
-      "question": "Name something you would never share with your roommate",
-      "category": "Hostel Life",
-      "answers": []
-    },
-    {
-      "id": "q_17",
-      "question": "Name a common excuse for missing hostel attendance",
-      "category": "Hostel Life",
-      "answers": []
-    },
-    {
-      "id": "q_18",
-      "question": "Name something students stock up on before exam week",
-      "category": "Hostel Life",
-      "answers": []
-    },
-    {
-      "id": "q_19",
-      "question": "Name a reason hostel room inspections go badly",
-      "category": "Hostel Life",
-      "answers": []
-    },
-    {
-      "id": "q_20",
-      "question": "Name something every fresher's hostel room smells like",
-      "category": "Hostel Life",
-      "answers": []
-    },
-    {
-      "id": "q_21",
-      "question": "Name the first food item that comes to mind at a college canteen",
-      "category": "Canteen & Mess",
-      "answers": []
-    },
-    {
-      "id": "q_22",
-      "question": "Name a common complaint about mess food",
-      "category": "Canteen & Mess",
-      "answers": []
-    },
-    {
-      "id": "q_23",
-      "question": "Name something students always order at the food court",
-      "category": "Canteen & Mess",
-      "answers": []
-    },
-    {
-      "id": "q_24",
-      "question": "Name a snack students eat between classes",
-      "category": "Canteen & Mess",
-      "answers": []
-    },
-    {
-      "id": "q_25",
-      "question": "Name a reason students skip the mess and order outside food",
-      "category": "Canteen & Mess",
-      "answers": []
-    },
-    {
-      "id": "q_26",
-      "question": "Name something students say while standing in the mess queue",
-      "category": "Canteen & Mess",
-      "answers": []
-    },
-    {
-      "id": "q_27",
-      "question": "Name a popular drink among college students",
-      "category": "Canteen & Mess",
-      "answers": []
-    },
-    {
-      "id": "q_28",
-      "question": "Name a food item students crave most during exams",
-      "category": "Canteen & Mess",
-      "answers": []
-    },
-    {
-      "id": "q_29",
-      "question": "Name something that always runs out first in the mess",
-      "category": "Canteen & Mess",
-      "answers": []
-    },
-    {
-      "id": "q_30",
-      "question": "Name a reason for a long queue at the canteen",
-      "category": "Canteen & Mess",
-      "answers": []
-    },
-    {
-      "id": "q_31",
-      "question": "Name something a food delivery order usually includes",
-      "category": "Canteen & Mess",
-      "answers": []
-    },
-    {
-      "id": "q_32",
-      "question": "Name a food app students use to order food",
-      "category": "Canteen & Mess",
-      "answers": []
-    },
-    {
-      "id": "q_33",
-      "question": "Name something students split the bill for",
-      "category": "Canteen & Mess",
-      "answers": []
-    },
-    {
-      "id": "q_34",
-      "question": "Name a reason for a bad mood at the mess counter",
-      "category": "Canteen & Mess",
-      "answers": []
-    },
-    {
-      "id": "q_35",
-      "question": "Name something students always ask the canteen uncle/aunty for",
-      "category": "Canteen & Mess",
-      "answers": []
-    },
-    {
-      "id": "q_36",
-      "question": "Name a South Indian breakfast item popular in college canteens",
-      "category": "Canteen & Mess",
-      "answers": []
-    },
-    {
-      "id": "q_37",
-      "question": "Name something students complain about in the hostel mess menu repeating",
-      "category": "Canteen & Mess",
-      "answers": []
-    },
-    {
-      "id": "q_38",
-      "question": "Name a comfort food students order when stressed",
-      "category": "Canteen & Mess",
-      "answers": []
-    },
-    {
-      "id": "q_39",
-      "question": "Name a reason students prefer the food truck over the canteen",
-      "category": "Canteen & Mess",
-      "answers": []
-    },
-    {
-      "id": "q_40",
-      "question": "Name something that always spikes in price during fest season",
-      "category": "Canteen & Mess",
-      "answers": []
-    },
-    {
-      "id": "q_41",
-      "question": "Name the first thing students do the night before an exam",
-      "category": "Exam & Study",
-      "answers": []
-    },
-    {
-      "id": "q_42",
-      "question": "Name a common excuse for not completing an assignment",
-      "category": "Exam & Study",
-      "answers": []
-    },
-    {
-      "id": "q_43",
-      "question": "Name something students do right before entering the exam hall",
-      "category": "Exam & Study",
-      "answers": []
-    },
-    {
-      "id": "q_44",
-      "question": "Name a place students go to study for exams",
-      "category": "Exam & Study",
-      "answers": []
-    },
-    {
-      "id": "q_45",
-      "question": "Name something students Google right before an exam",
-      "category": "Exam & Study",
-      "answers": []
-    },
-    {
-      "id": "q_46",
-      "question": "Name a reason for low attendance in a class",
-      "category": "Exam & Study",
-      "answers": []
-    },
-    {
-      "id": "q_47",
-      "question": "Name something students say after a tough exam",
-      "category": "Exam & Study",
-      "answers": []
-    },
-    {
-      "id": "q_48",
-      "question": "Name a subject students commonly fear",
-      "category": "Exam & Study",
-      "answers": []
-    },
-    {
-      "id": "q_49",
-      "question": "Name something students do to stay awake while studying at night",
-      "category": "Exam & Study",
-      "answers": []
-    },
-    {
-      "id": "q_50",
-      "question": "Name a place students hide a cheat sheet",
-      "category": "Exam & Study",
-      "answers": []
-    },
-    {
-      "id": "q_51",
-      "question": "Name a reason a group project goes wrong",
-      "category": "Exam & Study",
-      "answers": []
-    },
-    {
-      "id": "q_52",
-      "question": "Name something a professor says on the first day of class",
-      "category": "Exam & Study",
-      "answers": []
-    },
-    {
-      "id": "q_53",
-      "question": "Name a reason students ask for an internal marks revaluation",
-      "category": "Exam & Study",
-      "answers": []
-    },
-    {
-      "id": "q_54",
-      "question": "Name something students do immediately after an exam ends",
-      "category": "Exam & Study",
-      "answers": []
-    },
-    {
-      "id": "q_55",
-      "question": "Name a reason students miss a submission deadline",
-      "category": "Exam & Study",
-      "answers": []
-    },
-    {
-      "id": "q_56",
-      "question": "Name something students do during a boring lecture",
-      "category": "Exam & Study",
-      "answers": []
-    },
-    {
-      "id": "q_57",
-      "question": "Name a common reaction to seeing exam results",
-      "category": "Exam & Study",
-      "answers": []
-    },
-    {
-      "id": "q_58",
-      "question": "Name a tool/app students use to study",
-      "category": "Exam & Study",
-      "answers": []
-    },
-    {
-      "id": "q_59",
-      "question": "Name something students blame for a bad grade",
-      "category": "Exam & Study",
-      "answers": []
-    },
-    {
-      "id": "q_60",
-      "question": "Name a reason students pull an all-nighter",
-      "category": "Exam & Study",
-      "answers": []
-    },
-    {
-      "id": "q_61",
-      "question": "Name a reason freshers join a college club",
-      "category": "Fests & Clubs",
-      "answers": []
-    },
-    {
-      "id": "q_62",
-      "question": "Name something clubs promise in their recruitment poster",
-      "category": "Fests & Clubs",
-      "answers": []
-    },
-    {
-      "id": "q_63",
-      "question": "Name a type of club common in engineering colleges",
-      "category": "Fests & Clubs",
-      "answers": []
-    },
-    {
-      "id": "q_64",
-      "question": "Name something students do to prepare for a club interview",
-      "category": "Fests & Clubs",
-      "answers": []
-    },
-    {
-      "id": "q_65",
-      "question": "Name a reason a fest event gets delayed",
-      "category": "Fests & Clubs",
-      "answers": []
-    },
-    {
-      "id": "q_66",
-      "question": "Name something you'd find at a college fest stall",
-      "category": "Fests & Clubs",
-      "answers": []
-    },
-    {
-      "id": "q_67",
-      "question": "Name a popular event at a college cultural fest",
-      "category": "Fests & Clubs",
-      "answers": []
-    },
-    {
-      "id": "q_68",
-      "question": "Name a reason students volunteer for a fest",
-      "category": "Fests & Clubs",
-      "answers": []
-    },
-    {
-      "id": "q_69",
-      "question": "Name something a fest organizing team argues about",
-      "category": "Fests & Clubs",
-      "answers": []
-    },
-    {
-      "id": "q_70",
-      "question": "Name a reason clubs conduct workshops",
-      "category": "Fests & Clubs",
-      "answers": []
-    },
-    {
-      "id": "q_71",
-      "question": "Name something students look forward to during a club expo",
-      "category": "Fests & Clubs",
-      "answers": []
-    },
-    {
-      "id": "q_72",
-      "question": "Name a reason a fresher hesitates to join a club",
-      "category": "Fests & Clubs",
-      "answers": []
-    },
-    {
-      "id": "q_73",
-      "question": "Name something clubs use to promote their event",
-      "category": "Fests & Clubs",
-      "answers": []
-    },
-    {
-      "id": "q_74",
-      "question": "Name a reason for rivalry between two college clubs",
-      "category": "Fests & Clubs",
-      "answers": []
-    },
-    {
-      "id": "q_75",
-      "question": "Name something a club core team does behind the scenes",
-      "category": "Fests & Clubs",
-      "answers": []
-    },
-    {
-      "id": "q_76",
-      "question": "Name a reason students attend a fest even without participating",
-      "category": "Fests & Clubs",
-      "answers": []
-    },
-    {
-      "id": "q_77",
-      "question": "Name something every club wants on recruitment day",
-      "category": "Fests & Clubs",
-      "answers": []
-    },
-    {
-      "id": "q_78",
-      "question": "Name a reason a club event goes viral on campus",
-      "category": "Fests & Clubs",
-      "answers": []
-    },
-    {
-      "id": "q_79",
-      "question": "Name something seniors tell freshers about choosing clubs",
-      "category": "Fests & Clubs",
-      "answers": []
-    },
-    {
-      "id": "q_80",
-      "question": "Name a reason students prefer technical clubs over cultural clubs",
-      "category": "Fests & Clubs",
-      "answers": []
-    },
-    {
-      "id": "q_81",
-      "question": "Name something a professor says when the class is noisy",
-      "category": "Class & Professors",
-      "answers": []
-    },
-    {
-      "id": "q_82",
-      "question": "Name a reason a professor gets annoyed in class",
-      "category": "Class & Professors",
-      "answers": []
-    },
-    {
-      "id": "q_83",
-      "question": "Name something students do when the professor is absent",
-      "category": "Class & Professors",
-      "answers": []
-    },
-    {
-      "id": "q_84",
-      "question": "Name a common professor catchphrase",
-      "category": "Class & Professors",
-      "answers": []
-    },
-    {
-      "id": "q_85",
-      "question": "Name a reason students sit in the back bench",
-      "category": "Class & Professors",
-      "answers": []
-    },
-    {
-      "id": "q_86",
-      "question": "Name something professors ask for during attendance",
-      "category": "Class & Professors",
-      "answers": []
-    },
-    {
-      "id": "q_87",
-      "question": "Name a reason a class gets cancelled",
-      "category": "Class & Professors",
-      "answers": []
-    },
-    {
-      "id": "q_88",
-      "question": "Name something students whisper about during a lecture",
-      "category": "Class & Professors",
-      "answers": []
-    },
-    {
-      "id": "q_89",
-      "question": "Name a reason students like a particular professor",
-      "category": "Class & Professors",
-      "answers": []
-    },
-    {
-      "id": "q_90",
-      "question": "Name something a professor writes on the whiteboard often",
-      "category": "Class & Professors",
-      "answers": []
-    },
-    {
-      "id": "q_91",
-      "question": "Name a reason students are scared of a particular professor",
-      "category": "Class & Professors",
-      "answers": []
-    },
-    {
-      "id": "q_92",
-      "question": "Name something a professor does when nobody answers a question",
-      "category": "Class & Professors",
-      "answers": []
-    },
-    {
-      "id": "q_93",
-      "question": "Name a reason students request an extra class",
-      "category": "Class & Professors",
-      "answers": []
-    },
-    {
-      "id": "q_94",
-      "question": "Name something students do to impress a professor",
-      "category": "Class & Professors",
-      "answers": []
-    },
-    {
-      "id": "q_95",
-      "question": "Name a reason for confusion during an online class",
-      "category": "Class & Professors",
-      "answers": []
-    },
-    {
-      "id": "q_96",
-      "question": "Name something students say to justify a proxy attendance request",
-      "category": "Class & Professors",
-      "answers": []
-    },
-    {
-      "id": "q_97",
-      "question": "Name a reason lab sessions run late",
-      "category": "Class & Professors",
-      "answers": []
-    },
-    {
-      "id": "q_98",
-      "question": "Name something a professor does to make a boring topic interesting",
-      "category": "Class & Professors",
-      "answers": []
-    },
-    {
-      "id": "q_99",
-      "question": "Name a reason students don't ask doubts in class",
-      "category": "Class & Professors",
-      "answers": []
-    },
-    {
-      "id": "q_100",
-      "question": "Name something that happens on the last day of a semester",
-      "category": "Class & Professors",
-      "answers": []
-    },
-    {
-      "id": "q_101",
-      "question": "Name an app every college student has on their phone",
-      "category": "Gadgets & Apps",
-      "answers": []
-    },
-    {
-      "id": "q_102",
-      "question": "Name a reason students check their phone during class",
-      "category": "Gadgets & Apps",
-      "answers": []
-    },
-    {
-      "id": "q_103",
-      "question": "Name something students use a laptop for besides studying",
-      "category": "Gadgets & Apps",
-      "answers": []
-    },
-    {
-      "id": "q_104",
-      "question": "Name a reason a student's phone battery dies fast",
-      "category": "Gadgets & Apps",
-      "answers": []
-    },
-    {
-      "id": "q_105",
-      "question": "Name something students do first thing after waking up",
-      "category": "Gadgets & Apps",
-      "answers": []
-    },
-    {
-      "id": "q_106",
-      "question": "Name a payment app students use daily",
-      "category": "Gadgets & Apps",
-      "answers": []
-    },
-    {
-      "id": "q_107",
-      "question": "Name something students binge-watch during free time",
-      "category": "Gadgets & Apps",
-      "answers": []
-    },
-    {
-      "id": "q_108",
-      "question": "Name a social media platform popular among freshers",
-      "category": "Gadgets & Apps",
-      "answers": []
-    },
-    {
-      "id": "q_109",
-      "question": "Name a reason students use ChatGPT or AI tools",
-      "category": "Gadgets & Apps",
-      "answers": []
-    },
-    {
-      "id": "q_110",
-      "question": "Name something students do when their phone screen cracks",
-      "category": "Gadgets & Apps",
-      "answers": []
-    },
-    {
-      "id": "q_111",
-      "question": "Name a game college students play on their phones",
-      "category": "Gadgets & Apps",
-      "answers": []
-    },
-    {
-      "id": "q_112",
-      "question": "Name something students forget to carry to class",
-      "category": "Gadgets & Apps",
-      "answers": []
-    },
-    {
-      "id": "q_113",
-      "question": "Name a reason students use earphones/headphones in college",
-      "category": "Gadgets & Apps",
-      "answers": []
-    },
-    {
-      "id": "q_114",
-      "question": "Name something students search for at 2 AM",
-      "category": "Gadgets & Apps",
-      "answers": []
-    },
-    {
-      "id": "q_115",
-      "question": "Name a reason a student's laptop lags during class",
-      "category": "Gadgets & Apps",
-      "answers": []
-    },
-    {
-      "id": "q_116",
-      "question": "Name something students use to take notes",
-      "category": "Gadgets & Apps",
-      "answers": []
-    },
-    {
-      "id": "q_117",
-      "question": "Name a streaming platform students use",
-      "category": "Gadgets & Apps",
-      "answers": []
-    },
-    {
-      "id": "q_118",
-      "question": "Name a reason students join a Discord/WhatsApp study group",
-      "category": "Gadgets & Apps",
-      "answers": []
-    },
-    {
-      "id": "q_119",
-      "question": "Name something students do to save mobile data",
-      "category": "Gadgets & Apps",
-      "answers": []
-    },
-    {
-      "id": "q_120",
-      "question": "Name a reason students uninstall an app",
-      "category": "Gadgets & Apps",
-      "answers": []
-    },
-    {
-      "id": "q_121",
-      "question": "Name the first thing freshers worry about in college",
-      "category": "Fresher Firsts",
-      "answers": []
-    },
-    {
-      "id": "q_122",
-      "question": "Name something freshers get confused about in the first week",
-      "category": "Fresher Firsts",
-      "answers": []
-    },
-    {
-      "id": "q_123",
-      "question": "Name a reason freshers feel homesick",
-      "category": "Fresher Firsts",
-      "answers": []
-    },
-    {
-      "id": "q_124",
-      "question": "Name something seniors tell freshers on day one",
-      "category": "Fresher Firsts",
-      "answers": []
-    },
-    {
-      "id": "q_125",
-      "question": "Name something freshers are most excited about",
-      "category": "Fresher Firsts",
-      "answers": []
-    },
-    {
-      "id": "q_126",
-      "question": "Name a mistake freshers commonly make",
-      "category": "Fresher Firsts",
-      "answers": []
-    },
-    {
-      "id": "q_127",
-      "question": "Name something freshers ask seniors about",
-      "category": "Fresher Firsts",
-      "answers": []
-    },
-    {
-      "id": "q_128",
-      "question": "Name the first purchase a fresher makes for hostel life",
-      "category": "Fresher Firsts",
-      "answers": []
-    },
-    {
-      "id": "q_129",
-      "question": "Name a reason freshers feel nervous about ragging",
-      "category": "Fresher Firsts",
-      "answers": []
-    },
-    {
-      "id": "q_130",
-      "question": "Name something that surprises freshers about college life",
-      "category": "Fresher Firsts",
-      "answers": []
-    },
-    {
-      "id": "q_131",
-      "question": "Name a reason freshers struggle in the first semester",
-      "category": "Fresher Firsts",
-      "answers": []
-    },
-    {
-      "id": "q_132",
-      "question": "Name something freshers do to make friends quickly",
-      "category": "Fresher Firsts",
-      "answers": []
-    },
-    {
-      "id": "q_133",
-      "question": "Name a place freshers get lost in during their first week",
-      "category": "Fresher Firsts",
-      "answers": []
-    },
-    {
-      "id": "q_134",
-      "question": "Name something freshers miss most from school life",
-      "category": "Fresher Firsts",
-      "answers": []
-    },
-    {
-      "id": "q_135",
-      "question": "Name a reason freshers join the wrong club initially",
-      "category": "Fresher Firsts",
-      "answers": []
-    },
-    {
-      "id": "q_136",
-      "question": "Name something a fresher learns to do on their own for the first time",
-      "category": "Fresher Firsts",
-      "answers": []
-    },
-    {
-      "id": "q_137",
-      "question": "Name a common fresher year fashion trend",
-      "category": "Fresher Firsts",
-      "answers": []
-    },
-    {
-      "id": "q_138",
-      "question": "Name something freshers look forward to in their first fest",
-      "category": "Fresher Firsts",
-      "answers": []
-    },
-    {
-      "id": "q_139",
-      "question": "Name a reason freshers feel more confident after the first semester",
-      "category": "Fresher Firsts",
-      "answers": []
-    },
-    {
-      "id": "q_140",
-      "question": "Name something a fresher regrets not doing in the first month",
-      "category": "Fresher Firsts",
-      "answers": []
-    },
-    {
-      "id": "q_141",
-      "question": "Name the first thing that comes to mind when you hear 'VIT Chennai'",
-      "category": "VIT Chennai Campus",
-      "answers": []
-    },
-    {
-      "id": "q_142",
-      "question": "Name a reason students are late to class at VIT",
-      "category": "VIT Chennai Campus",
-      "answers": []
-    },
-    {
-      "id": "q_143",
-      "question": "Name something students do at the Technology Tower",
-      "category": "VIT Chennai Campus",
-      "answers": []
-    },
-    {
-      "id": "q_144",
-      "question": "Name a reason for the campus attendance rule getting criticized",
-      "category": "VIT Chennai Campus",
-      "answers": []
-    },
-    {
-      "id": "q_145",
-      "question": "Name something students do on the college bus",
-      "category": "VIT Chennai Campus",
-      "answers": []
-    },
-    {
-      "id": "q_146",
-      "question": "Name a popular spot on campus to hang out with friends",
-      "category": "VIT Chennai Campus",
-      "answers": []
-    },
-    {
-      "id": "q_147",
-      "question": "Name something students say about VIT's campus size",
-      "category": "VIT Chennai Campus",
-      "answers": []
-    },
-    {
-      "id": "q_148",
-      "question": "Name a reason students love the fest season at VIT",
-      "category": "VIT Chennai Campus",
-      "answers": []
-    },
-    {
-      "id": "q_149",
-      "question": "Name something a VIT student complains about most",
-      "category": "VIT Chennai Campus",
-      "answers": []
-    },
-    {
-      "id": "q_150",
-      "question": "Name a reason placements are a big deal at VIT",
-      "category": "VIT Chennai Campus",
-      "answers": []
-    },
-    {
-      "id": "q_151",
-      "question": "Name something students look forward to at Zeal/college fest",
-      "category": "VIT Chennai Campus",
-      "answers": []
-    },
-    {
-      "id": "q_152",
-      "question": "Name a reason students prefer studying in the library over their room",
-      "category": "VIT Chennai Campus",
-      "answers": []
-    },
-    {
-      "id": "q_153",
-      "question": "Name something new students notice about VIT's diversity",
-      "category": "VIT Chennai Campus",
-      "answers": []
-    },
-    {
-      "id": "q_154",
-      "question": "Name a reason for confusion during course registration",
-      "category": "VIT Chennai Campus",
-      "answers": []
-    },
-    {
-      "id": "q_155",
-      "question": "Name something students do to relax after exams",
-      "category": "VIT Chennai Campus",
-      "answers": []
-    },
-    {
-      "id": "q_156",
-      "question": "Name a reason students join the gym or sports complex",
-      "category": "VIT Chennai Campus",
-      "answers": []
-    },
-    {
-      "id": "q_157",
-      "question": "Name something that's always crowded on campus",
-      "category": "VIT Chennai Campus",
-      "answers": []
-    },
-    {
-      "id": "q_158",
-      "question": "Name a reason a fresher chose VIT Chennai",
-      "category": "VIT Chennai Campus",
-      "answers": []
-    },
-    {
-      "id": "q_159",
-      "question": "Name something students do while waiting for a friend near the main gate",
-      "category": "VIT Chennai Campus",
-      "answers": []
-    },
-    {
-      "id": "q_160",
-      "question": "Name a reason students stay back on campus after classes end",
-      "category": "VIT Chennai Campus",
-      "answers": []
-    },
-    {
-      "id": "q_161",
-      "question": "Name a reason two college friends fall out",
-      "category": "Friendship & Roommates",
-      "answers": []
-    },
-    {
-      "id": "q_162",
-      "question": "Name something best friends in college do together",
-      "category": "Friendship & Roommates",
-      "answers": []
-    },
-    {
-      "id": "q_163",
-      "question": "Name a reason roommates become best friends",
-      "category": "Friendship & Roommates",
-      "answers": []
-    },
-    {
-      "id": "q_164",
-      "question": "Name something friend groups argue about while planning an outing",
-      "category": "Friendship & Roommates",
-      "answers": []
-    },
-    {
-      "id": "q_165",
-      "question": "Name a reason college friendships are considered special",
-      "category": "Friendship & Roommates",
-      "answers": []
-    },
-    {
-      "id": "q_166",
-      "question": "Name something a good roommate does",
-      "category": "Friendship & Roommates",
-      "answers": []
-    },
-    {
-      "id": "q_167",
-      "question": "Name a reason friend groups have a group chat name",
-      "category": "Friendship & Roommates",
-      "answers": []
-    },
-    {
-      "id": "q_168",
-      "question": "Name something friends do to cheer someone up after a bad exam",
-      "category": "Friendship & Roommates",
-      "answers": []
-    },
-    {
-      "id": "q_169",
-      "question": "Name a reason friends plan a surprise birthday",
-      "category": "Friendship & Roommates",
-      "answers": []
-    },
-    {
-      "id": "q_170",
-      "question": "Name something college friends bond over",
-      "category": "Friendship & Roommates",
-      "answers": []
-    },
-    {
-      "id": "q_171",
-      "question": "Name a reason friends stop talking for a while",
-      "category": "Friendship & Roommates",
-      "answers": []
-    },
-    {
-      "id": "q_172",
-      "question": "Name something friends do during a long bus/train journey together",
-      "category": "Friendship & Roommates",
-      "answers": []
-    },
-    {
-      "id": "q_173",
-      "question": "Name a reason a roommate swap happens",
-      "category": "Friendship & Roommates",
-      "answers": []
-    },
-    {
-      "id": "q_174",
-      "question": "Name something friends do to prank each other in the hostel",
-      "category": "Friendship & Roommates",
-      "answers": []
-    },
-    {
-      "id": "q_175",
-      "question": "Name a reason someone becomes the 'mom friend' of the group",
-      "category": "Friendship & Roommates",
-      "answers": []
-    },
-    {
-      "id": "q_176",
-      "question": "Name something friends say when planning a trip that never happens",
-      "category": "Friendship & Roommates",
-      "answers": []
-    },
-    {
-      "id": "q_177",
-      "question": "Name a reason a friend group has a 'group mom' or 'group dad'",
-      "category": "Friendship & Roommates",
-      "answers": []
-    },
-    {
-      "id": "q_178",
-      "question": "Name something roommates split evenly",
-      "category": "Friendship & Roommates",
-      "answers": []
-    },
-    {
-      "id": "q_179",
-      "question": "Name a reason a friendship in college lasts a lifetime",
-      "category": "Friendship & Roommates",
-      "answers": []
-    },
-    {
-      "id": "q_180",
-      "question": "Name something students worry about regarding placements",
-      "category": "Career & Placements",
-      "answers": []
-    },
-    {
-      "id": "q_181",
-      "question": "Name a skill students try to build for placements",
-      "category": "Career & Placements",
-      "answers": []
-    },
-    {
-      "id": "q_182",
-      "question": "Name something students do to prepare for a technical interview",
-      "category": "Career & Placements",
-      "answers": []
-    },
-    {
-      "id": "q_183",
-      "question": "Name a reason students choose a particular specialization/branch",
-      "category": "Career & Placements",
-      "answers": []
-    },
-    {
-      "id": "q_184",
-      "question": "Name something students add to their resume to stand out",
-      "category": "Career & Placements",
-      "answers": []
-    },
-    {
-      "id": "q_185",
-      "question": "Name a reason students pursue higher studies instead of a job",
-      "category": "Career & Placements",
-      "answers": []
-    },
-    {
-      "id": "q_186",
-      "question": "Name a common fear before a campus placement drive",
-      "category": "Career & Placements",
-      "answers": []
-    },
-    {
-      "id": "q_187",
-      "question": "Name something students do after getting placed",
-      "category": "Career & Placements",
-      "answers": []
-    },
-    {
-      "id": "q_188",
-      "question": "Name a reason students take up an internship",
-      "category": "Career & Placements",
-      "answers": []
-    },
-    {
-      "id": "q_189",
-      "question": "Name something students consider before choosing a job offer",
-      "category": "Career & Placements",
-      "answers": []
-    },
-    {
-      "id": "q_190",
-      "question": "Name a reason students attend a career fair",
-      "category": "Career & Placements",
-      "answers": []
-    },
-    {
-      "id": "q_191",
-      "question": "Name something students do to network professionally",
-      "category": "Career & Placements",
-      "answers": []
-    },
-    {
-      "id": "q_192",
-      "question": "Name a reason students feel pressure to get a high-paying job",
-      "category": "Career & Placements",
-      "answers": []
-    },
-    {
-      "id": "q_193",
-      "question": "Name something recruiters look for in a candidate",
-      "category": "Career & Placements",
-      "answers": []
-    },
-    {
-      "id": "q_194",
-      "question": "Name a reason students switch their career interest during college",
-      "category": "Career & Placements",
-      "answers": []
-    },
-    {
-      "id": "q_195",
-      "question": "Name something students do the night before a placement interview",
-      "category": "Career & Placements",
-      "answers": []
-    },
-    {
-      "id": "q_196",
-      "question": "Name a reason students value soft skills for placements",
-      "category": "Career & Placements",
-      "answers": []
-    },
-    {
-      "id": "q_197",
-      "question": "Name something a placement coordinator does",
-      "category": "Career & Placements",
-      "answers": []
-    },
-    {
-      "id": "q_198",
-      "question": "Name a reason students prefer a startup job over a corporate job",
-      "category": "Career & Placements",
-      "answers": []
-    },
-    {
-      "id": "q_199",
-      "question": "Name something students feel after their final placement season ends",
-      "category": "Career & Placements",
-      "answers": []
-    },
-    {
-      "id": "q_200",
-      "question": "Name something a fresher wishes they knew about placements on day one",
-      "category": "Career & Placements",
-      "answers": []
+      "id": "q1",
+      "question": "Name something every VIT student carries.",
+      "category": "Campus",
+      "answers": [
+        {
+          "text": "Phone",
+          "points": 40
+        },
+        {
+          "text": "ID Card",
+          "points": 25
+        },
+        {
+          "text": "Laptop",
+          "points": 15
+        },
+        {
+          "text": "Water Bottle",
+          "points": 10
+        },
+        {
+          "text": "Umbrella",
+          "points": 5
+        },
+        {
+          "text": "Earphones",
+          "points": 3
+        },
+        {
+          "text": "Pen",
+          "points": 2
+        }
+      ]
+    },
+    {
+      "id": "q2",
+      "question": "Name a popular spot on VIT Chennai campus.",
+      "category": "Campus",
+      "answers": [
+        {
+          "text": "Gazebo",
+          "points": 35
+        },
+        {
+          "text": "MG Auditorium",
+          "points": 25
+        },
+        {
+          "text": "Food Court",
+          "points": 20
+        },
+        {
+          "text": "Central Library",
+          "points": 12
+        },
+        {
+          "text": "Netaji Sports Ground",
+          "points": 5
+        },
+        {
+          "text": "D-Block",
+          "points": 3
+        }
+      ]
+    },
+    {
+      "id": "q3",
+      "question": "Name something you do when a class gets cancelled.",
+      "category": "Funny",
+      "answers": [
+        {
+          "text": "Sleep",
+          "points": 45
+        },
+        {
+          "text": "Go to Cafeteria",
+          "points": 25
+        },
+        {
+          "text": "Play Games",
+          "points": 15
+        },
+        {
+          "text": "Watch Movies",
+          "points": 10
+        },
+        {
+          "text": "Go back to Hostel",
+          "points": 5
+        }
+      ]
+    },
+    {
+      "id": "q4",
+      "question": "Name a programming language taught in first year.",
+      "category": "Academics",
+      "answers": [
+        {
+          "text": "Python",
+          "points": 50
+        },
+        {
+          "text": "C",
+          "points": 30
+        },
+        {
+          "text": "Java",
+          "points": 12
+        },
+        {
+          "text": "C++",
+          "points": 8
+        }
+      ]
+    },
+    {
+      "id": "q5",
+      "question": "Name a reason a student gets a call from the warden.",
+      "category": "Hostel",
+      "answers": [
+        {
+          "text": "Late Entry",
+          "points": 45
+        },
+        {
+          "text": "Low Attendance",
+          "points": 25
+        },
+        {
+          "text": "Courier Arrival",
+          "points": 15
+        },
+        {
+          "text": "Noise Complaint",
+          "points": 10
+        },
+        {
+          "text": "Room Shifting",
+          "points": 5
+        }
+      ]
+    },
+    {
+      "id": "q6",
+      "question": "Name a keyword associated with Android Club.",
+      "category": "Android Club",
+      "answers": [
+        {
+          "text": "Hackathon",
+          "points": 35
+        },
+        {
+          "text": "App Development",
+          "points": 30
+        },
+        {
+          "text": "Kotlin",
+          "points": 18
+        },
+        {
+          "text": "Flutter",
+          "points": 10
+        },
+        {
+          "text": "Innovation",
+          "points": 5
+        },
+        {
+          "text": "Club Expo",
+          "points": 2
+        }
+      ]
     }
   ],
   "games": {},
