@@ -204,6 +204,7 @@ export default function Display() {
       );
       if (response.ok) {
         alert("Question deleted!");
+        window.location.reload();
       }
     } catch (e) {
       console.error(e);
@@ -239,21 +240,23 @@ export default function Display() {
       try {
         const parsed = JSON.parse(event.target.result);
         if (Array.isArray(parsed)) {
-          for (const q of parsed) {
-            await fetch(
-              (import.meta.env.VITE_BACKEND_URL || `${window.location.protocol}//${window.location.hostname}:5000`) + '/api/questions',
-              {
-                method: 'POST',
-                headers: { 
-                  'Content-Type': 'application/json',
-                  'x-admin-key': adminKey
-                },
-                body: JSON.stringify(q)
-              }
-            );
+          const response = await fetch(
+            (import.meta.env.VITE_BACKEND_URL || `${window.location.protocol}//${window.location.hostname}:5000`) + '/api/questions',
+            {
+              method: 'POST',
+              headers: { 
+                'Content-Type': 'application/json',
+                'x-admin-key': adminKey
+              },
+              body: JSON.stringify(parsed)
+            }
+          );
+          if (response.ok) {
+            alert("Import complete! Refreshing.");
+            window.location.reload();
+          } else {
+            alert("Import failed.");
           }
-          alert("Import complete! Refreshing.");
-          window.location.reload();
         } else {
           alert("Invalid file format.");
         }

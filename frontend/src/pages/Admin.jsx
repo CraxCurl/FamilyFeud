@@ -147,6 +147,7 @@ export default function Admin() {
       );
       if (response.ok) {
         alert("Question deleted!");
+        window.location.reload();
       } else {
         alert("Delete authorization failed.");
       }
@@ -184,21 +185,23 @@ export default function Admin() {
       try {
         const parsed = JSON.parse(event.target.result);
         if (Array.isArray(parsed)) {
-          for (const q of parsed) {
-            await fetch(
-              (import.meta.env.VITE_BACKEND_URL || `${window.location.protocol}//${window.location.hostname}:5000`) + '/api/questions',
-              {
-                method: 'POST',
-                headers: { 
-                  'Content-Type': 'application/json',
-                  'x-admin-key': adminKey
-                },
-                body: JSON.stringify(q)
-              }
-            );
+          const response = await fetch(
+            (import.meta.env.VITE_BACKEND_URL || `${window.location.protocol}//${window.location.hostname}:5000`) + '/api/questions',
+            {
+              method: 'POST',
+              headers: { 
+                'Content-Type': 'application/json',
+                'x-admin-key': adminKey
+              },
+              body: JSON.stringify(parsed)
+            }
+          );
+          if (response.ok) {
+            alert("Import complete! Refreshing page details.");
+            window.location.reload();
+          } else {
+            alert("Import failed.");
           }
-          alert("Import complete! Refreshing page details.");
-          window.location.reload();
         } else {
           alert("Invalid file format. Must be a JSON array of questions.");
         }

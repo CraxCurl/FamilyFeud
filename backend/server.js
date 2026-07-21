@@ -357,8 +357,22 @@ app.get('/api/questions', (req, res) => {
 });
 
 app.post('/api/questions', verifyAdminKey, (req, res) => {
-  const q = saveQuestion(req.body);
-  res.json(q);
+  if (Array.isArray(req.body)) {
+    localDb.questions = req.body.map((q, index) => {
+      if (!q.id) {
+        q.id = 'q_' + (Date.now() + index);
+      }
+      if (!q.answers) {
+        q.answers = [];
+      }
+      return q;
+    });
+    saveLocalDb();
+    res.json({ success: true, count: localDb.questions.length });
+  } else {
+    const q = saveQuestion(req.body);
+    res.json(q);
+  }
 });
 
 app.delete('/api/questions/:id', verifyAdminKey, (req, res) => {
