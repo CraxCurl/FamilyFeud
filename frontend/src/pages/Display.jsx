@@ -766,8 +766,16 @@ export default function Display() {
 
                         {/* Answers controller */}
                         {adminState?.currentQuestion && (
-                          <div className="glass-panel p-4 rounded-xl space-y-4 border-[#0D483F]/10">
-                            <span className="text-xs font-bold text-[#0D483F]/60 uppercase tracking-widest block border-b border-[#0D483F]/10 pb-1">Reveals & Strikes</span>
+                          <div className="space-y-6">
+                            <div className="glass-panel p-4 rounded-xl space-y-2 border-[#0D483F]/10 bg-[#0D483F]/5">
+                              <span className="text-xs font-bold text-[#0D483F]/60 uppercase tracking-widest block border-b border-[#0D483F]/10 pb-1">Current Question</span>
+                              <div className="text-lg font-black text-[#0D483F]">
+                                “{adminState.currentQuestion.question}”
+                              </div>
+                            </div>
+
+                            <div className="glass-panel p-4 rounded-xl space-y-4 border-[#0D483F]/10">
+                              <span className="text-xs font-bold text-[#0D483F]/60 uppercase tracking-widest block border-b border-[#0D483F]/10 pb-1">Reveals & Strikes</span>
                             
                             <div className="space-y-2">
                               {adminState?.currentQuestion?.answers?.map((ans, idx) => {
@@ -868,6 +876,7 @@ export default function Display() {
                               </div>
                             </div>
                           </div>
+                        </div>
                         )}
                       </div>
 
