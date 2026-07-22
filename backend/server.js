@@ -36,22 +36,24 @@ const userSchema = new mongoose.Schema({
 
 const User = mongoose.model('User', userSchema);
 
+const questionSchema = new mongoose.Schema({
+  id: { type: String, unique: true },
+  question: String,
+  category: String,
+  answers: [{
+    text: String,
+    points: Number
+  }]
+});
+
+const Question = mongoose.model('Question', questionSchema);
+
 mongoose.set('bufferCommands', false);
 const mongoUri = process.env.MONGO_URI || 'mongodb://localhost:27017/familyfeud';
 const mongoOptions = {
   serverSelectionTimeoutMS: 5000,
   family: 4
 };
-
-mongoose.connect(mongoUri, mongoOptions)
-  .then(() => {
-    isMongoConnected = true;
-    console.log(`Successfully connected to MongoDB at ${mongoUri}`);
-  })
-  .catch((err) => {
-    isMongoConnected = false;
-    console.warn(`MongoDB connection failed (${err.message}). Gracefully falling back to local file log.`);
-  });
 
 async function logPlayerAction(data) {
   if (isMongoConnected) {
@@ -98,56 +100,46 @@ const io = new Server(server, {
   }
 });
 
-// Load default questions
-const questionsPath = path.join(__dirname, 'data', 'initialQuestions.json');
-let questionsList = [];
-try {
-  const fileContent = fs.readFileSync(questionsPath, 'utf8');
-  questionsList = JSON.parse(fileContent);
-} catch (e) {
-  console.error("Could not load default questions:", e);
-}
-
-// Local Database State
+// Local Database State (used for memory cache & tracking used questions in current session)
 let localDb = {
-  questions: questionsList,
+  questions: [],
   games: {},
   usedQuestionIds: []
 };
 
-// Save helper for persistence
-const saveLocalDb = () => {
+// Initial seeding from file to MongoDB if empty
+async function seedQuestions() {
+  if (!isMongoConnected) return;
   try {
-    const dbPath = path.join(__dirname, 'data', 'db.json');
-    fs.writeFileSync(dbPath, JSON.stringify(localDb, null, 2), 'utf8');
-  } catch (e) {
-    console.error("Failed to save local db:", e);
-  }
-};
-
-// Load saved local db if exists
-try {
-  const dbPath = path.join(__dirname, 'data', 'db.json');
-  if (fs.existsSync(dbPath)) {
-    const content = fs.readFileSync(dbPath, 'utf8');
-    localDb = JSON.parse(content);
-    if (!localDb.usedQuestionIds) {
-      localDb.usedQuestionIds = [];
+    const count = await Question.countDocuments();
+    if (count === 0) {
+      const questionsPath = path.join(__dirname, 'data', 'initialQuestions.json');
+      if (fs.existsSync(questionsPath)) {
+        const fileContent = fs.readFileSync(questionsPath, 'utf8');
+        const initialQs = JSON.parse(fileContent);
+        await Question.insertMany(initialQs.map((q, i) => ({
+          ...q,
+          id: q.id || 'q_' + (Date.now() + i)
+        })));
+        console.log("Seeded initial questions to MongoDB.");
+      }
     }
-    console.log("Loaded existing database from local JSON file.");
+  } catch (err) {
+    console.error("Seeding failed:", err.message);
   }
-} catch (e) {
-  console.error("Could not read local db.json, using defaults.");
 }
 
 // Fetch all questions helper
-function getQuestions() {
+async function getQuestions() {
+  if (isMongoConnected) {
+    return await Question.find({});
+  }
   return localDb.questions;
 }
 
 // Draw questions helper
-function drawQuestions(count, currentQuestionsToExclude = []) {
-  const allQuestions = getQuestions();
+async function drawQuestions(count, currentQuestionsToExclude = []) {
+  const allQuestions = await getQuestions();
   if (allQuestions.length === 0) return [];
 
   // Filter out any questions we want to exclude
@@ -197,30 +189,51 @@ function drawQuestions(count, currentQuestionsToExclude = []) {
     }
   });
 
-  saveLocalDb();
   return selected;
 }
 
 // Save question helper
-function saveQuestion(question) {
+async function saveQuestion(question) {
   if (!question.id) {
     question.id = 'q_' + Date.now();
   }
-  const idx = localDb.questions.findIndex(q => q.id === question.id);
-  if (idx !== -1) {
-    localDb.questions[idx] = question;
+
+  if (isMongoConnected) {
+    return await Question.findOneAndUpdate(
+      { id: question.id },
+      question,
+      { upsert: true, new: true }
+    );
   } else {
-    localDb.questions.push(question);
+    const idx = localDb.questions.findIndex(q => q.id === question.id);
+    if (idx !== -1) {
+      localDb.questions[idx] = question;
+    } else {
+      localDb.questions.push(question);
+    }
+    return question;
   }
-  saveLocalDb();
-  return question;
 }
 
 // Delete question helper
-function deleteQuestion(id) {
-  localDb.questions = localDb.questions.filter(q => q.id !== id);
-  saveLocalDb();
+async function deleteQuestion(id) {
+  if (isMongoConnected) {
+    await Question.deleteOne({ id });
+  } else {
+    localDb.questions = localDb.questions.filter(q => q.id !== id);
+  }
 }
+
+mongoose.connect(mongoUri, mongoOptions)
+  .then(async () => {
+    isMongoConnected = true;
+    console.log(`Successfully connected to MongoDB at ${mongoUri}`);
+    await seedQuestions();
+  })
+  .catch((err) => {
+    isMongoConnected = false;
+    console.warn(`MongoDB connection failed (${err.message}). Gracefully falling back to local memory.`);
+  });
 
 // Global Game Control State
 let gameState = {
@@ -287,9 +300,11 @@ function broadcastState() {
 
 function sendAdminState(socket) {
   const target = socket || io.to('admin-room');
-  target.emit('admin_state_update', {
-    ...gameState,
-    allQuestions: localDb.questions
+  getQuestions().then(qs => {
+    target.emit('admin_state_update', {
+      ...gameState,
+      allQuestions: qs
+    });
   });
 }
 
@@ -351,14 +366,14 @@ const verifyAdminKey = (req, res, next) => {
 };
 
 // REST APIs
-app.get('/api/questions', (req, res) => {
-  // Free read to allow display/play view setup if needed
-  res.json(getQuestions());
+app.get('/api/questions', async (req, res) => {
+  const qs = await getQuestions();
+  res.json(qs);
 });
 
-app.post('/api/questions', verifyAdminKey, (req, res) => {
+app.post('/api/questions', verifyAdminKey, async (req, res) => {
   if (Array.isArray(req.body)) {
-    localDb.questions = req.body.map((q, index) => {
+    const questions = req.body.map((q, index) => {
       if (!q.id) {
         q.id = 'q_' + (Date.now() + index);
       }
@@ -367,22 +382,31 @@ app.post('/api/questions', verifyAdminKey, (req, res) => {
       }
       return q;
     });
-    saveLocalDb();
-    res.json({ success: true, count: localDb.questions.length });
+
+    if (isMongoConnected) {
+      await Question.deleteMany({});
+      await Question.insertMany(questions);
+    } else {
+      localDb.questions = questions;
+    }
+    res.json({ success: true, count: questions.length });
   } else {
-    const q = saveQuestion(req.body);
+    const q = await saveQuestion(req.body);
     res.json(q);
   }
 });
 
-app.delete('/api/questions', verifyAdminKey, (req, res) => {
-  localDb.questions = [];
-  saveLocalDb();
+app.delete('/api/questions', verifyAdminKey, async (req, res) => {
+  if (isMongoConnected) {
+    await Question.deleteMany({});
+  } else {
+    localDb.questions = [];
+  }
   res.json({ success: true, count: 0 });
 });
 
-app.delete('/api/questions/:id', verifyAdminKey, (req, res) => {
-  deleteQuestion(req.params.id);
+app.delete('/api/questions/:id', verifyAdminKey, async (req, res) => {
+  await deleteQuestion(req.params.id);
   res.json({ success: true });
 });
 
@@ -653,7 +677,7 @@ io.on('connection', (socket) => {
 
     switch (action) {
       case 'START_GAME':
-        gameState.questions = drawQuestions(gameState.maxRounds);
+        gameState.questions = await drawQuestions(gameState.maxRounds);
         gameState.status = 'PLAYING';
         gameState.currentRound = 1;
         gameState.currentQuestion = gameState.questions[0] || null;
@@ -805,7 +829,7 @@ io.on('connection', (socket) => {
 
       case 'SKIP_QUESTION':
         const currentInGameIds = gameState.questions.map(q => q.id);
-        const replacementQs = drawQuestions(1, currentInGameIds);
+        const replacementQs = await drawQuestions(1, currentInGameIds);
         if (replacementQs.length > 0) {
           const newQ = replacementQs[0];
           gameState.questions[gameState.currentRound - 1] = newQ;
