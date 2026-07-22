@@ -92,18 +92,9 @@ export default function Play() {
   useEffect(() => {
     const resumeAudio = () => {
       sounds.init();
-      if (sounds.buzzAudio) {
-        sounds.buzzAudio.load();
-        sounds.buzzAudio.play()
-          .then(() => {
-            sounds.buzzAudio.pause();
-            sounds.buzzAudio.currentTime = 0;
-          })
-          .catch(() => {});
-      }
     };
-    window.addEventListener('click', resumeAudio);
-    window.addEventListener('touchstart', resumeAudio);
+    window.addEventListener('click', resumeAudio, { once: true });
+    window.addEventListener('touchstart', resumeAudio, { once: true });
     return () => {
       window.removeEventListener('click', resumeAudio);
       window.removeEventListener('touchstart', resumeAudio);
