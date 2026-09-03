@@ -900,19 +900,30 @@ io.on('connection', (socket) => {
       const cleanInput = submittedAnswer.toLowerCase();
       matchedIndex = gameState.currentQuestion.answers.findIndex(ans => {
         const cleanAns = ans.text.trim().toLowerCase();
-        return cleanAns === cleanInput || cleanAns.includes(cleanInput) || cleanInput.includes(cleanAns);
+        return cleanAns === cleanInput;
       });
     }
+
+    const isExactUnrevealedMatch = matchedIndex !== -1 && !gameState.revealedAnswers[matchedIndex];
 
     const response = {
       id: `${socket.id}-${Date.now()}`,
       team: player.team,
       answer: submittedAnswer,
       matchedIndex,
-      matched: matchedIndex !== -1 && !gameState.revealedAnswers[matchedIndex],
+      matched: isExactUnrevealedMatch,
+      autoRevealed: isExactUnrevealedMatch,
       submittedAt: Date.now()
     };
     gameState.submittedAnswers.push(response);
+
+    if (isExactUnrevealedMatch) {
+      gameState.revealedAnswers[matchedIndex] = true;
+      const points = gameState.currentQuestion.answers[matchedIndex].points;
+      gameState.teams[player.team].score += points;
+      io.emit('play_sound', { type: 'CORRECT' });
+      io.emit('play_sound', { type: 'POINTS_SCORED' });
+    }
     io.to('admin-room').emit('incoming_answer', response);
 
     broadcastState();

@@ -483,6 +483,7 @@ export default function Admin() {
               </div>
             </div>
 
+            <div className="grid grid-cols-1 2xl:grid-cols-2 gap-6 items-start">
             <div className="glass-panel p-6 rounded-2xl relative overflow-hidden">
               <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-neonCyan to-neonPurple" />
               <div className="flex justify-between items-center mb-4 border-b border-white/5 pb-3">
@@ -500,7 +501,7 @@ export default function Admin() {
                           <span className="text-xs font-bold text-neonCyan">{response.team}</span>
                           <p className="text-sm font-semibold text-white mt-0.5">{response.answer}</p>
                           <span className={`text-[10px] font-bold uppercase ${response.matched ? 'text-emerald-400' : 'text-gray-500'}`}>
-                            {response.matched ? 'Matches a board answer' : response.matchedIndex >= 0 ? 'Answer already revealed' : 'No board match'}
+                            {response.autoRevealed ? 'Exact match — revealed and points awarded' : response.matched ? 'Matches a board answer' : response.matchedIndex >= 0 ? 'Answer already revealed' : 'No exact board match'}
                           </span>
                         </div>
                         {response.matched && !isAlreadyRevealed && (
@@ -638,6 +639,7 @@ export default function Admin() {
                 </div>
               </div>
             )}
+            </div>
           </div>
 
           {/* Right/Side Panel: Teams & Devices */}
