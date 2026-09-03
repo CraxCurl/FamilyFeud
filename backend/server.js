@@ -73,21 +73,6 @@ async function logPlayerAction(data) {
   }
 }
 
-const RANDOM_NAMES = [
-  "Proxy Master", "Kotlin Knight", "Vite Wizard", "Bug Hunter",
-  "Code Ninja", "UI Wizard", "Coffee Dev", "Git Guru",
-  "Flutter Flyer", "Stack Overflowed", "Terminal Hacker", "Ctrl-Alt-Elite",
-  "Latecomer", "App Pioneer", "Gradle Groovy", "Logcat Lover",
-  "Async Avenger", "Thread Ripper", "Null Pointer", "JSON Derulo",
-  "Merge Conflict", "Pixel Pusher", "Callback Queen", "Heap Leaker",
-  "Stack Trace", "Cyber Punk", "Prompt Engineer", "Byte Sized",
-  "Cache Money", "Bit Flip", "Kernel Panic", "Binary Boss",
-  "Cookie Monster", "DOM Terminator", "Flexbox Fanatic", "Sudo Samurai",
-  "YAML Wrangler", "RAM Raider", "Ping Ponger", "Docker Captain",
-  "Git Pushy", "Data Miner", "Cyber Sentinel", "SDK Sorcerer",
-  "DNS Wizard", "Bug Whisperer"
-];
-
 const app = express();
 app.use(cors());
 app.use(express.json());
@@ -256,11 +241,13 @@ let gameState = {
   activeInputTeam: null, // Team currently allowed to input answers (or has the buzz)
   maxRounds: 3,
   turnSeconds: 15,
-  turnsTaken: { 'Team Alpha': 0, 'Team Beta': 0 },
+  teamCapacity: 4,
+  turnsTaken: {},
   turnsPerTeam: 3,
   winner: null,
   finalScores: {},
-  strikeFlash: 0
+  strikeFlash: 0,
+  submittedAnswers: []
 };
 
 // Interval for Countdown Timers
@@ -290,6 +277,7 @@ function broadcastState() {
     activeInputTeam: gameState.activeInputTeam,
     maxRounds: gameState.maxRounds,
     turnSeconds: gameState.turnSeconds,
+    teamCapacity: gameState.teamCapacity,
     turnsTaken: gameState.turnsTaken,
     turnsPerTeam: gameState.turnsPerTeam,
     winner: gameState.winner,
@@ -300,12 +288,21 @@ function broadcastState() {
 
 function sendAdminState(socket) {
   const target = socket || io.to('admin-room');
-  getQuestions().then(qs => {
-    target.emit('admin_state_update', {
-      ...gameState,
-      allQuestions: qs
+  getQuestions()
+    .then((qs) => {
+      target.emit('admin_state_update', {
+        ...gameState,
+        allQuestions: qs
+      });
+    })
+    .catch((err) => {
+      console.error('Could not load admin questions; sending fallback state:', err.message);
+      isMongoConnected = false;
+      target.emit('admin_state_update', {
+        ...gameState,
+        allQuestions: localDb.questions || []
+      });
     });
-  });
 }
 
 function startTimer(seconds, onTick, onComplete) {
@@ -337,13 +334,16 @@ function stopTimer() {
   sendAdminState();
 }
 
+function resetTurnCounts() {
+  gameState.turnsTaken = Object.fromEntries(Object.keys(gameState.teams).map((teamName) => [teamName, 0]));
+}
+
+function resetSubmittedAnswers() {
+  gameState.submittedAnswers = [];
+}
+
 function clearPlayerTeams() {
-  if (gameState.teams['Team Alpha']) {
-    gameState.teams['Team Alpha'].members = [];
-  }
-  if (gameState.teams['Team Beta']) {
-    gameState.teams['Team Beta'].members = [];
-  }
+  Object.values(gameState.teams).forEach((team) => { team.members = []; });
 
   Object.keys(gameState.players).forEach(socketId => {
     gameState.players[socketId].team = null;
@@ -448,7 +448,7 @@ function concludeGame() {
 }
 
 function processQueue() {
-  const lobbyCapacity = 6;
+  const lobbyCapacity = 8;
   const currentActiveCount = Object.keys(gameState.players).length;
   const spacesAvailable = lobbyCapacity - currentActiveCount;
 
@@ -495,9 +495,9 @@ function beginTeamTurn(team, buzzed = false) {
 function advanceTeamTurn() {
   io.emit('play_sound', { type: 'TIMER_END' });
   const currentTeam = gameState.activeInputTeam;
-  const otherTeam = currentTeam === 'Team Alpha' ? 'Team Beta' : 'Team Alpha';
+  const otherTeam = Object.keys(gameState.teams).find((teamName) => teamName !== currentTeam);
 
-  if (gameState.turnsTaken[otherTeam] < gameState.turnsPerTeam) {
+  if (otherTeam && gameState.turnsTaken[otherTeam] < gameState.turnsPerTeam) {
     beginTeamTurn(otherTeam);
   } else if (gameState.turnsTaken[currentTeam] < gameState.turnsPerTeam) {
     beginTeamTurn(currentTeam);
@@ -508,7 +508,7 @@ function advanceTeamTurn() {
 
 function startTurnCycle() {
   stopTimer();
-  gameState.turnsTaken = { 'Team Alpha': 0, 'Team Beta': 0 };
+  resetTurnCounts();
   gameState.activeInputTeam = null;
   gameState.buzzState = { locked: false, player: null, team: null, time: null };
   gameState.status = 'PLAYING';
@@ -526,30 +526,10 @@ io.on('connection', (socket) => {
   // Send current state on connect
   broadcastState();
 
-  // Player Registration (automatic name assignment with MongoDB profiles, team: null initially)
+  // Player Registration (team is selected separately in the lobby)
   socket.on('join_game', async ({ id }) => {
     try {
-      let resolvedUsername = null;
-
-      // Find or create User in MongoDB only if connected
-      if (isMongoConnected) {
-        try {
-          let user = await User.findOne({ userId: id });
-          if (!user) {
-            const randomName = RANDOM_NAMES[Math.floor(Math.random() * RANDOM_NAMES.length)] || `User_${Math.floor(Math.random() * 1000)}`;
-            user = await User.create({ userId: id, username: randomName });
-          }
-          resolvedUsername = user.username;
-        } catch (dbErr) {
-          console.log(`Database query failed: ${dbErr.message}. Falling back to memory.`);
-        }
-      }
-
-      // If database was not connected or query failed, fallback to memory
-      if (!resolvedUsername) {
-        const randomName = RANDOM_NAMES[Math.floor(Math.random() * RANDOM_NAMES.length)] || `User_${Math.floor(Math.random() * 1000)}`;
-        resolvedUsername = randomName;
-      }
+      const resolvedUsername = 'Player';
 
       // Check if they are already in the active session
       let existingPlayer = Object.values(gameState.players).find(p => p.id === id);
@@ -580,9 +560,7 @@ io.on('connection', (socket) => {
         return;
       }
 
-      const activePlayersCount = Object.keys(gameState.players).length;
-
-      if (gameState.status !== 'LOBBY' || activePlayersCount >= 6) {
+      if (gameState.status !== 'LOBBY') {
         const queuedPlayer = { id, name: resolvedUsername, socketId: socket.id };
         gameState.queue.push(queuedPlayer);
         socket.emit('joined_queue', { position: gameState.queue.length });
@@ -603,55 +581,60 @@ io.on('connection', (socket) => {
     }
   });
 
-  // Player Draws new Identity and Enters Active Team (3 max per team, 6 total max)
-  socket.on('draw_identity', () => {
+  // Players choose one of at most two named teams, within the host-configured capacity.
+  socket.on('select_team', ({ teamName }, acknowledge = () => {}) => {
     const player = gameState.players[socket.id];
-    if (!player) return;
+    if (!player) {
+      acknowledge({ ok: false, message: 'Your player session is not ready. Please try again.' });
+      return;
+    }
 
     if (gameState.status !== 'LOBBY') {
-      socket.emit('join_blocked', { message: 'Teams are locked once the game starts.' });
+      const message = 'Teams are locked once the game starts.';
+      socket.emit('join_blocked', { message });
+      acknowledge({ ok: false, message });
       return;
     }
 
-    // Reject if already enrolled in a team for this round
-    if (player.team) return;
-
-    const activePlayersWithTeam = Object.values(gameState.players).filter(p => p.team !== null).length;
-    if (activePlayersWithTeam >= 6) {
-      socket.emit('join_blocked', {
-        message: "The arena teams are full (6/6 players). Please wait in the queue patiently and learn more about Android Club!"
-      });
+    if (player.team) {
+      acknowledge({ ok: true, team: player.team });
+      socket.emit('joined_details', player);
       return;
     }
 
-    if (!gameState.teams['Team Alpha']) gameState.teams['Team Alpha'] = { score: 0, members: [] };
-    if (!gameState.teams['Team Beta']) gameState.teams['Team Beta'] = { score: 0, members: [] };
-
-    const teamA = gameState.teams['Team Alpha'];
-    const teamB = gameState.teams['Team Beta'];
-
-    let assignedTeam = 'Team Alpha';
-    if (teamA.members.length >= 3) {
-      assignedTeam = 'Team Beta';
-    } else if (teamB.members.length >= 3) {
-      assignedTeam = 'Team Alpha';
-    } else {
-      assignedTeam = teamA.members.length <= teamB.members.length ? 'Team Alpha' : 'Team Beta';
+    const requestedName = String(teamName || '').trim().replace(/\s+/g, ' ').slice(0, 24);
+    if (!requestedName) {
+      const message = 'Enter a team name to join.';
+      socket.emit('join_blocked', { message });
+      acknowledge({ ok: false, message });
+      return;
     }
 
-    // Draw a new random alias for this specific round
-    const activeNames = Object.values(gameState.players).map(p => p.name);
-    const availableNames = RANDOM_NAMES.filter(n => !activeNames.includes(n));
-    const randomAlias = availableNames[Math.floor(Math.random() * availableNames.length)] || player.name;
+    const existingTeamName = Object.keys(gameState.teams).find((name) => name.toLowerCase() === requestedName.toLowerCase());
+    const assignedTeam = existingTeamName || requestedName;
+    if (!existingTeamName && Object.keys(gameState.teams).length >= 2) {
+      const message = 'Two teams are already set up. Join one of those teams.';
+      socket.emit('join_blocked', { message });
+      acknowledge({ ok: false, message });
+      return;
+    }
 
-    player.name = randomAlias;
+    if (!gameState.teams[assignedTeam]) gameState.teams[assignedTeam] = { score: 0, members: [] };
+    if (gameState.teams[assignedTeam].members.length >= gameState.teamCapacity) {
+      const message = `${assignedTeam} is full (${gameState.teamCapacity}/${gameState.teamCapacity}).`;
+      socket.emit('join_blocked', { message });
+      acknowledge({ ok: false, message });
+      return;
+    }
+
     player.team = assignedTeam;
-    gameState.teams[assignedTeam].members.push({ name: randomAlias, id: player.id, socketId: socket.id });
+    gameState.teams[assignedTeam].members.push({ id: player.id, socketId: socket.id });
 
-    console.log(`Player ${randomAlias} drawn for round onto ${assignedTeam}`);
-    logPlayerAction({ userId: player.id, username: randomAlias, team: assignedTeam, round: gameState.currentRound, action: 'join' });
+    console.log(`Player joined ${assignedTeam} (${gameState.teams[assignedTeam].members.length}/4)`);
+    logPlayerAction({ userId: player.id, team: assignedTeam, round: gameState.currentRound, action: 'join' });
 
     socket.emit('joined_details', player);
+    acknowledge({ ok: true, team: assignedTeam });
     broadcastState();
     sendAdminState();
   });
@@ -690,11 +673,13 @@ io.on('connection', (socket) => {
         gameState.winner = null;
         gameState.finalScores = {};
         gameState.strikeFlash = 0;
-        gameState.turnsTaken = { 'Team Alpha': 0, 'Team Beta': 0 };
+        resetSubmittedAnswers();
+        resetTurnCounts();
         startTurnCycle();
         break;
 
       case 'START_QUESTION':
+        resetSubmittedAnswers();
         startTurnCycle();
         break;
 
@@ -715,7 +700,8 @@ io.on('connection', (socket) => {
         gameState.winner = null;
         gameState.finalScores = {};
         gameState.strikeFlash = 0;
-        gameState.turnsTaken = { 'Team Alpha': 0, 'Team Beta': 0 };
+        resetSubmittedAnswers();
+        resetTurnCounts();
         stopTimer();
         processQueue();
         break;
@@ -730,7 +716,8 @@ io.on('connection', (socket) => {
           gameState.strikes = 0;
           gameState.buzzState = { locked: false, player: null, team: null, time: null };
           gameState.activeInputTeam = null;
-          gameState.turnsTaken = { 'Team Alpha': 0, 'Team Beta': 0 };
+          resetSubmittedAnswers();
+          resetTurnCounts();
           // Keep the same players and their teams for the complete game.
           // A new question immediately begins the next alternating turn cycle.
           startTurnCycle();
@@ -749,7 +736,8 @@ io.on('connection', (socket) => {
           gameState.strikes = 0;
           gameState.buzzState = { locked: false, player: null, team: null, time: null };
           gameState.activeInputTeam = null;
-          gameState.turnsTaken = { 'Team Alpha': 0, 'Team Beta': 0 };
+          resetSubmittedAnswers();
+          resetTurnCounts();
           startTurnCycle();
         }
         break;
@@ -797,10 +785,15 @@ io.on('connection', (socket) => {
       case 'UPDATE_SETTINGS':
         if (gameState.status !== 'LOBBY') break;
         if (payload.maxRounds !== undefined) {
-          gameState.maxRounds = Math.max(1, Math.min(3, Number(payload.maxRounds) || 3));
+          gameState.maxRounds = Math.max(1, Math.min(10, Number(payload.maxRounds) || 3));
         }
         if (payload.turnSeconds !== undefined) {
           gameState.turnSeconds = Math.max(5, Math.min(60, Number(payload.turnSeconds) || 15));
+        }
+        if (payload.teamCapacity !== undefined) {
+          const requestedCapacity = Math.max(1, Math.min(10, Number(payload.teamCapacity) || 4));
+          const largestTeam = Math.max(0, ...Object.values(gameState.teams).map((team) => team.members.length));
+          gameState.teamCapacity = Math.max(requestedCapacity, largestTeam);
         }
         break;
 
@@ -823,8 +816,8 @@ io.on('connection', (socket) => {
         // Kept for older host controls: forcing a player now simply opens that
         // team's next timed turn instead of reviving the buzzer mechanic.
         stopTimer();
-        gameState.turnsTaken = { 'Team Alpha': 0, 'Team Beta': 0 };
-        beginTeamTurn(payload.team || 'Team Alpha');
+        resetTurnCounts();
+        beginTeamTurn(payload.team || Object.keys(gameState.teams)[0]);
         break;
 
       case 'SKIP_QUESTION':
@@ -838,7 +831,8 @@ io.on('connection', (socket) => {
           gameState.strikes = 0;
           gameState.buzzState = { locked: false, player: null, team: null, time: null };
           gameState.activeInputTeam = null;
-          gameState.turnsTaken = { 'Team Alpha': 0, 'Team Beta': 0 };
+          resetSubmittedAnswers();
+          resetTurnCounts();
           stopTimer();
         }
         break;
@@ -898,34 +892,28 @@ io.on('connection', (socket) => {
     const player = gameState.players[socket.id];
     if (!player || player.team !== gameState.activeInputTeam) return;
 
-    io.to('admin-room').emit('incoming_answer', {
-      player: player.name,
-      team: player.team,
-      answer: answer
-    });
+    const submittedAnswer = String(answer || '').trim().slice(0, 100);
+    if (!submittedAnswer) return;
 
     let matchedIndex = -1;
     if (gameState.currentQuestion) {
-      const cleanInput = answer.trim().toLowerCase();
+      const cleanInput = submittedAnswer.toLowerCase();
       matchedIndex = gameState.currentQuestion.answers.findIndex(ans => {
         const cleanAns = ans.text.trim().toLowerCase();
         return cleanAns === cleanInput || cleanAns.includes(cleanInput) || cleanInput.includes(cleanAns);
       });
     }
 
-    if (matchedIndex !== -1 && !gameState.revealedAnswers[matchedIndex]) {
-      gameState.revealedAnswers[matchedIndex] = true;
-      const pts = gameState.currentQuestion.answers[matchedIndex].points;
-      gameState.teams[player.team].score += pts;
-
-      io.emit('play_sound', { type: 'CORRECT' });
-      io.emit('play_sound', { type: 'POINTS_SCORED' });
-      // Keep the current 15-second team turn running after a correct answer.
-    } else {
-      gameState.strikes = 1;
-      gameState.strikeFlash += 1;
-      io.emit('play_sound', { type: 'WRONG' });
-    }
+    const response = {
+      id: `${socket.id}-${Date.now()}`,
+      team: player.team,
+      answer: submittedAnswer,
+      matchedIndex,
+      matched: matchedIndex !== -1 && !gameState.revealedAnswers[matchedIndex],
+      submittedAt: Date.now()
+    };
+    gameState.submittedAnswers.push(response);
+    io.to('admin-room').emit('incoming_answer', response);
 
     broadcastState();
     sendAdminState();
@@ -963,6 +951,10 @@ io.on('connection', (socket) => {
   socket.on('disconnect', () => {
     const player = gameState.players[socket.id];
     if (player) {
+      if (player.team && gameState.teams[player.team]) {
+        gameState.teams[player.team].members = gameState.teams[player.team].members
+          .filter((member) => member.socketId !== socket.id && member.id !== player.id);
+      }
       delete gameState.players[socket.id];
     }
 

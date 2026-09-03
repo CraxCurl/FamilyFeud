@@ -21,6 +21,7 @@ export default function Play() {
   const [submitted, setSubmitted] = useState(false);
   const [isBlocked, setIsBlocked] = useState(false);
   const [joinError, setJoinError] = useState('');
+  const [isJoiningTeam, setIsJoiningTeam] = useState(false);
   const [queuePosition, setQueuePosition] = useState(0);
   const [showStrikeOverlay, setShowStrikeOverlay] = useState(false);
   const [localGameOver, setLocalGameOver] = useState(false);
@@ -133,31 +134,35 @@ export default function Play() {
   useEffect(() => {
     if (!socket || !userId) return;
 
-    // Trigger auto-join
-    socket.emit('join_game', { id: userId });
-
-    socket.on('joined_details', (details) => {
+    const handleJoinedDetails = (details) => {
       setTeam(details.team);
       setRegistered(true);
       setIsBlocked(false);
       setJoinError('');
       setQueuePosition(0);
-    });
+    };
 
-    socket.on('joined_queue', ({ position }) => {
+    const handleJoinedQueue = ({ position }) => {
       setQueuePosition(position);
       setRegistered(true);
       setIsBlocked(true);
-    });
+    };
 
-    socket.on('join_blocked', ({ message } = {}) => {
+    const handleJoinBlocked = ({ message } = {}) => {
       setJoinError(message || 'Unable to join that team.');
-    });
+    };
+
+    socket.on('joined_details', handleJoinedDetails);
+    socket.on('joined_queue', handleJoinedQueue);
+    socket.on('join_blocked', handleJoinBlocked);
+
+    // Listeners must be ready before the server responds to this fast local event.
+    socket.emit('join_game', { id: userId });
 
     return () => {
-      socket.off('joined_details');
-      socket.off('joined_queue');
-      socket.off('join_blocked');
+      socket.off('joined_details', handleJoinedDetails);
+      socket.off('joined_queue', handleJoinedQueue);
+      socket.off('join_blocked', handleJoinBlocked);
     };
   }, [socket, userId]);
 
@@ -190,9 +195,26 @@ export default function Play() {
 
   const handleTeamJoin = (e) => {
     e.preventDefault();
-    if (socket && teamNameInput.trim()) {
-      socket.emit('select_team', { teamName: teamNameInput });
+    if (!socket?.connected || !teamNameInput.trim()) {
+      setJoinError('Connection is not ready. Please wait a moment and try again.');
+      return;
     }
+
+    setJoinError('');
+    setIsJoiningTeam(true);
+    socket.timeout(5000).emit('select_team', { teamName: teamNameInput }, (error, result) => {
+      setIsJoiningTeam(false);
+      if (error) {
+        setJoinError('Could not reach the game server. Please try again.');
+        return;
+      }
+      if (!result?.ok) {
+        setJoinError(result?.message || 'Unable to join that team.');
+        return;
+      }
+      setTeam(result.team);
+      setJoinError('');
+    });
   };
 
   const handleWalkOff = () => {
@@ -354,9 +376,10 @@ export default function Play() {
             {joinError && <p className="text-xs font-semibold text-red-600">{joinError}</p>}
             <button
               type="submit"
+              disabled={isJoiningTeam}
               className="w-full py-3.5 bg-[#D2F128] text-[#0D483F] border-2 border-[#0D483F] font-condensed font-bold uppercase tracking-wider rounded-none text-base hover:bg-[#0D483F] hover:text-white transition cursor-pointer shadow-[4px_4px_0_#0D483F] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none"
             >
-              Join Team
+              {isJoiningTeam ? 'Joining Team...' : 'Join Team'}
             </button>
           </form>
 

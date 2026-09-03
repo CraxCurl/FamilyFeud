@@ -15,11 +15,17 @@ An interactive, real-time multiplayer Family Feud style game customized for **An
 
 ---
 
-## Access & Security
+## Open the Game Pages
 
-To keep players from accessing the game controls or the live board during active play, the admin host panel and public board are hidden under a specific path:
-- **Player Controller**: `/` or `/play`
-- **Hidden Display Board & Host Panel**: `/display/admin` (This route is hidden and omitted from the landing screen to keep game management and question previews secure).
+The app uses hash-based URLs. Replace `http://localhost:5173` below with your Vite URL during development, or with your deployed site URL in production.
+
+| Page | URL | Purpose |
+| --- | --- | --- |
+| Player page | `http://localhost:5173/#/play` | Open this on players' phones. They enter or join a team, buzz, and submit answers during their turn. |
+| Live display | `http://localhost:5173/#/display/admin` | Open this on the TV or projector. It shows the question board, team scores, timer, and final results. |
+| Admin panel | `http://localhost:5173/#/admin` | Open this on the host's laptop or tablet. Enter the `ADMIN_KEY` to start/reset games, select rounds, view team answers, reveal matches, and award points. |
+
+The display page has a settings icon that opens the separate admin page. Keep the admin URL and passkey private during an event.
 
 ---
 
@@ -70,7 +76,7 @@ Create a `.env` file inside `backend/` to configure the server port and host acc
 PORT=5000
 ADMIN_KEY=your_secure_admin_key_here
 ```
-*Note: If no ADMIN_KEY is configured, the server defaults to 'android_club_expo'. All question data is saved locally to the JSON database at `backend/data/db.json`.*
+*Note: If no `ADMIN_KEY` is configured, the server defaults to `123456789`. All question data is saved locally to the JSON database at `backend/data/db.json`.*
 
 Start the backend server:
 ```bash
@@ -93,6 +99,8 @@ Start the local Vite server:
 ```bash
 npm run dev
 ```
+
+Then open the page URLs listed in [Open the Game Pages](#open-the-game-pages). Keep the backend server running in a separate terminal while using the frontend dev server.
 
 ---
 
