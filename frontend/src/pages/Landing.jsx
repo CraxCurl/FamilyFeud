@@ -15,7 +15,7 @@ export default function Landing() {
         className="acfeud-landing__intro"
       >
         <p className="acfeud-eyebrow">ANDROID CLUB PRESENTS</p>
-        <h1>AC<em>FEUD</em></h1>
+        <h1>THE FEUD<br /><em>STARTS HERE.</em></h1>
         <p className="acfeud-landing__copy">
           A live team game built for fast answers, loud cheers, and a little friendly chaos.
         </p>

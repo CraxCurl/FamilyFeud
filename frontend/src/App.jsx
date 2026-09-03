@@ -65,7 +65,7 @@ function AppShell() {
         {showGlobalHeader && (
           <header className="moxie-header">
             <span className="moxie-header__mark" aria-hidden="true" />
-            <span className="moxie-header__logo">THE FEUD STARTS HERE</span>
+            <span className="moxie-header__logo">AC FEUD</span>
             <span className="moxie-header__meta">LIVE<br />GAME</span>
           </header>
         )}
