@@ -483,6 +483,7 @@ export default function Admin() {
               </div>
             </div>
 
+            <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 items-start">
             <div className="glass-panel p-6 rounded-2xl relative overflow-hidden">
               <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-neonCyan to-neonPurple" />
               <div className="flex justify-between items-center mb-4 border-b border-white/5 pb-3">
@@ -500,7 +501,7 @@ export default function Admin() {
                           <span className="text-xs font-bold text-neonCyan">{response.team}</span>
                           <p className="text-sm font-semibold text-white mt-0.5">{response.answer}</p>
                           <span className={`text-[10px] font-bold uppercase ${response.matched ? 'text-emerald-400' : 'text-gray-500'}`}>
-                            {response.matched ? 'Matches a board answer' : response.matchedIndex >= 0 ? 'Answer already revealed' : 'No board match'}
+                            {response.autoRevealed ? 'Exact match — revealed and points awarded' : response.matched ? 'Matches a board answer' : response.matchedIndex >= 0 ? 'Answer already revealed' : 'No exact board match'}
                           </span>
                         </div>
                         {response.matched && !isAlreadyRevealed && (
@@ -638,6 +639,7 @@ export default function Admin() {
                 </div>
               </div>
             )}
+            </div>
           </div>
 
           {/* Right/Side Panel: Teams & Devices */}
@@ -678,34 +680,6 @@ export default function Admin() {
                 </div>
               ) : (
                 <p className="text-xs text-gray-500 text-center py-4">Start a turn cycle to put a team on the clock.</p>
-              )}
-            </div>
-
-            {/* Live Buzzer State Panel */}
-            <div className="glass-panel p-6 rounded-2xl relative overflow-hidden">
-              <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-neonPink to-neonCyan" />
-              
-              <h3 className="font-bold text-white text-lg mb-4">Live Buzzer</h3>
-              
-              {adminState.buzzState.locked ? (
-                <div className="p-4 bg-neonPink/10 border border-neonPink/30 rounded-xl text-center">
-                  <div className="w-10 h-10 bg-neonPink rounded-full flex items-center justify-center font-bold text-white text-lg mx-auto mb-2 text-glow-pink">
-                    🔥
-                  </div>
-                  <span className="text-xs text-gray-400 block font-semibold">BUZZ WINNER</span>
-                  <span className="text-xs text-neonCyan font-bold">{adminState.buzzState.team}</span>
-
-                  <button
-                    onClick={() => sendControl('RESET_BUZZ')}
-                    className="mt-4 w-full py-2.5 bg-amber-500/20 border border-amber-500/40 text-amber-300 hover:bg-amber-500/30 rounded-xl text-xs font-bold transition"
-                  >
-                    Unlock Buzzer
-                  </button>
-                </div>
-              ) : (
-                <div className="p-6 text-center text-gray-500 text-xs font-semibold border border-dashed border-white/10 rounded-xl">
-                  Buzzer Open
-                </div>
               )}
             </div>
 
