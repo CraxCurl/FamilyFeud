@@ -3,6 +3,7 @@ import { HashRouter as Router, Routes, Route, useLocation } from 'react-router-d
 import Landing from './pages/Landing';
 import Play from './pages/Play';
 import Display from './pages/Display';
+import Admin from './pages/Admin';
 import { useSocket } from './context/SocketContext';
 import { sounds } from './utils/sounds';
 
@@ -11,7 +12,8 @@ function AppShell() {
   const location = useLocation();
   const isDisplayRoute = location.pathname === '/display/admin';
   const isPlayRoute = location.pathname === '/play';
-  const showGlobalHeader = !isDisplayRoute && !isPlayRoute;
+  const isAdminRoute = location.pathname === '/admin';
+  const showGlobalHeader = !isDisplayRoute && !isPlayRoute && !isAdminRoute;
 
   useEffect(() => {
     if (!socket) return;
@@ -71,6 +73,7 @@ function AppShell() {
           <Route path="/" element={<Landing />} />
           <Route path="/play" element={<Play />} />
           <Route path="/display/admin" element={<Display />} />
+          <Route path="/admin" element={<Admin />} />
         </Routes>
       </div>
   );

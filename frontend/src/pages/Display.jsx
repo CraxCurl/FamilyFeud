@@ -338,13 +338,13 @@ export default function Display() {
             </div>
           )}
           
-          <button
-            onClick={() => setShowHostPanel(true)}
+          <a
+            href="#/admin"
             className="p-3 bg-neonPurple/5 border border-neonPurple/15 rounded-xl hover:bg-neonPurple/10 text-[#0D483F] transition cursor-pointer"
-            title="Host Controls Dashboard"
+            title="Open Host Controls Dashboard"
           >
             <Settings className="w-5 h-5" />
-          </button>
+          </a>
         </div>
       </div>
 
@@ -464,14 +464,12 @@ export default function Display() {
 
               {/* Show Final Scores */}
               <div className="grid grid-cols-2 gap-8 w-full max-w-md bg-neonPurple/5 border border-neonPurple/10 rounded-2xl p-6 mb-8 text-neonPurple font-bold">
-                <div>
-                  <span className="text-xs text-[#0D483F]/60 block uppercase font-bold tracking-wider">Team Alpha</span>
-                  <span className="text-4xl font-black">{gameState.finalScores?.['Team Alpha'] ?? gameState.teams['Team Alpha']?.score ?? 0} Pts</span>
-                </div>
-                <div className="border-l border-neonPurple/10">
-                  <span className="text-xs text-[#0D483F]/60 block uppercase font-bold tracking-wider">Team Beta</span>
-                  <span className="text-4xl font-black">{gameState.finalScores?.['Team Beta'] ?? gameState.teams['Team Beta']?.score ?? 0} Pts</span>
-                </div>
+                {Object.entries(gameState.finalScores || gameState.teams || {}).slice(0, 2).map(([teamName, teamData], index) => (
+                  <div key={teamName} className={index === 1 ? 'border-l border-neonPurple/10' : ''}>
+                    <span className="text-xs text-[#0D483F]/60 block uppercase font-bold tracking-wider">{teamName}</span>
+                    <span className="text-4xl font-black">{typeof teamData === 'number' ? teamData : teamData?.score || 0} Pts</span>
+                  </div>
+                ))}
               </div>
 
               {/* Instagram QR Code & Details */}
@@ -508,12 +506,12 @@ export default function Display() {
                 >
                   Instagram Link
                 </a>
-                <button
-                  onClick={() => setShowHostPanel(true)}
+                <a
+                  href="#/admin"
                   className="px-6 py-2.5 bg-[#D2F128] text-[#0D483F] border border-[#0D483F] font-bold text-xs rounded-xl hover:bg-[#0D483F] hover:text-white transition cursor-pointer"
                 >
                   Host Panel Options
-                </button>
+                </a>
               </div>
             </motion.div>
           </motion.div>
@@ -544,7 +542,7 @@ export default function Display() {
               </button>
 
               <h2 className="text-4xl font-condensed font-bold uppercase tracking-tight text-[#0D483F] mb-2">Join the Feud!</h2>
-              <p className="text-xs font-condensed font-bold text-neonPink tracking-widest uppercase mb-6">Scan to join Team Alpha or Team Beta</p>
+              <p className="text-xs font-condensed font-bold text-neonPink tracking-widest uppercase mb-6">Scan to join or create a team</p>
               
               <div className="p-4 bg-white border-2 border-[#0D483F] mb-6">
                 <img 
@@ -838,7 +836,7 @@ export default function Display() {
                                                     : 'bg-cyan-500/10 border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/20 cursor-pointer'
                                                 }`}
                                               >
-                                                + {tName === 'Team Alpha' ? 'Alpha' : 'Beta'}
+                                                + {tName}
                                               </button>
                                             );
                                           })}
@@ -945,27 +943,16 @@ export default function Display() {
                           })}
                         </div>
 
-                        {/* Connected Members */}
+                        {/* Team Capacity */}
                         <div className="glass-panel p-4 rounded-xl space-y-3 border-[#0D483F]/10">
-                          <span className="text-xs font-bold text-[#0D483F]/60 uppercase tracking-widest block border-b border-[#0D483F]/10 pb-1">Connected Members</span>
-                          <div className="space-y-2 max-h-48 overflow-y-auto pr-1">
-                            {Object.values(adminState?.players || {}).map((player) => (
-                              <div key={player.socketId || player.id} className="flex justify-between items-center bg-[#FAF6EE] px-2.5 py-1.5 rounded-lg border border-[#0D483F]/10 text-xs">
-                                <div className="truncate pr-2">
-                                  <strong className="text-neonPurple block leading-tight">{player.name}</strong>
-                                  <span className="text-[9px] text-gray-500 block uppercase font-bold">{player.team || 'Lobby'}</span>
-                                </div>
-                                <button
-                                  onClick={() => sendControl('KICK_PLAYER', { playerId: player.id, socketId: player.socketId })}
-                                  className="px-2 py-1 bg-red-500/10 border border-red-500/30 text-red-500 rounded text-[10px] font-bold hover:bg-red-500 hover:text-white transition cursor-pointer"
-                                >
-                                  Remove
-                                </button>
+                          <span className="text-xs font-bold text-[#0D483F]/60 uppercase tracking-widest block border-b border-[#0D483F]/10 pb-1">Team Capacity</span>
+                          <div className="space-y-2">
+                            {Object.entries(adminState?.teams || {}).map(([teamName, teamData]) => (
+                              <div key={teamName} className="flex justify-between items-center bg-[#FAF6EE] px-2.5 py-1.5 rounded-lg border border-[#0D483F]/10 text-xs">
+                                <strong className="text-neonPurple truncate">{teamName}</strong>
+                                <span className="font-black text-[#0D483F]">{teamData.members?.length || 0} / {adminState?.teamCapacity || 4}</span>
                               </div>
                             ))}
-                            {(!adminState?.players || adminState.players.length === 0) && (
-                              <div className="text-center py-3 text-gray-500 text-xs">No active players connected.</div>
-                            )}
                           </div>
                         </div>
                       </div>
@@ -1139,8 +1126,9 @@ export default function Display() {
 }
 
 function renderTeamPanel(gameState, index) {
-  const teamNames = ['Team Alpha', 'Team Beta'];
-  const teamName = teamNames[index];
+  const teamNames = Object.keys(gameState.teams || {});
+  const fallbackNames = ['Team 1', 'Team 2'];
+  const teamName = teamNames[index] || fallbackNames[index];
   const teamData = gameState.teams[teamName] || { score: 0, members: [] };
   const isActive = gameState.activeInputTeam === teamName;
 
@@ -1160,26 +1148,16 @@ function renderTeamPanel(gameState, index) {
         </>
       )}
       
-      <span className="text-[10px] font-bold text-[#0D483F]/60 uppercase tracking-widest mb-1 block">Team {index === 0 ? 'Alpha' : 'Beta'}</span>
+      <span className="text-[10px] font-bold text-[#0D483F]/60 uppercase tracking-widest mb-1 block">Team {index + 1}</span>
       <h4 className="text-xl font-bold text-neonPurple mb-4 truncate">{teamName}</h4>
       
       <div className="text-5xl font-black text-neonPurple mb-6">
         {teamData.score || 0}
       </div>
 
-      <div className="text-left w-full">
-        <span className="text-[10px] text-[#0D483F]/60 font-semibold uppercase block border-b border-neonPurple/10 pb-1 mb-2">Connected Players</span>
-        <ul className="text-xs text-gray-700 space-y-1 max-h-32 overflow-y-auto pr-1">
-          {teamData.members?.map((m, idx) => (
-            <li key={idx} className="flex justify-between items-center bg-neonPurple/5 px-2 py-1 rounded">
-              <span className="truncate">{m.name}</span>
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-            </li>
-          ))}
-          {teamData.members?.length === 0 && (
-            <li className="text-[10px] text-gray-600 text-center py-2">Waiting for connection...</li>
-          )}
-        </ul>
+      <div className="w-full bg-neonPurple/5 border border-neonPurple/10 rounded-lg px-3 py-2 text-center">
+        <span className="text-[10px] text-[#0D483F]/60 font-semibold uppercase block">Team members</span>
+        <span className="text-lg font-black text-[#0D483F]">{teamData.members?.length || 0} / {gameState.teamCapacity || 4}</span>
       </div>
     </motion.div>
   );

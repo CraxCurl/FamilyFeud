@@ -3,7 +3,7 @@ import { useSocket } from '../context/SocketContext';
 import { Play, RotateCcw, FastForward, Check, X, ShieldAlert, Sparkles, Plus, Trash2, Copy, FileCode, Search, HelpCircle, Eye, EyeOff, Trophy, RefreshCw, Key } from 'lucide-react';
 
 export default function Admin() {
-  const { socket, adminState } = useSocket();
+  const { socket, adminState, connectionStatus } = useSocket();
   const fileInputRef = useRef(null);
 
   // Auth States
@@ -26,30 +26,37 @@ export default function Admin() {
   
   // Register as Admin when key or socket changes
   useEffect(() => {
-    if (socket && adminKey) {
-      socket.emit('admin_register', { key: adminKey });
-    }
+    if (!socket || !adminKey) return;
+
+    const registerAdmin = () => socket.emit('admin_register', { key: adminKey });
+    socket.on('connect', registerAdmin);
+    if (socket.connected) registerAdmin();
+
+    return () => socket.off('connect', registerAdmin);
   }, [socket, adminKey]);
 
   // Auth response listeners
   useEffect(() => {
     if (!socket) return;
 
-    socket.on('admin_auth_failed', () => {
+    const handleAuthFailed = () => {
       setIsAuthenticated(false);
       setAuthError('Invalid Access Key');
       localStorage.removeItem('feud_admin_key');
-    });
+    };
 
     // When admin state is successfully received, it implies they are registered & authenticated
-    socket.on('admin_state_update', () => {
+    const handleAdminStateUpdate = () => {
       setIsAuthenticated(true);
       setAuthError('');
-    });
+    };
+
+    socket.on('admin_auth_failed', handleAuthFailed);
+    socket.on('admin_state_update', handleAdminStateUpdate);
 
     return () => {
-      socket.off('admin_auth_failed');
-      socket.off('admin_state_update');
+      socket.off('admin_auth_failed', handleAuthFailed);
+      socket.off('admin_state_update', handleAdminStateUpdate);
     };
   }, [socket]);
 
@@ -237,7 +244,7 @@ export default function Admin() {
   // Render Login Panel if not authenticated
   if (!isAuthenticated) {
     return (
-      <div className="flex items-center justify-center min-h-screen px-4 py-8">
+      <div className="admin-console flex items-center justify-center min-h-screen px-4 py-8">
         <div className="w-full max-w-sm p-8 rounded-2xl glass-panel relative overflow-hidden text-center">
           <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-neonPurple to-neonPink" />
           
@@ -274,10 +281,21 @@ export default function Admin() {
   // Render Loader if adminState is not synced yet
   if (!adminState) {
     return (
-      <div className="flex items-center justify-center min-h-screen text-center">
+      <div className="admin-console flex items-center justify-center min-h-screen text-center">
         <div>
           <div className="w-10 h-10 border-2 border-dashed border-neonPurple animate-spin mx-auto mb-4" />
-          <p className="text-gray-400">Loading Dashboard Sync...</p>
+          <p className="text-gray-400">
+            {connectionStatus === 'disconnected' ? 'Backend server is unavailable.' : 'Loading Dashboard Sync...'}
+          </p>
+          {connectionStatus === 'disconnected' && (
+            <p className="mt-2 max-w-sm text-xs text-gray-500">Start the backend with <code>npm start</code> from the project folder, then retry.</p>
+          )}
+          <button
+            onClick={() => socket?.emit('admin_register', { key: adminKey })}
+            className="mt-4 px-3 py-2 text-xs font-bold text-neonCyan border border-neonCyan/30 rounded-lg hover:bg-neonCyan/10 transition"
+          >
+            Retry connection
+          </button>
         </div>
       </div>
     );
@@ -290,15 +308,15 @@ export default function Admin() {
   );
 
   return (
-    <div className="min-h-screen p-6 md:p-10 select-none">
+    <div className="admin-console min-h-screen p-5 md:p-10 select-none">
       
       {/* Top Banner */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-white/5 pb-6 mb-8 gap-4">
         <div>
-          <h1 className="text-3xl font-black bg-clip-text text-transparent bg-gradient-to-r from-neonPurple via-neonPink to-neonCyan text-glow-purple">
-            HOST CONTROLS
-          </h1>
-          <p className="text-xs text-gray-500 font-semibold tracking-widest uppercase">VIT Chennai Android Club</p>
+          <div className="admin-console__masthead">
+            <h1 className="admin-console__brand">ANDROID <em>CLUB</em></h1>
+            <p>Host Control Center</p>
+          </div>
         </div>
 
         {/* Tab Selection & Logout */}
@@ -415,6 +433,91 @@ export default function Admin() {
                   Skip Question
                 </button>
               </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4 border-t border-white/5 pt-4">
+                <label className="text-xs text-gray-400 font-semibold">
+                  Number of rounds
+                  <select
+                    value={adminState.maxRounds || 3}
+                    disabled={adminState.status !== 'LOBBY'}
+                    onChange={(e) => sendControl('UPDATE_SETTINGS', { maxRounds: Number(e.target.value) })}
+                    className="mt-1.5 w-full px-3 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white disabled:opacity-50 focus:outline-none focus:border-neonPurple/50"
+                  >
+                    {Array.from({ length: 10 }, (_, index) => index + 1).map((rounds) => (
+                      <option key={rounds} value={rounds} className="bg-darkBg">
+                        {rounds} {rounds === 1 ? 'round' : 'rounds'}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+
+                <label className="text-xs text-gray-400 font-semibold">
+                  Seconds per turn
+                  <select
+                    value={adminState.turnSeconds || 15}
+                    disabled={adminState.status !== 'LOBBY'}
+                    onChange={(e) => sendControl('UPDATE_SETTINGS', { turnSeconds: Number(e.target.value) })}
+                    className="mt-1.5 w-full px-3 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white disabled:opacity-50 focus:outline-none focus:border-neonPurple/50"
+                  >
+                    {[10, 15, 20, 30, 45, 60].map((seconds) => (
+                      <option key={seconds} value={seconds} className="bg-darkBg">{seconds} seconds</option>
+                    ))}
+                  </select>
+                </label>
+
+                <label className="text-xs text-gray-400 font-semibold">
+                  Members per team
+                  <select
+                    value={adminState.teamCapacity || 4}
+                    disabled={adminState.status !== 'LOBBY'}
+                    onChange={(e) => sendControl('UPDATE_SETTINGS', { teamCapacity: Number(e.target.value) })}
+                    className="mt-1.5 w-full px-3 py-2.5 bg-white/5 border border-white/10 rounded-xl text-white disabled:opacity-50 focus:outline-none focus:border-neonPurple/50"
+                  >
+                    {Array.from({ length: 10 }, (_, index) => index + 1).map((capacity) => (
+                      <option key={capacity} value={capacity} className="bg-darkBg">
+                        {capacity} {capacity === 1 ? 'member' : 'members'}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              </div>
+            </div>
+
+            <div className="glass-panel p-6 rounded-2xl relative overflow-hidden">
+              <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-neonCyan to-neonPurple" />
+              <div className="flex justify-between items-center mb-4 border-b border-white/5 pb-3">
+                <h3 className="font-bold text-white text-lg">Team Responses</h3>
+                <span className="text-xs text-gray-500 font-semibold">CURRENT ROUND</span>
+              </div>
+
+              {(adminState.submittedAnswers || []).length ? (
+                <div className="space-y-2 max-h-64 overflow-y-auto pr-1">
+                  {[...(adminState.submittedAnswers || [])].reverse().map((response) => {
+                    const isAlreadyRevealed = response.matchedIndex >= 0 && adminState.revealedAnswers?.[response.matchedIndex];
+                    return (
+                      <div key={response.id} className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 bg-white/5 border border-white/10 rounded-xl">
+                        <div>
+                          <span className="text-xs font-bold text-neonCyan">{response.team}</span>
+                          <p className="text-sm font-semibold text-white mt-0.5">{response.answer}</p>
+                          <span className={`text-[10px] font-bold uppercase ${response.matched ? 'text-emerald-400' : 'text-gray-500'}`}>
+                            {response.matched ? 'Matches a board answer' : response.matchedIndex >= 0 ? 'Answer already revealed' : 'No board match'}
+                          </span>
+                        </div>
+                        {response.matched && !isAlreadyRevealed && (
+                          <button
+                            onClick={() => sendControl('REVEAL_ANSWER', { index: response.matchedIndex, awardToTeam: response.team })}
+                            className="px-3 py-2 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 rounded-lg text-xs font-bold hover:bg-emerald-500/20 transition"
+                          >
+                            Reveal & Award
+                          </button>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <p className="text-xs text-gray-500 text-center py-4">Submitted team answers will appear here.</p>
+              )}
             </div>
 
             {/* Current Question Status */}
@@ -495,7 +598,7 @@ export default function Admin() {
                                         : 'bg-cyan-500/10 border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/20 cursor-pointer'
                                     }`}
                                   >
-                                    + {tName === 'Team Alpha' ? 'Alpha' : tName === 'Team Beta' ? 'Beta' : tName}
+                                    + {tName}
                                   </button>
                                 );
                               })}
@@ -590,7 +693,6 @@ export default function Admin() {
                     🔥
                   </div>
                   <span className="text-xs text-gray-400 block font-semibold">BUZZ WINNER</span>
-                  <span className="font-black text-white text-lg block">{adminState.buzzState.player?.name}</span>
                   <span className="text-xs text-neonCyan font-bold">{adminState.buzzState.team}</span>
 
                   <button
@@ -660,28 +762,18 @@ export default function Admin() {
               )}
             </div>
 
-            {/* Connected Devices */}
+            {/* Team Capacity */}
             <div className="glass-panel p-6 rounded-2xl">
-              <h3 className="font-bold text-white text-lg mb-2">Connected Devices</h3>
-              <p className="text-[10px] text-gray-500 mb-4 uppercase font-bold">Real-time player socket connections</p>
-              
-              <ul className="space-y-1 max-h-48 overflow-y-auto pr-1">
-                {adminState.players.map((p, idx) => (
-                  <li key={idx} className="flex justify-between items-center bg-white/5 px-2.5 py-1.5 rounded-lg text-xs">
-                    <div className="truncate">
-                      <span className="font-bold text-white">{p.name}</span>
-                      <span className="text-gray-500 text-[10px] ml-1.5">({p.team})</span>
-                    </div>
-
-                    <button
-                      onClick={() => sendControl('FORCE_BUZZ_WINNER', { player: { name: p.name, socketId: p.socketId }, team: p.team })}
-                      className="text-[9px] bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 px-1.5 py-0.5 rounded font-bold uppercase"
-                    >
-                      Force Buzz
-                    </button>
-                  </li>
+              <h3 className="font-bold text-white text-lg mb-2">Team Capacity</h3>
+              <p className="text-[10px] text-gray-500 mb-4 uppercase font-bold">Host-configured member limit</p>
+              <div className="space-y-2">
+                {Object.entries(adminState.teams).map(([teamName, teamData]) => (
+                  <div key={teamName} className="flex justify-between items-center bg-white/5 px-3 py-2 rounded-lg text-xs">
+                    <span className="font-bold text-white truncate">{teamName}</span>
+                    <span className="text-neonCyan font-black">{teamData.members?.length || 0} / {adminState.teamCapacity || 4}</span>
+                  </div>
                 ))}
-              </ul>
+              </div>
             </div>
           </div>
         </div>
@@ -797,7 +889,7 @@ export default function Admin() {
                 
                 <button
                   onClick={() => fileInputRef.current?.click()}
-                  className="px-3.5 py-2 bg-gradient-to-r from-cyan-500/20 to-purple-500/20 border border-cyan-500/30 rounded-xl text-xs text-cyan-400 font-bold flex items-center gap-1.5"
+                  className="admin-console__import-button px-3.5 py-2 border rounded-xl text-xs font-bold flex items-center gap-1.5"
                 >
                   <Plus className="w-3.5 h-3.5" /> Import JSON
                 </button>

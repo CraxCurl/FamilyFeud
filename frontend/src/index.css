@@ -361,6 +361,155 @@
 .acfeud-choice__arrow { position: absolute; right: 1.4rem; bottom: 1.35rem; }
 .acfeud-landing__footer { margin: 2.2rem 0 0; font-size: 10px; font-weight: 700; letter-spacing: .13em; color: rgba(17, 37, 33, .58); }
 
+/* Dedicated host workspace: the same crisp, editorial language as the game. */
+.admin-console {
+  min-height: 100vh;
+  color: #0d483f;
+  background:
+    radial-gradient(circle at 92% 4%, rgba(210, 241, 40, .27), transparent 20rem),
+    radial-gradient(circle at 8% 18%, rgba(208, 59, 91, .07), transparent 21rem),
+    #faf6ee;
+}
+
+.admin-console > .glass-panel,
+.admin-console .glass-panel {
+  border: 1.5px solid rgba(13, 72, 63, .28) !important;
+  border-radius: 0 !important;
+  background: #fffbed !important;
+  box-shadow: 5px 5px 0 rgba(13, 72, 63, .14) !important;
+}
+
+.admin-console h1,
+.admin-console h2,
+.admin-console h3,
+.admin-console h4 {
+  color: #0d483f !important;
+  font-family: 'Roboto Condensed', sans-serif !important;
+  letter-spacing: -.025em;
+}
+
+.admin-console h1 {
+  background: none !important;
+  -webkit-text-fill-color: #0d483f !important;
+  font-size: clamp(2.8rem, 5vw, 4.5rem) !important;
+  line-height: .82;
+}
+
+.admin-console h1.bg-gradient-to-r {
+  background: none !important;
+  color: #0d483f !important;
+  -webkit-text-fill-color: #0d483f !important;
+}
+
+.admin-console__masthead {
+  min-width: min(100%, 590px);
+  padding: 1.15rem 1.5rem 1rem;
+  background: #0d483f;
+  border: 1px solid #0d483f;
+  box-shadow: 6px 6px 0 #d2f128;
+}
+
+.admin-console h1.admin-console__brand {
+  margin: 0;
+  color: #fffbed !important;
+  -webkit-text-fill-color: #fffbed !important;
+  font-size: clamp(2.6rem, 5vw, 4.25rem) !important;
+  font-weight: 700;
+  letter-spacing: -.055em;
+  line-height: .75;
+}
+
+.admin-console__brand em {
+  color: #d2f128 !important;
+  -webkit-text-fill-color: #d2f128 !important;
+  font-style: normal;
+}
+
+.admin-console__masthead p {
+  margin: .9rem 0 0;
+  color: rgba(255, 251, 237, .78);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+}
+
+.admin-console__masthead p span { color: #d2f128; }
+
+.admin-console button.admin-console__import-button {
+  background: #d2f128 !important;
+  border-color: #0d483f !important;
+  color: #0d483f !important;
+}
+
+.admin-console .text-white { color: #0d483f !important; }
+.admin-console button.text-white { color: #fffbed !important; }
+.admin-console .text-gray-400 { color: #426b63 !important; }
+.admin-console .text-gray-500 { color: #52736d !important; }
+.admin-console .text-gray-300 { color: #254f47 !important; }
+.admin-console .text-neonPurple { color: #0d483f !important; }
+.admin-console .text-neonCyan { color: #0d483f !important; }
+
+.admin-console input,
+.admin-console select {
+  border: 1.5px solid rgba(13, 72, 63, .42) !important;
+  border-radius: 0 !important;
+  background: #fff !important;
+  color: #0d483f !important;
+}
+
+.admin-console button {
+  border-radius: 0 !important;
+  border-color: rgba(13, 72, 63, .42) !important;
+  box-shadow: none;
+}
+
+.admin-console button:hover:not(:disabled) {
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0 rgba(13, 72, 63, .25);
+}
+
+.admin-console button:disabled {
+  opacity: 1 !important;
+  color: #52736d !important;
+  background: #edf0e9 !important;
+  border-color: #b8c7bd !important;
+}
+
+.admin-console .bg-gradient-to-r,
+.admin-console .bg-gradient-to-r.from-neonPurple {
+  background: #0d483f !important;
+}
+
+.admin-console .bg-white\/5,
+.admin-console .bg-white\/10 {
+  background: rgba(13, 72, 63, .045) !important;
+}
+
+.admin-console .border-white\/5,
+.admin-console .border-white\/10 {
+  border-color: rgba(13, 72, 63, .14) !important;
+}
+
+.admin-console .bg-emerald-500\/10,
+.admin-console .bg-cyan-500\/10,
+.admin-console .bg-amber-500\/10,
+.admin-console .bg-pink-500\/10 {
+  background: rgba(210, 241, 40, .25) !important;
+}
+
+.admin-console .bg-red-500\/10 { background: rgba(208, 59, 91, .1) !important; }
+.admin-console .text-emerald-400,
+.admin-console .text-cyan-400,
+.admin-console .text-amber-400 { color: #0d483f !important; }
+.admin-console .text-pink-400,
+.admin-console .text-red-400 { color: #d03b5b !important; }
+
+@media (max-width: 640px) {
+  .admin-console { padding: 1rem !important; }
+  .admin-console h1 { font-size: 2.75rem !important; }
+}
+
 @media (max-width: 640px) {
   .acfeud-landing { min-height: calc(100vh - 98px); padding-top: 3.5rem; justify-content: flex-start; }
   .acfeud-choices { grid-template-columns: 1fr; margin-top: 2.7rem; }

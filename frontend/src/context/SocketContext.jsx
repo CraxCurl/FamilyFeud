@@ -18,7 +18,8 @@ export const SocketProvider = ({ children }) => {
     activeInputTeam: null,
     maxRounds: 3,
     turnSeconds: 15,
-    turnsTaken: { 'Team Alpha': 0, 'Team Beta': 0 },
+    teamCapacity: 4,
+    turnsTaken: {},
     turnsPerTeam: 3,
     winner: null,
     finalScores: {},
@@ -26,6 +27,7 @@ export const SocketProvider = ({ children }) => {
   });
 
   const [adminState, setAdminState] = useState(null);
+  const [connectionStatus, setConnectionStatus] = useState('connecting');
 
   useEffect(() => {
     const socketUrl = import.meta.env.VITE_BACKEND_URL || (
@@ -42,6 +44,16 @@ export const SocketProvider = ({ children }) => {
 
     newSocket.on('connect', () => {
       console.log('Socket.io connected successfully!');
+      setConnectionStatus('connected');
+    });
+
+    newSocket.on('connect_error', (error) => {
+      console.error('Socket.io connection failed:', error.message);
+      setConnectionStatus('disconnected');
+    });
+
+    newSocket.on('disconnect', () => {
+      setConnectionStatus('disconnected');
     });
 
     newSocket.on('game_state_update', (state) => {
@@ -58,7 +70,7 @@ export const SocketProvider = ({ children }) => {
   }, []);
 
   return (
-    <SocketContext.Provider value={{ socket, gameState, adminState }}>
+    <SocketContext.Provider value={{ socket, gameState, adminState, connectionStatus }}>
       {children}
     </SocketContext.Provider>
   );

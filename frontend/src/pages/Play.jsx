@@ -13,13 +13,14 @@ export default function Play() {
   const { socket, gameState } = useSocket();
   
   // Registration local state
-  const [name, setName] = useState('');
   const [team, setTeam] = useState('');
+  const [teamNameInput, setTeamNameInput] = useState('');
   const [registered, setRegistered] = useState(false);
   const [userId, setUserId] = useState('');
   const [answerInput, setAnswerInput] = useState('');
   const [submitted, setSubmitted] = useState(false);
   const [isBlocked, setIsBlocked] = useState(false);
+  const [joinError, setJoinError] = useState('');
   const [queuePosition, setQueuePosition] = useState(0);
   const [showStrikeOverlay, setShowStrikeOverlay] = useState(false);
   const [localGameOver, setLocalGameOver] = useState(false);
@@ -136,10 +137,10 @@ export default function Play() {
     socket.emit('join_game', { id: userId });
 
     socket.on('joined_details', (details) => {
-      setName(details.name);
       setTeam(details.team);
       setRegistered(true);
       setIsBlocked(false);
+      setJoinError('');
       setQueuePosition(0);
     });
 
@@ -149,8 +150,8 @@ export default function Play() {
       setIsBlocked(true);
     });
 
-    socket.on('join_blocked', () => {
-      setIsBlocked(true);
+    socket.on('join_blocked', ({ message } = {}) => {
+      setJoinError(message || 'Unable to join that team.');
     });
 
     return () => {
@@ -181,7 +182,16 @@ export default function Play() {
 
   const handleLeave = () => {
     if (socket) {
-      socket.emit('draw_identity');
+      socket.emit('walk_off');
+    }
+    localStorage.removeItem('feud_user_id');
+    window.location.reload();
+  };
+
+  const handleTeamJoin = (e) => {
+    e.preventDefault();
+    if (socket && teamNameInput.trim()) {
+      socket.emit('select_team', { teamName: teamNameInput });
     }
   };
 
@@ -301,7 +311,7 @@ export default function Play() {
       <div className="flex flex-col items-center justify-center min-h-screen text-center px-4">
         <div className="w-12 h-12 rounded-full border-2 border-dashed border-[#0D483F] animate-spin mx-auto mb-4" />
         <h3 className="text-xl font-bold text-neonPurple mb-1">Connecting to Feud Arena...</h3>
-        <p className="text-xs text-[#0D483F]/75">Assigning your random VIT alias and team...</p>
+        <p className="text-xs text-[#0D483F]/75">Connecting you to the team lobby...</p>
       </div>
     );
   }
@@ -319,25 +329,36 @@ export default function Play() {
             🎭
           </div>
 
-          <h2 className="text-3xl font-condensed font-bold uppercase tracking-tight text-[#0D483F] mb-1">Assign Team Identity</h2>
+          <h2 className="text-3xl font-condensed font-bold uppercase tracking-tight text-[#0D483F] mb-1">Join a Team</h2>
           <p className="text-xs font-condensed font-bold text-neonPink tracking-widest uppercase mb-6">VIT CHENNAI CLUB EXPO SPECIAL</p>
           
           <div className="p-5 bg-[#FAF6EE] border-2 border-[#0D483F] rounded-none mb-6 text-sm text-[#0D483F] text-left space-y-2">
             <p className="font-condensed font-bold text-center text-neonPurple uppercase tracking-widest text-xs">How it works</p>
             <p className="text-xs text-[#0D483F]/85 leading-relaxed text-center font-medium">
-              Pick your player identity before the host starts. You’ll be placed in Team Alpha or Team Beta (up to 3 players per team).
+              Enter your team name. The first two unique names create the two teams; teammates can enter the same name to join up to the host-set team limit.
             </p>
             <p className="text-xs text-[#0D483F]/60 text-center italic font-medium">
               Teams lock as soon as the game begins.
             </p>
           </div>
 
-          <button
-            onClick={() => socket.emit('draw_identity')}
-            className="w-full py-3.5 bg-[#D2F128] text-[#0D483F] border-2 border-[#0D483F] font-condensed font-bold uppercase tracking-wider rounded-none text-base hover:bg-[#0D483F] hover:text-white transition cursor-pointer shadow-[4px_4px_0_#0D483F] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none mb-6"
-          >
-            Draw Alias & Join Team
-          </button>
+          <form onSubmit={handleTeamJoin} className="w-full mb-6 space-y-3">
+            <input
+              value={teamNameInput}
+              onChange={(e) => setTeamNameInput(e.target.value)}
+              maxLength={24}
+              placeholder="Enter your team name"
+              required
+              className="w-full px-4 py-3 bg-[#FAF6EE] border-2 border-[#0D483F] text-[#0D483F] text-center font-semibold focus:outline-none"
+            />
+            {joinError && <p className="text-xs font-semibold text-red-600">{joinError}</p>}
+            <button
+              type="submit"
+              className="w-full py-3.5 bg-[#D2F128] text-[#0D483F] border-2 border-[#0D483F] font-condensed font-bold uppercase tracking-wider rounded-none text-base hover:bg-[#0D483F] hover:text-white transition cursor-pointer shadow-[4px_4px_0_#0D483F] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none"
+            >
+              Join Team
+            </button>
+          </form>
 
           <span className="text-[10px] font-condensed font-bold tracking-widest text-[#0D483F]/55 uppercase">Android Club VITC</span>
         </motion.div>
@@ -414,7 +435,7 @@ export default function Play() {
       <div className="flex justify-between items-center mb-6 bg-white px-4 py-3 border-2 border-[#0D483F] shadow-[4px_4px_0_#0D483F]">
         <div>
           <span className="text-[10px] text-[#0D483F]/60 block font-bold">PLAYER</span>
-          <span className="font-extrabold text-[#0D483F] text-sm">{name}</span>
+          <span className="font-extrabold text-[#0D483F] text-sm">MEMBER</span>
         </div>
         <div className="text-right">
           <span className="text-[10px] text-[#0D483F]/60 block font-bold">TEAM</span>
@@ -440,7 +461,6 @@ export default function Play() {
               </p>
               
               <div className="p-3 bg-[#FAF6EE] border-2 border-[#0D483F]/20 rounded-none mb-4 text-xs space-y-1 text-left">
-                <div className="font-condensed uppercase tracking-wider"><span className="font-bold text-[#0D483F]/60">Your Alias:</span> <strong className="text-[#0D483F]">{name}</strong></div>
                 <div className="font-condensed uppercase tracking-wider"><span className="font-bold text-[#0D483F]/60">Your Team:</span> <strong className="text-[#0D483F]">{team || 'Lobby'}</strong></div>
               </div>
             </motion.div>
@@ -528,21 +548,40 @@ export default function Play() {
               )}
 
               {isMyTeamActiveInput ? (
-                <div className="p-4 bg-[#FAF6EE] border-2 border-dashed border-[#0D483F]/30 w-full">
-                  <p className="text-sm font-bold text-[#0D483F] uppercase tracking-wide">
-                    Answer Verbally Now!
+                <form onSubmit={handleSubmitAnswer} className="p-4 bg-[#FAF6EE] border-2 border-dashed border-[#0D483F]/30 w-full">
+                  <label className="text-sm font-bold text-[#0D483F] uppercase tracking-wide block mb-2" htmlFor="team-answer">
+                    Type your team answer
+                  </label>
+                  <div className="flex gap-2">
+                    <input
+                      id="team-answer"
+                      value={answerInput}
+                      onChange={(e) => setAnswerInput(e.target.value)}
+                      maxLength={100}
+                      placeholder="Enter an answer"
+                      autoComplete="off"
+                      className="min-w-0 flex-1 px-3 py-2 bg-white border-2 border-[#0D483F] text-[#0D483F] text-sm font-semibold focus:outline-none"
+                    />
+                    <button
+                      type="submit"
+                      disabled={!answerInput.trim()}
+                      className="px-4 py-2 bg-[#0D483F] text-white text-xs font-bold uppercase disabled:opacity-40 transition"
+                    >
+                      Send
+                    </button>
+                  </div>
+                  <p className="text-xs text-[#0D483F]/70 mt-2 leading-relaxed">
+                    Matching answers are sent to the host, who can reveal the board answer and award your team the points.
                   </p>
-                  <p className="text-xs text-[#0D483F]/70 mt-1 leading-relaxed">
-                    Call out your answer to the host. The host will reveal it and award points on the admin board.
-                  </p>
-                </div>
+                  {submitted && <p className="text-xs font-bold text-emerald-700 mt-2">Answer sent to the host.</p>}
+                </form>
               ) : (
                 <div className="p-4 bg-[#FAF6EE]/50 border-2 border-dashed border-[#0D483F]/10 w-full">
                   <p className="text-sm font-bold text-[#0D483F]/65 uppercase tracking-wide">
                     Waiting for Other Team...
                   </p>
                   <p className="text-xs text-[#0D483F]/50 mt-1 leading-relaxed">
-                    The other team is answering verbally to the host. Think of your answers in case they get a strike!
+                    The other team is submitting answers. Think of your answers in case they get a strike!
                   </p>
                 </div>
               )}
@@ -572,7 +611,7 @@ export default function Play() {
             onClick={handleLeave}
             className="text-xs text-[#0D483F]/70 hover:text-neonPurple underline transition cursor-pointer font-semibold"
           >
-            Draw New Identity
+            Leave Team
           </button>
         )}
         <button
