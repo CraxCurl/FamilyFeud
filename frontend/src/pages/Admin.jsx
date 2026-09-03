@@ -387,7 +387,7 @@ export default function Admin() {
 
                 <button
                   onClick={() => sendControl('START_QUESTION')}
-                  disabled={adminState.status !== 'PLAYING'}
+                  disabled={adminState.status === 'LOBBY' || adminState.status === 'GAME_OVER'}
                   className="flex flex-col items-center justify-center p-4 bg-cyan-500/10 border border-cyan-500/30 rounded-xl hover:bg-cyan-500/20 text-cyan-400 font-bold transition group disabled:opacity-50 disabled:pointer-events-none"
                 >
                   <Sparkles className="w-6 h-6 mb-2 group-hover:animate-bounce transition" />
@@ -396,7 +396,7 @@ export default function Admin() {
 
                 <button
                   onClick={() => sendControl('PREV_ROUND')}
-                  disabled={adminState.status !== 'PLAYING'}
+                  disabled={adminState.status === 'LOBBY' || adminState.status === 'GAME_OVER'}
                   className="flex flex-col items-center justify-center p-4 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 text-white font-bold transition disabled:opacity-50"
                 >
                   <FastForward className="w-6 h-6 mb-2 rotate-180" />
@@ -405,7 +405,7 @@ export default function Admin() {
 
                 <button
                   onClick={() => sendControl('NEXT_ROUND')}
-                  disabled={adminState.status !== 'PLAYING'}
+                  disabled={adminState.status === 'LOBBY' || adminState.status === 'GAME_OVER'}
                   className="flex flex-col items-center justify-center p-4 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 text-white font-bold transition group disabled:opacity-50"
                 >
                   <FastForward className="w-6 h-6 mb-2 group-hover:translate-x-1 transition" />

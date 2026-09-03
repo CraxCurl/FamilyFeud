@@ -710,6 +710,14 @@ io.on('connection', (socket) => {
         if (gameState.currentRound < gameState.maxRounds) {
           gameState.currentRound++;
           gameState.currentQuestion = gameState.questions[gameState.currentRound - 1] || null;
+          if (!gameState.currentQuestion) {
+            const currentInGameIds = (gameState.questions || []).map(q => q?.id).filter(Boolean);
+            const extraQs = await drawQuestions(1, currentInGameIds);
+            if (extraQs.length > 0) {
+              gameState.currentQuestion = extraQs[0];
+              gameState.questions[gameState.currentRound - 1] = extraQs[0];
+            }
+          }
           if (gameState.currentQuestion) {
             gameState.revealedAnswers = Array(gameState.currentQuestion.answers.length).fill(false);
           }
